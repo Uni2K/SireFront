@@ -135,8 +135,8 @@ class _ScreenEditorState extends State<ScreenEditor> {
     double leftNavLeft=(totalWidth/2.0)-((totalHeight*heightPercentage/sqrt(2))/2);
     double leftNavRight=(totalWidth/2.0)+((totalHeight*heightPercentage/sqrt(2))/2);
 
-    Positioned leftNav=Positioned(child: NavigationRound(back: true,),top: topHeaderMid-buttonSize/2,left: leftNavLeft-buttonSize/2,);
-    Positioned rightNav=Positioned(child: NavigationRound(),top: topHeaderMid-buttonSize/2,left: leftNavRight-buttonSize/2,);
+    Positioned leftNav=Positioned(child: NavigationRound(back: true, onClick: () => navigatePrevious(ContentTypes.Header,context),),top: topHeaderMid-buttonSize/2,left: leftNavLeft-buttonSize/2,);
+    Positioned rightNav=Positioned(child: NavigationRound(onClick: () => navigateNext(ContentTypes.Header,context),),top: topHeaderMid-buttonSize/2,left: leftNavRight-buttonSize/2,);
 
 
 
@@ -144,6 +144,15 @@ class _ScreenEditorState extends State<ScreenEditor> {
     overlayWidgets.add(rightNav);
 
     return overlayWidgets;
+
+  }
+
+  navigatePrevious(ContentTypes header, BuildContext context) {
+    _controllersHeader?.animateTo(0, curve: Curves.linear, duration: Duration(seconds: 1));
+  }
+
+  navigateNext(ContentTypes header, BuildContext context) {
+    _controllersHeader?.animateTo(30, curve: Curves.linear, duration: Duration(seconds: 1));
 
   }
 }

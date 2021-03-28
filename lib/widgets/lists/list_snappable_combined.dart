@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/helper/helper_server.dart';
-import 'package:sire/widgets/editor/page_background.dart';
-import 'package:sire/widgets/editor/page_content.dart';
+import 'package:sire/widgets/editor/page_combined.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
 enum ContentTypes { Header, Body, Footer }
@@ -42,9 +41,7 @@ class _ListSnappableCombinedState extends State<ListSnappableCombined> {
 
         final List content = result.data?[getDataSelector()];
         for(var item in content){
-          if(widget.background) contentPages.add(PageBackground());
-          else
-          contentPages.add(PageContent(content: item["content"]));
+          contentPages.add(PageCombined(content: item["content"], background: widget.background, contentType: widget.contentType,));
         }
 
 
