@@ -142,9 +142,9 @@ packages:
   flutter_html:
     dependency: "direct main"
     description:
-      name: flutter_html
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "flutter_html-2.0.0-nullsafety.0-hijacked"
+      relative: true
+    source: path
     version: "2.0.0-nullsafety.0"
   flutter_layout_grid:
     dependency: transitive
@@ -468,7 +468,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.19"
+    version: "0.3.0"
   typed_data:
     dependency: transitive
     description:

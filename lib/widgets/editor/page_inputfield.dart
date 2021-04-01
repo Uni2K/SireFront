@@ -1,27 +1,39 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/style.dart';
 
 class PageInputfield extends StatefulWidget {
-  PageInputfield({Key? key, required this.hint, this.bold = false, this.italic=false})
-      : super(key: key);
+  PageInputfield({
+    Key? key,
+    required this.hint,
+    required this.style,
+  }) : super(key: key);
 
   final String hint;
-  final bool bold,italic;
+  final Style style;
 
   TextEditingController textEditingController = new TextEditingController();
 
   @override
   _PageInputfieldState createState() => _PageInputfieldState();
 }
-
+https://github.com/fluttercandies/extended_text
+https://github.com/flutter/flutter/issues/30688
 class _PageInputfieldState extends State<PageInputfield> {
   @override
   Widget build(BuildContext context) {
-    return IntrinsicWidth(child:TextField(
+  TextStyle textStyle=widget.style.generateTextStyle();
+  textStyle=textStyle.copyWith(fontSize: 14);
+    return IntrinsicWidth(
+        child: TextField(
+
+          enableInteractiveSelection: true,
       controller: widget.textEditingController,
-      style: TextStyle(
-          fontSize: 14,
-          fontWeight: widget.bold? FontWeight.bold: FontWeight.normal, fontStyle: widget.italic?FontStyle.italic: FontStyle.normal),
+      style: textStyle,// TextStyle(fontSize: 14, inherit: textStyle.inherit, fontWeight: textStyle.fontWeight, backgroundColor: textStyle.backgroundColor, height: textStyle.height, fontStyle: textStyle.fontStyle ),
+      textAlign: widget.style.textAlign ?? TextAlign.start,
+      textDirection: widget.style.direction,
+
+      // textScaleFactor: textScaleFactor,
       decoration: new InputDecoration.collapsed(hintText: widget.hint),
     ));
   }

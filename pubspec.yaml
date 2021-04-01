@@ -29,9 +29,9 @@ dependencies:
   font_awesome_flutter: ^9.0.0
   cupertino_icons: ^1.0.2
   graphql_flutter: ^5.0.0-nullsafety.1
-  flutter_html: ^2.0.0-nullsafety.0
   scroll_snap_list: ^0.7.0
-
+  flutter_html:
+    path: ./flutter_html-2.0.0-nullsafety.0-hijacked
 
 dev_dependencies:
   flutter_test:
