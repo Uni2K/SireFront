@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:sire/constants/constant_color.dart';
 
 class Logo extends StatefulWidget {

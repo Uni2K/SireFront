@@ -21,6 +21,7 @@ class _NavigationRoundState extends State<NavigationRound> {
       minWidth: 0,
       color: accentColor,
       padding: EdgeInsets.zero,
+      focusNode: FocusNode( skipTraversal: true),
       shape: CircleBorder(),
       child: Icon(
         widget.back?Icons.navigate_before: Icons.navigate_next,

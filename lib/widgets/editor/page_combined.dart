@@ -1,14 +1,12 @@
-import 'dart:convert';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
-import 'package:get/get.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/widgets/editor/page_inputfield.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
 
+// ignore: must_be_immutable
 class PageCombined extends StatefulWidget {
   PageCombined(
       {Key? key,
@@ -20,28 +18,30 @@ class PageCombined extends StatefulWidget {
   final String? content;
   final bool background;
   final ContentTypes contentType;
-
+  bool isDisable=true;
   @override
-  _PageCombinedState createState() => _PageCombinedState();
+  PageCombinedState createState() => PageCombinedState();
 }
 
-class _PageCombinedState extends State<PageCombined> {
+class PageCombinedState extends State<PageCombined> {
   @override
   Widget build(BuildContext context) {
     return widget.background ? getBackground() : getContent();
   }
 
   Widget getContent() {
-
-    return Container(
-        padding: getPadding(),
-        margin: const EdgeInsets.symmetric(
-            horizontal: spacePages, vertical: spacePages),
-        width: ((MediaQuery.of(context).size.height * heightPercentage) /
-                sqrt(2)) -
-            spacePages * 2,
-        child: Html(
-            customRender: getCustomRenderer(), data: widget.content ?? ""));
+    return AbsorbPointer(
+        absorbing: widget.isDisable,
+        child: Container(
+            padding: getPadding(),
+            margin: const EdgeInsets.symmetric(
+                horizontal: spacePages, vertical: spacePages),
+            width: ((MediaQuery.of(context).size.height * heightPercentage) /
+                    sqrt(2)) -
+                spacePages * 2,
+            child: Html(
+                customRender: getCustomRenderer(),
+                data: widget.content ?? "")));
   }
 
   Widget getBackground() {
@@ -96,8 +96,8 @@ class _PageCombinedState extends State<PageCombined> {
           _) {
         return generateInputField(child);
       },
-      "span": (RenderContext context, Widget child, Map<String, String> attributes,
-          _) {
+      "span": (RenderContext context, Widget child,
+          Map<String, String> attributes, _) {
         return generateInputField(child);
       },
     };
@@ -108,13 +108,11 @@ class _PageCombinedState extends State<PageCombined> {
       ContainerSpan? containerSpan = child as ContainerSpan?;
       if (containerSpan != null && containerSpan.children != null) {
         List<InlineSpan> children = containerSpan.children!;
-        print(containerSpan.style.generateTextStyle());
 
         for (var value in children) {
           if (value is TextSpan) {
             return PageInputfield(
-                hint: value.text ?? "",
-                style: containerSpan.style);
+                hint: value.text ?? "", style: containerSpan.style);
           }
         }
       }

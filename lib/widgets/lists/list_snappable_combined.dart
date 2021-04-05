@@ -11,7 +11,7 @@ enum ContentTypes { Header, Body, Footer }
 
 class ListSnappableCombined extends StatefulWidget {
   ListSnappableCombined(
-      {Key? key, this.scrollController, required this.contentType, this.background=false})
+      {Key? key, this.scrollController, required this.contentType, this.background = false})
       : super(key: key);
 
   final ContentTypes contentType;
@@ -25,7 +25,7 @@ class ListSnappableCombined extends StatefulWidget {
 class _ListSnappableCombinedState extends State<ListSnappableCombined> {
   @override
   Widget build(BuildContext context) {
-    List<dynamic> contentPages = List.empty(growable: true);
+    List<PageCombined> contentPages = List.empty(growable: true);
 
 
     return Query(
@@ -39,24 +39,34 @@ class _ListSnappableCombinedState extends State<ListSnappableCombined> {
         }
 
 
-        final List content = result.data?[getDataSelector()];
-        for(var item in content){
-          contentPages.add(PageCombined(content: item["content"], background: widget.background, contentType: widget.contentType,));
+        final List content = result.data ? [getDataSelector()];
+        for (var item in content) {
+          contentPages.add(PageCombined(content: item["content"],
+            key: GlobalKey<PageCombinedState>(),
+            background: widget.background,
+            contentType: widget.contentType,));
         }
-
 
 
         return ScrollSnapList(
           scrollDirection: Axis.horizontal,
           itemCount: content.length,
           listController: widget.scrollController,
-          initialIndex: (content.length/2),
+          initialIndex: (content.length / 2),
+
           itemBuilder: (context, index) {
             return contentPages[index];
           },
-          itemSize: (((MediaQuery.of(context).size.height * heightPercentage) /
+          itemSize: (((MediaQuery
+              .of(context)
+              .size
+              .height * heightPercentage) /
               sqrt(2))),
-          onItemFocus: (int) {},
+          onItemFocus: (int) {
+            (contentPages[int].key as GlobalKey<PageCombinedState>).currentState?.setState(() {
+              ( contentPages[int].key as GlobalKey<PageCombinedState>).currentState?.widget.isDisable=false;
+            });
+          },
         );
       },
       options: QueryOptions(
@@ -71,20 +81,24 @@ class _ListSnappableCombinedState extends State<ListSnappableCombined> {
   }
 
   String getQuery() {
-    switch(widget.contentType){
-      case ContentTypes.Header: return HelperServer.getHeaders();
-      case ContentTypes.Body: return HelperServer.getBodies();
-      case ContentTypes.Footer: return HelperServer.getFooters();
-
+    switch (widget.contentType) {
+      case ContentTypes.Header:
+        return HelperServer.getHeaders();
+      case ContentTypes.Body:
+        return HelperServer.getBodies();
+      case ContentTypes.Footer:
+        return HelperServer.getFooters();
     }
   }
 
   getDataSelector() {
-    switch(widget.contentType){
-      case ContentTypes.Header: return "headers";
-      case ContentTypes.Body: return "bodies";
-      case ContentTypes.Footer: return "footers";
-
+    switch (widget.contentType) {
+      case ContentTypes.Header:
+        return "headers";
+      case ContentTypes.Body:
+        return "bodies";
+      case ContentTypes.Footer:
+        return "footers";
     }
   }
 }

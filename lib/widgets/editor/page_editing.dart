@@ -6,10 +6,10 @@ class PageEditing extends StatefulWidget {
   PageEditing({Key? key}) : super(key: key);
 
   @override
-  _PageEditingState createState() => _PageEditingState();
+  PageEditingState createState() => PageEditingState();
 }
 
-class _PageEditingState extends State<PageEditing> {
+class PageEditingState extends State<PageEditing> {
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -3,8 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
 
 class Save extends StatefulWidget {
-  Save({Key? key}) : super(key: key);
-
+  Save({Key? key, required this.onClick}) : super(key: key);
+  final VoidCallback onClick;
   @override
   _SaveState createState() => _SaveState();
 }
@@ -16,7 +16,7 @@ class _SaveState extends State<Save> {
       RawMaterialButton(
         fillColor: navigationBarBackgroundColor,
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 2),
-      onPressed: () {},
+      onPressed: () =>widget.onClick(),
       child:
           Row(
         children: [

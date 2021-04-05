@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 
 const String SERVER_URL = "http://127.0.0.1:3000/graphql";
 
