@@ -213,7 +213,7 @@ class _ScreenEditorState extends State<ScreenEditor> {
 
   save() async {
 
-   Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
+  /* Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
       final doc = pw.Document();
 
       final image = await WidgetWraper.fromKey(
@@ -230,7 +230,7 @@ class _ScreenEditorState extends State<ScreenEditor> {
           }));
 
       return doc.save();
-    });
+    });*/
   }
 
   reset() {}

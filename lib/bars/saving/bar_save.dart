@@ -5,6 +5,8 @@ import 'package:sire/bars/saving/reset.dart';
 import 'package:sire/bars/saving/save.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 
+import 'bar_editing.dart';
+
 class BarSave extends StatefulWidget {
   BarSave({Key? key, required this.save, required this.reset}) : super(key: key);
 
@@ -21,7 +23,7 @@ class _BarSaveState extends State<BarSave> {
         width: (MediaQuery.of(context).size.height * heightPercentage) / sqrt(2),
         height: MediaQuery.of(context).size.height * 0.1,
         child: Row(
-          children: [Reset(onClick:widget.reset), Spacer(),Save(onClick:widget.save)],
+          children: [BarEditing(), Spacer(),Save(onClick:widget.save)],
         ));
   }
 }
