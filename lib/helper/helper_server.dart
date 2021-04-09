@@ -2,6 +2,26 @@
 const String SERVER_URL = "http://127.0.0.1:3000/graphql";
 
 class HelperServer {
+
+  static String getAllContent() {
+    return """query{
+    headers{
+  name
+  content
+},
+bodies{
+  name
+  content
+},
+  footers{
+  name
+  content
+}
+
+}""";
+  }
+
+
   static String getHeaders() {
     return """query{
     headers{

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
+import 'package:get/get.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/widgets/editor/page_inputfield.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
@@ -18,7 +19,7 @@ class PageCombined extends StatefulWidget {
   final String? content;
   final bool background;
   final ContentTypes contentType;
-  bool isDisable=true;
+  RxBool isDisable=true.obs;
   @override
   PageCombinedState createState() => PageCombinedState();
 }
@@ -30,8 +31,8 @@ class PageCombinedState extends State<PageCombined> {
   }
 
   Widget getContent() {
-    return AbsorbPointer(
-        absorbing: widget.isDisable,
+    return Obx(()=> AbsorbPointer(
+        absorbing: widget.isDisable.value,
         child: Container(
             padding: getPadding(),
             margin: const EdgeInsets.symmetric(
@@ -41,7 +42,7 @@ class PageCombinedState extends State<PageCombined> {
                 spacePages * 2,
             child: Html(
                 customRender: getCustomRenderer(),
-                data: widget.content ?? "")));
+                data: widget.content ?? ""))));
   }
 
   Widget getBackground() {

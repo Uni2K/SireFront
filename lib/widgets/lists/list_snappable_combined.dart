@@ -11,94 +11,89 @@ enum ContentTypes { Header, Body, Footer }
 
 class ListSnappableCombined extends StatefulWidget {
   ListSnappableCombined(
-      {Key? key, this.scrollController, required this.contentType, this.background = false})
-      : super(key: key);
+      {Key? key,
+      this.scrollController,
+      required this.contentType,
+      this.background = false,
+      required QueryResult result})
+      : super(key: key) {
+    content = result.data?[getDataSelector()];
+    for (var item in content ?? []) {
+      contentPages.add(PageCombined(
+        content: item["content"],
+        background: background,
+        contentType: contentType,
+      ));
+    }
+  }
 
   final ContentTypes contentType;
   final ScrollController? scrollController;
   final bool background;
-
-  @override
-  _ListSnappableCombinedState createState() => _ListSnappableCombinedState();
-}
-
-class _ListSnappableCombinedState extends State<ListSnappableCombined> {
-  @override
-  Widget build(BuildContext context) {
-    List<PageCombined> contentPages = List.empty(growable: true);
-
-
-    return Query(
-      builder: (result, {fetchMore, refetch}) {
-        if (result.hasException) {
-          return Text(result.exception.toString());
-        }
-
-        if (result.isLoading) {
-          return Text('Loading');
-        }
-
-
-        final List content = result.data ? [getDataSelector()];
-        for (var item in content) {
-          contentPages.add(PageCombined(content: item["content"],
-            key: GlobalKey<PageCombinedState>(),
-            background: widget.background,
-            contentType: widget.contentType,));
-        }
-
-
-        return ScrollSnapList(
-          scrollDirection: Axis.horizontal,
-          itemCount: content.length,
-          listController: widget.scrollController,
-          initialIndex: (content.length / 2),
-
-          itemBuilder: (context, index) {
-            return contentPages[index];
-          },
-          itemSize: (((MediaQuery
-              .of(context)
-              .size
-              .height * heightPercentage) /
-              sqrt(2))),
-          onItemFocus: (int) {
-            (contentPages[int].key as GlobalKey<PageCombinedState>).currentState?.setState(() {
-              ( contentPages[int].key as GlobalKey<PageCombinedState>).currentState?.widget.isDisable=false;
-            });
-          },
-        );
-      },
-      options: QueryOptions(
-        document: gql(getQuery()),
-        // this is the query string you just created
-        variables: {
-          'nRepositories': 50,
-        },
-        pollInterval: Duration(seconds: 10),
-      ),
-    );
-  }
-
-  String getQuery() {
-    switch (widget.contentType) {
-      case ContentTypes.Header:
-        return HelperServer.getHeaders();
-      case ContentTypes.Body:
-        return HelperServer.getBodies();
-      case ContentTypes.Footer:
-        return HelperServer.getFooters();
-    }
-  }
+  List? content;
+  int selectedIndex = -1;
+  List<PageCombined> contentPages = List.empty(growable: true);
 
   getDataSelector() {
-    switch (widget.contentType) {
+    switch (contentType) {
       case ContentTypes.Header:
         return "headers";
       case ContentTypes.Body:
         return "bodies";
       case ContentTypes.Footer:
         return "footers";
+    }
+  }
+
+  @override
+  ListSnappableCombinedState createState() => ListSnappableCombinedState();
+}
+
+class ListSnappableCombinedState extends State<ListSnappableCombined> {
+  @override
+  Widget build(BuildContext context) {
+    widget.selectedIndex = ((widget.content?.length ?? 0) / 2).floor();
+    return ScrollSnapList(
+      scrollDirection: Axis.horizontal,
+      itemCount: widget.content?.length,
+      listController: widget.scrollController,
+      initialIndex: ((widget.content?.length ?? 0) / 2).floor().roundToDouble(),
+      itemBuilder: (context, index) {
+        return widget.contentPages[index];
+      },
+      itemSize:
+          (((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2))),
+      onItemFocus: (int) {
+        widget.selectedIndex = int;
+
+
+        for(PageCombined w in widget.contentPages){
+          if(widget.contentPages.indexOf(w)==int){
+           w.isDisable.value=false;
+          }else{
+            w.isDisable.value=true;
+          }
+        }
+
+
+       /* (widget.contentPages[int].key as GlobalKey<PageCombinedState>)
+            .currentState
+            ?.setState(() {
+          (widget.contentPages[int].key as GlobalKey<PageCombinedState>)
+              .currentState
+              ?.widget
+              .isDisable = false;
+        });*/
+      },
+    );
+  }
+
+  PageCombined? getContent() {
+    print(
+        "getContent: ${widget.selectedIndex}  size:${widget.content?.length} ");
+    if (widget.background) return null;
+    if (widget.content != null) {
+      return widget.contentPages[widget.selectedIndex];
     }
   }
 }

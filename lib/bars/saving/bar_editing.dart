@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/utils/util_color.dart';
+import 'package:sire/widgets/buttons/button_circle_neutral.dart';
 
 class BarEditing extends StatefulWidget {
-  BarEditing({Key? key}) : super(key: key);
+  BarEditing({Key? key, required this.delete, required this.help, required this.preview}) : super(key: key);
+
+  final VoidCallback delete,help,preview;
 
   @override
   _BarEditingState createState() => _BarEditingState();
@@ -31,11 +34,11 @@ class _BarEditingState extends State<BarEditing> {
       child: Row(
         children: [
           SizedBox(width: 10,),
-          Icon(Icons.delete_forever, color: Colors.white,size: 18,),
-          SizedBox(width: 15,),
-          Icon(Icons.help, color: Colors.white,size: 18,),
-          SizedBox(width: 15,),
-          Icon(Icons.visibility, color: Colors.white,size: 18,),
+          ButtonCircleNeutral(icon: Icon(Icons.delete, color: Colors.white,size: 18,), onClick: ()=>widget.delete()),
+          SizedBox(width: 10,),
+          ButtonCircleNeutral(icon: Icon(Icons.help, color: Colors.white,size: 18,), onClick: ()=>widget.help()),
+          SizedBox(width: 10,),
+          ButtonCircleNeutral(icon: Icon(Icons.visibility, color: Colors.white,size: 18,), onClick: ()=>widget.preview()),
           SizedBox(width: 40,),
           Container(
             padding: EdgeInsets.all(5),
@@ -65,4 +68,6 @@ class _BarEditingState extends State<BarEditing> {
       ),
     );
   }
+
+
 }
