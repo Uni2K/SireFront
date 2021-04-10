@@ -12,10 +12,10 @@ class PagePreview extends StatefulWidget {
   final PageCombined? header, body, footer;
 
   @override
-  _PagePreviewState createState() => _PagePreviewState();
+  PagePreviewState createState() => PagePreviewState();
 }
 
-class _PagePreviewState extends State<PagePreview> {
+class PagePreviewState extends State<PagePreview> {
   @override
   Widget build(BuildContext context) {
     return Align(

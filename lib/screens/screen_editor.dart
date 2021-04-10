@@ -28,7 +28,7 @@ class ScreenEditor extends StatefulWidget {
   GlobalKey editingKey = GlobalKey();
   GlobalKey backgroundKey = GlobalKey();
   GlobalKey contentKey = GlobalKey();
-  GlobalKey<ScreenPreviewState> screenPreviewKey;
+  GlobalKey<ScreenPreviewState> screenPreviewKey=new GlobalKey();
 
   @override
   _ScreenEditorState createState() => _ScreenEditorState();
@@ -116,7 +116,7 @@ class _ScreenEditorState extends State<ScreenEditor>
                             height: 50,
                             width: 50,
                             child: CircularProgressIndicator(
-                              color: navigationBarBackgroundColor,
+                              valueColor: AlwaysStoppedAnimation<Color>(navigationBarBackgroundColor),
                               strokeWidth: 5,
                             )));
                   }
@@ -206,9 +206,9 @@ class _ScreenEditorState extends State<ScreenEditor>
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
-                color: Colors.blueGrey,
+                color: previewBackgroundColor,
                 child: ScreenPreview(
-                  key: screenPreviewKey,
+                  key: widget.screenPreviewKey,
                   bodyKey: bodyKey,
                   footerKey: footerKey,
                   headerKey: headerKey,
@@ -326,7 +326,9 @@ class _ScreenEditorState extends State<ScreenEditor>
   }
 
   openPreview() {
-    widget.screenPreviewKey.currentState.setState({});
+    widget.screenPreviewKey.currentState!.setState(() {
+
+    });
     if (previewController.status == AnimationStatus.forward ||
         previewController.status == AnimationStatus.completed) {
       previewController.reverse();

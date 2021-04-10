@@ -1,22 +1,34 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:printing/printing.dart';
+import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/widgets/buttons/button_target.dart';
 import 'package:sire/widgets/editor/page_editing.dart';
 import 'package:sire/widgets/editor/page_preview.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
-class ScreenPreview extends StatelessWidget {
+class ScreenPreview extends StatefulWidget {
   final GlobalKey<ListSnappableCombinedState> footerKey, headerKey, bodyKey;
 
-  const ScreenPreview(
+  ScreenPreview(
       {Key? key,
       required this.footerKey,
       required this.headerKey,
       required this.bodyKey})
       : super(key: key);
 
+  GlobalKey pagePreviewKey=new GlobalKey();
+
+  @override
+  ScreenPreviewState createState() => ScreenPreviewState();
+}
+
+class ScreenPreviewState extends State<ScreenPreview> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,15 +40,17 @@ class ScreenPreview extends StatelessWidget {
               alignment: Alignment.center,
             ),
             Align(
-                child: PagePreview(
-                    footer: footerKey.currentState?.getContent(),
-                    header: headerKey.currentState?.getContent(),
-                    body: bodyKey.currentState?.getContent())),
+                child:  RepaintBoundary(
+                key: widget.pagePreviewKey,child: PagePreview(
+                    footer: widget.footerKey.currentState?.getContent(),
+                    header: widget.headerKey.currentState?.getContent(),
+                    body: widget.bodyKey.currentState?.getContent()))),
             Align(
               child: Container(
                   width: MediaQuery.of(context).size.height *
                       heightPercentage /
                       sqrt(2),
+                  color:previewBackgroundColor,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,18 +58,21 @@ class ScreenPreview extends StatelessWidget {
                       ButtonTarget(
                         icon: Icons.cloud_download_outlined,
                         text: "Downloaden",
+                        onClick:(){save();},
                       ),
                       SizedBox(
-                        height: 40,
+                        height: 30,
                       ),
                       ButtonTarget(
+                        onClick: (){},
                         icon: Icons.local_printshop_rounded,
                         text: "Drucken",
                       ),
                       SizedBox(
-                        height: 40,
+                        height: 30,
                       ),
                       ButtonTarget(
+                        onClick: (){},
                         icon: Icons.share_rounded,
                         text: "Teilen",
                       ),
@@ -65,5 +82,27 @@ class ScreenPreview extends StatelessWidget {
             )
           ],
         ));
+  }
+  save() {
+    Printing.layoutPdf(onLayout: (PdfPageFormat format)  async{
+      final doc = pw.Document(author: "Sire", title: "Title");
+
+      final image = await WidgetWraper.fromKey(
+        key: widget.pagePreviewKey,
+         pixelRatio: 1.0, //Quality
+       // orientation: PdfImageOrientation.topLeft
+      );
+
+      doc.addPage(pw.Page(
+          pageFormat: PdfPageFormat.a4,
+
+          build: (pw.Context context) {
+            return
+              pw.Image(image, fit: pw.BoxFit.cover);
+
+          }));
+
+      return doc.save();
+    });
   }
 }

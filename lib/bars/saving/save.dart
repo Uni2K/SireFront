@@ -71,7 +71,8 @@ class _SaveState extends State<Save> with TickerProviderStateMixin {
             ? Container(
                 padding: EdgeInsets.all(9),
                 child: CircularProgressIndicator(
-                  color: Colors.white,
+
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   strokeWidth: 2,
                 ))
             : Container(
