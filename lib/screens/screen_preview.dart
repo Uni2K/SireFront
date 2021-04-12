@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:printing/printing.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
+import 'package:sire/widgets/buttons/button_circle_neutral.dart';
 import 'package:sire/widgets/buttons/button_target.dart';
 import 'package:sire/widgets/editor/page_editing.dart';
 import 'package:sire/widgets/editor/page_preview.dart';
@@ -22,7 +23,7 @@ class ScreenPreview extends StatefulWidget {
       required this.bodyKey})
       : super(key: key);
 
-  GlobalKey pagePreviewKey=new GlobalKey();
+  GlobalKey pagePreviewKey = new GlobalKey();
 
   @override
   ScreenPreviewState createState() => ScreenPreviewState();
@@ -40,42 +41,71 @@ class ScreenPreviewState extends State<ScreenPreview> {
               alignment: Alignment.center,
             ),
             Align(
-                child:  RepaintBoundary(
-                key: widget.pagePreviewKey,child: PagePreview(
-                    footer: widget.footerKey.currentState?.getContent(),
-                    header: widget.headerKey.currentState?.getContent(),
-                    body: widget.bodyKey.currentState?.getContent()))),
+                child: RepaintBoundary(
+                    key: widget.pagePreviewKey,
+                    child: PagePreview(
+                        footer: widget.footerKey.currentState?.getContent(),
+                        header: widget.headerKey.currentState?.getContent(),
+                        body: widget.bodyKey.currentState?.getContent()))),
             Align(
               child: Container(
                   width: MediaQuery.of(context).size.height *
                       heightPercentage /
-                      sqrt(2),
-                  color:previewBackgroundColor,
+                      sqrt(2) *
+                      0.5,
+                  padding: EdgeInsets.all(20),
+                  color: previewBackgroundColor,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ButtonTarget(
-                        icon: Icons.cloud_download_outlined,
-                        text: "Downloaden",
-                        onClick:(){save();},
+                      Row(
+                        children: [
+                          Expanded(
+                              child: ButtonTarget(
+                            icon: Icons.cloud_download_outlined,
+                            text: "Herunterladen ",
+                            onClick: () {
+                              save();
+                            },
+                          )),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          ButtonTarget(
+                            onClick: () {},
+                            icon: Icons.local_printshop_rounded,
+                            text: null,
+                          ),
+                        ],
                       ),
                       SizedBox(
-                        height: 30,
+                        height: 20,
                       ),
-                      ButtonTarget(
-                        onClick: (){},
-                        icon: Icons.local_printshop_rounded,
-                        text: "Drucken",
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      ButtonTarget(
-                        onClick: (){},
-                        icon: Icons.share_rounded,
-                        text: "Teilen",
-                      ),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: double.infinity),
+                        child: Container(
+                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(child: Text("Share")),
+                                  ButtonCircleNeutral(
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: Colors.grey,
+                                        size: 18,
+                                      ),
+                                      onClick: () {}),
+                                ],
+                              ),
+                              SizedBox(height: 20,)
+                            ],
+                          ),
+                        ),
+                      )
                     ],
                   )),
               alignment: Alignment.centerRight,
@@ -83,23 +113,21 @@ class ScreenPreviewState extends State<ScreenPreview> {
           ],
         ));
   }
+
   save() {
-    Printing.layoutPdf(onLayout: (PdfPageFormat format)  async{
+    Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
       final doc = pw.Document(author: "Sire", title: "Title");
 
       final image = await WidgetWraper.fromKey(
         key: widget.pagePreviewKey,
-         pixelRatio: 1.0, //Quality
-       // orientation: PdfImageOrientation.topLeft
+        pixelRatio: 1.0, //Quality
+        // orientation: PdfImageOrientation.topLeft
       );
 
       doc.addPage(pw.Page(
           pageFormat: PdfPageFormat.a4,
-
           build: (pw.Context context) {
-            return
-              pw.Image(image, fit: pw.BoxFit.cover);
-
+            return pw.Image(image, fit: pw.BoxFit.cover);
           }));
 
       return doc.save();

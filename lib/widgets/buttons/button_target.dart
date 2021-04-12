@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 class ButtonTarget extends StatelessWidget {
   final IconData icon;
-  final String text;
+  final String? text;
   final VoidCallback onClick;
 
-  const ButtonTarget({Key? key, required this.icon, required this.text, required this.onClick})
+  const ButtonTarget(
+      {Key? key, required this.icon, required this.text, required this.onClick})
       : super(key: key);
 
   @override
@@ -13,20 +14,24 @@ class ButtonTarget extends StatelessWidget {
     return IntrinsicWidth(
         child: TextButton(
             style: ButtonStyle(
-              padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(20)),
-              overlayColor: MaterialStateProperty.all<Color>(Colors.white38),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              padding:
+                  MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
+              overlayColor: MaterialStateProperty.all<Color>(Colors.black12),
             ),
-            onPressed: ()=>onClick(),
+            onPressed: () => onClick(),
             child: Row(
               children: [
-                Icon(icon, color: Colors.white, size: 20),
-                SizedBox(
+                Icon(icon, color: Colors.black, size: 25),
+                if(text!=null) SizedBox(
                   width: 20,
                 ),
-                Text(
-                  text,
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
+               if(text!=null) Expanded(
+                    child: Center(
+                      child:Text(
+                  text??"",
+                  style:  TextStyle(fontSize: 17, color: Colors.black)),
+                )),
               ],
             )));
   }
