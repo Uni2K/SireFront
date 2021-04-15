@@ -6,6 +6,7 @@ import 'package:printing/printing.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/widgets/buttons/button_circle_neutral.dart';
+import 'package:sire/widgets/buttons/button_circle_socialmedia.dart';
 import 'package:sire/widgets/buttons/button_target.dart';
 import 'package:sire/widgets/editor/page_editing.dart';
 import 'package:sire/widgets/editor/page_preview.dart';
@@ -49,69 +50,96 @@ class ScreenPreviewState extends State<ScreenPreview> {
                         body: widget.bodyKey.currentState?.getContent()))),
             Align(
               child: Container(
-                  width: MediaQuery.of(context).size.height *
-                      heightPercentage /
-                      sqrt(2) *
-                      0.5,
+                  width: calculateShareWidth(),
                   padding: EdgeInsets.all(20),
-                  color: previewBackgroundColor,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                  child: FractionallySizedBox(
+                      widthFactor: 0.7,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                              child: ButtonTarget(
-                            icon: Icons.cloud_download_outlined,
-                            text: "Herunterladen ",
-                            onClick: () {
-                              save();
-                            },
-                          )),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          ButtonTarget(
-                            onClick: () {},
-                            icon: Icons.local_printshop_rounded,
-                            text: null,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(minWidth: double.infinity),
-                        child: Container(
-                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
-                          padding: EdgeInsets.all(10),
-                          child: Column(
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(child: Text("Share")),
-                                  ButtonCircleNeutral(
-                                      icon: Icon(
-                                        Icons.close,
-                                        color: Colors.grey,
-                                        size: 18,
-                                      ),
-                                      onClick: () {}),
-                                ],
+                              Expanded(
+                                  child: ButtonTarget(
+                                icon: Icons.cloud_download_outlined,
+                                text: "Herunterladen",
+                                onClick: () {
+                                  save();
+                                },
+                              )),
+                              SizedBox(
+                                width: 10,
                               ),
-                              SizedBox(height: 20,)
+                              ButtonTarget(
+                                onClick: () {},
+                                icon: Icons.local_printshop_rounded,
+                                text: null,
+                              ),
                             ],
                           ),
-                        ),
-                      )
-                    ],
-                  )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          ConstrainedBox(
+                            constraints:
+                                BoxConstraints(minWidth: double.infinity),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade400,
+                                      offset: Offset(0.0, 3.0), //(x,y)
+                                      blurRadius: 3.0,
+                                    )
+                                  ],
+                                  color: Colors.white,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5))),
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(child: Text("Share")),
+                                      ButtonCircleNeutral(
+                                          icon: Icon(
+                                            Icons.close,
+                                            color: Colors.grey,
+                                            size: 18,
+                                          ),
+                                          onClick: () {}),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  GridView.count(
+                                    crossAxisCount: 4,
+                                    shrinkWrap: true,
+                                    childAspectRatio: 1,
+                                    children: getSocialMediaWidgets(),
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ))),
               alignment: Alignment.centerRight,
             )
           ],
         ));
+  }
+
+  double calculateShareWidth() {
+    double pageWidth =
+        ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2)) -
+            spacePages * 2;
+    double totalWidth = MediaQuery.of(context).size.width;
+    double remainingWidth = totalWidth - pageWidth;
+    double remainingWidthPerSide = remainingWidth / 2.0;
+    return remainingWidthPerSide;
   }
 
   save() {
@@ -132,5 +160,33 @@ class ScreenPreviewState extends State<ScreenPreview> {
 
       return doc.save();
     });
+  }
+
+  List<Widget> getSocialMediaWidgets() {
+    List<Widget> widgets = List.empty(growable: true);
+
+    widgets.add(ButtonCircleSocialmedia(
+      type: Types.Twitter,
+    ));
+    widgets.add(ButtonCircleSocialmedia(
+      type: Types.Facebook,
+    ));
+    widgets.add(ButtonCircleSocialmedia(
+      type: Types.Reddit,
+    ));
+    widgets.add(ButtonCircleSocialmedia(
+      type: Types.Skype,
+    ));
+    widgets.add(ButtonCircleSocialmedia(
+      type: Types.Whatsapp,
+    ));
+    widgets.add(ButtonCircleSocialmedia(
+      type: Types.Messenger,
+    ));
+    widgets.add(ButtonCircleSocialmedia(
+      type: Types.Telegram,
+    ));
+
+    return widgets;
   }
 }

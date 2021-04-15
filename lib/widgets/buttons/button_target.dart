@@ -14,25 +14,29 @@ class ButtonTarget extends StatelessWidget {
     return IntrinsicWidth(
         child: TextButton(
             style: ButtonStyle(
+              elevation: MaterialStateProperty.all<double>(5),
               backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
               padding:
                   MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
               overlayColor: MaterialStateProperty.all<Color>(Colors.black12),
             ),
             onPressed: () => onClick(),
-            child: Row(
-              children: [
-                Icon(icon, color: Colors.black, size: 25),
-                if(text!=null) SizedBox(
-                  width: 20,
-                ),
-               if(text!=null) Expanded(
-                    child: Center(
-                      child:Text(
-                  text??"",
-                  style:  TextStyle(fontSize: 17, color: Colors.black)),
-                )),
-              ],
+            child:  Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, color: Colors.black, size: 25),
+                    if (text != null)
+                      SizedBox(
+                        width: 20,
+                      ),
+                    if (text != null)
+                      Expanded(
+                          child: Center(
+                        child: Text(text ?? "",
+                            style:
+                                TextStyle(fontSize: 17, color: Colors.black)),
+                      )),
+                  ],
             )));
   }
 }

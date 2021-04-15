@@ -15,7 +15,8 @@ class ListSnappableCombined extends StatefulWidget {
       this.scrollController,
       required this.contentType,
       this.background = false,
-      required QueryResult result})
+      required QueryResult result,
+      required this.onFocused})
       : super(key: key) {
     content = result.data?[getDataSelector()];
     for (var item in content ?? []) {
@@ -27,6 +28,7 @@ class ListSnappableCombined extends StatefulWidget {
     }
   }
 
+  final VoidCallback onFocused;
   final ContentTypes contentType;
   final ScrollController? scrollController;
   final bool background;
@@ -52,7 +54,6 @@ class ListSnappableCombined extends StatefulWidget {
 class ListSnappableCombinedState extends State<ListSnappableCombined> {
   @override
   Widget build(BuildContext context) {
-
     widget.selectedIndex = ((widget.content?.length ?? 0) / 2).floor();
     return ScrollSnapList(
       scrollDirection: Axis.horizontal,
@@ -64,25 +65,24 @@ class ListSnappableCombinedState extends State<ListSnappableCombined> {
       },
       itemSize:
           (((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2))),
+      updateOnScroll: true,
+
+
       onItemFocus: (int) {
-
-        //SCALE ANIMATION
-
+        widget.onFocused();
         widget.selectedIndex = int;
-        for(PageCombined w in widget.contentPages){
-          if(widget.contentPages.indexOf(w)==int){
-           w.isDisable.value=false;
-          }else{
-            w.isDisable.value=true;
+        for (PageCombined w in widget.contentPages) {
+          if (widget.contentPages.indexOf(w) == int) {
+            w.isDisable.value = false;
+          } else {
+            w.isDisable.value = true;
           }
         }
-
       },
     );
   }
 
   PageCombined? getContent() {
-
     if (widget.background) return null;
     if (widget.content != null) {
       return widget.contentPages[widget.selectedIndex];

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sire/constants/constant_color.dart';
 
 class ButtonCircleNeutral extends StatefulWidget {
   ButtonCircleNeutral({Key? key, required this.icon, required this.onClick})
@@ -20,6 +21,7 @@ class _ButtonCircleNeutralState extends State<ButtonCircleNeutral> {
       },
       minWidth: 0,
       elevation: 0.0,
+      color: dividerColor,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       //fillColor: Colors.white,
       child: widget.icon,

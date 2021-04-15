@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:sire/utils/util_color.dart';
 
 Color primaryColor = Colors.white;
-Color backgroundColor=ColorUtil.getColorFromHex("#EAEDFC");
+Color backgroundColor=Colors.white;//ColorUtil.getColorFromHex("#EAEDFC");
 Color navigationBarBackgroundColor = ColorUtil.getColorFromHex("#07A4E9");
 Color accentColor = ColorUtil.getColorFromHex("#5C82A250");
 
-Color previewBackgroundColor = ColorUtil.getColorFromHex("#5C82A2");
+Color previewBackgroundColor = backgroundColor;
+Color highlightColor = ColorUtil.getColorFromHex("#AEE5FB");
 
 
 

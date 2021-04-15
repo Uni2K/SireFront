@@ -46,6 +46,8 @@ class _ScreenEditorState extends State<ScreenEditor>
   ScrollController? _headerContent, _bodyContent, _footerContent;
   ScrollController? _headerBackground, _bodyBackground, _footerBackground;
 
+  GlobalKey<PageEditingState> previewBackground=GlobalKey();
+
   GlobalKey<ListSnappableCombinedState> footerKey = GlobalKey(),
       bodyKey = GlobalKey(),
       headerKey = GlobalKey(),
@@ -109,7 +111,7 @@ class _ScreenEditorState extends State<ScreenEditor>
 
                   return Obx(() => AnimatedOpacity(
                       opacity: isLoadingFinished.value ? 1 : 0,
-                      duration: Duration(milliseconds: 500),
+                      duration: Duration(milliseconds: 1000),
                       child: Align(
                           alignment: Alignment.center,
                           child: Container(
@@ -133,12 +135,14 @@ class _ScreenEditorState extends State<ScreenEditor>
                                                 scrollController:
                                                     _headerBackground,
                                                 key: headerBKey,
+                                                onFocused: ()=>highlightAnimation(0),
                                                 contentType:
                                                     ContentTypes.Header,
                                                 background: true)),
                                         Flexible(
                                             flex: 70,
                                             child: ListSnappableCombined(
+                                                onFocused: ()=>highlightAnimation(1),
                                                 result: result,
                                                 scrollController:
                                                     _bodyBackground,
@@ -148,6 +152,7 @@ class _ScreenEditorState extends State<ScreenEditor>
                                         Flexible(
                                             flex: 10,
                                             child: ListSnappableCombined(
+                                                onFocused: ()=>highlightAnimation(2),
                                                 result: result,
                                                 scrollController:
                                                     _footerBackground,
@@ -160,7 +165,7 @@ class _ScreenEditorState extends State<ScreenEditor>
                                 Align(
                                   child: RepaintBoundary(
                                       key: widget.editingKey,
-                                      child: PageEditing()),
+                                      child: PageEditing(key: previewBackground,)),
                                   alignment: Alignment.center,
                                 ),
                                 Align(
@@ -175,6 +180,7 @@ class _ScreenEditorState extends State<ScreenEditor>
                                         Flexible(
                                             flex: 20,
                                             child: ListSnappableCombined(
+                                              onFocused: ()=>null,
                                               result: result,
                                               key: headerKey,
                                               scrollController: _headerContent,
@@ -183,6 +189,7 @@ class _ScreenEditorState extends State<ScreenEditor>
                                         Flexible(
                                             flex: 70,
                                             child: ListSnappableCombined(
+                                              onFocused: ()=>null,
                                               result: result,
                                               key: bodyKey,
                                               scrollController: _bodyContent,
@@ -191,6 +198,7 @@ class _ScreenEditorState extends State<ScreenEditor>
                                         Flexible(
                                             flex: 10,
                                             child: ListSnappableCombined(
+                                                onFocused: ()=>null,
                                                 result: result,
                                                 key: footerKey,
                                                 scrollController:
@@ -370,7 +378,7 @@ class _ScreenEditorState extends State<ScreenEditor>
   }
 
   void disposeScrollControllers() {
-    /*  _headerContent?.dispose();
+     _headerContent?.dispose();
     _headerBackground?.dispose();
 
     _bodyBackground?.dispose();
@@ -378,6 +386,14 @@ class _ScreenEditorState extends State<ScreenEditor>
 
     _footerBackground?.dispose();
     _footerContent?.dispose();
-*/
+
+  }
+
+  highlightAnimation(int i) {
+    Timer(Duration(seconds: 1), () {
+      previewBackground.currentState?.highlightAnimation(i);
+
+    });
+
   }
 }

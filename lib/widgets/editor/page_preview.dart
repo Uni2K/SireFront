@@ -24,7 +24,7 @@ class PagePreviewState extends State<PagePreview> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Flexible(flex: 20,fit: FlexFit.tight, child: widget.header??Container(color: Colors.red,)),
+            Flexible(flex: 20,fit: FlexFit.tight, child: widget.header??Container()),
             Flexible(flex: 70,fit: FlexFit.tight, child: widget.body??Container()),
             Flexible(flex: 10,fit: FlexFit.tight, child: widget.footer??Container()),
           ],
