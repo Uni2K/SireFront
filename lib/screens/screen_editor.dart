@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:circular_reveal_animation/circular_reveal_animation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
@@ -28,7 +31,7 @@ class ScreenEditor extends StatefulWidget {
   GlobalKey editingKey = GlobalKey();
   GlobalKey backgroundKey = GlobalKey();
   GlobalKey contentKey = GlobalKey();
-  GlobalKey<ScreenPreviewState> screenPreviewKey=new GlobalKey();
+  GlobalKey<ScreenPreviewState> screenPreviewKey = new GlobalKey();
 
   @override
   _ScreenEditorState createState() => _ScreenEditorState();
@@ -45,28 +48,21 @@ class _ScreenEditorState extends State<ScreenEditor>
 
   GlobalKey<ListSnappableCombinedState> footerKey = GlobalKey(),
       bodyKey = GlobalKey(),
-      headerKey = GlobalKey();
+      headerKey = GlobalKey(),
+      footerBKey = GlobalKey(),
+      bodyBKey = GlobalKey(),
+      headerBKey = GlobalKey();
 
   late AnimationController previewController;
   late Animation<double> previewAnimation;
 
-  RxBool isLoaded=true.obs;
+  RxBool isLoadingFinished = false.obs;
+  bool isLoadingInProgress = true;
 
   @override
   void initState() {
     super.initState();
-    _controllersHeader = LinkedScrollControllerGroup();
-    _controllersBody = LinkedScrollControllerGroup();
-    _controllersFooter = LinkedScrollControllerGroup();
-
-    _headerContent = _controllersHeader?.addAndGet();
-    _headerBackground = _controllersHeader?.addAndGet();
-
-    _bodyContent = _controllersBody?.addAndGet();
-    _bodyBackground = _controllersBody?.addAndGet();
-
-    _footerContent = _controllersFooter?.addAndGet();
-    _footerBackground = _controllersFooter?.addAndGet();
+    createScrollControllers();
 
     previewController = AnimationController(
       vsync: this,
@@ -81,20 +77,16 @@ class _ScreenEditorState extends State<ScreenEditor>
 
   @override
   void dispose() {
-  /*  _headerContent?.dispose();
-    _headerBackground?.dispose();
-
-    _bodyBackground?.dispose();
-    _bodyContent?.dispose();
-
-    _footerBackground?.dispose();
-    _footerContent?.dispose();
-*/
+    disposeScrollControllers();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    Timer(Duration(seconds: 2), () {
+      showApp();
+    });
+
     return Material(
         color: backgroundColor,
         child: Stack(
@@ -102,106 +94,125 @@ class _ScreenEditorState extends State<ScreenEditor>
             Query(
                 options: QueryOptions(
                   document: gql(HelperServer.getAllContent()),
-                  pollInterval: Duration(seconds: 10),
+                  pollInterval: Duration(seconds: 60),
+                  cacheRereadPolicy: CacheRereadPolicy.mergeOptimistic,
                   fetchPolicy: FetchPolicy.cacheAndNetwork,
                 ),
                 builder: (result, {fetchMore, refetch}) {
                   if (result.hasException) {
                     return Text(result.exception.toString());
                   }
-
-                  if (result.isLoading) {
-                    return Center(
-                        child: SizedBox(
-                            height: 50,
-                            width: 50,
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(navigationBarBackgroundColor),
-                              strokeWidth: 5,
-                            )));
+                  if (result.isLoading ) {
+                    return SizedBox();
                   }
+                  isLoadingInProgress = false;
 
-                //isLoaded.value=true;
-
-                  return Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: MediaQuery.of(context).size.height *
-                            heightPercentage,
-                        child: Stack(
-                          children: [
-                            Align(
-                                key: widget.backgroundKey,
-                                alignment: Alignment.center,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Flexible(
-                                        flex: 20,
-                                        child: ListSnappableCombined(
-                                            result: result,
-                                            scrollController: _headerBackground,
-                                            contentType: ContentTypes.Header,
-                                            background: true)),
-                                    Flexible(
-                                        flex: 70,
-                                        child: ListSnappableCombined(
-                                            result: result,
-                                            scrollController: _bodyBackground,
-                                            contentType: ContentTypes.Body,
-                                            background: true)),
-                                    Flexible(
-                                        flex: 10,
-                                        child: ListSnappableCombined(
-                                            result: result,
-                                            scrollController: _footerBackground,
-                                            contentType: ContentTypes.Footer,
-                                            background: true)),
-                                  ],
-                                )),
-                            Align(
-                              child: RepaintBoundary(
-                                  key: widget.editingKey, child: PageEditing()),
-                              alignment: Alignment.center,
+                  return Obx(() => AnimatedOpacity(
+                      opacity: isLoadingFinished.value ? 1 : 0,
+                      duration: Duration(milliseconds: 500),
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            height: MediaQuery.of(context).size.height *
+                                heightPercentage,
+                            child: Stack(
+                              children: [
+                                Align(
+                                    key: widget.backgroundKey,
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Flexible(
+                                            flex: 20,
+                                            child: ListSnappableCombined(
+                                                result: result,
+                                                scrollController:
+                                                    _headerBackground,
+                                                key: headerBKey,
+                                                contentType:
+                                                    ContentTypes.Header,
+                                                background: true)),
+                                        Flexible(
+                                            flex: 70,
+                                            child: ListSnappableCombined(
+                                                result: result,
+                                                scrollController:
+                                                    _bodyBackground,
+                                                key: bodyBKey,
+                                                contentType: ContentTypes.Body,
+                                                background: true)),
+                                        Flexible(
+                                            flex: 10,
+                                            child: ListSnappableCombined(
+                                                result: result,
+                                                scrollController:
+                                                    _footerBackground,
+                                                key: footerBKey,
+                                                contentType:
+                                                    ContentTypes.Footer,
+                                                background: true)),
+                                      ],
+                                    )),
+                                Align(
+                                  child: RepaintBoundary(
+                                      key: widget.editingKey,
+                                      child: PageEditing()),
+                                  alignment: Alignment.center,
+                                ),
+                                Align(
+                                    key: widget.contentKey,
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Flexible(
+                                            flex: 20,
+                                            child: ListSnappableCombined(
+                                              result: result,
+                                              key: headerKey,
+                                              scrollController: _headerContent,
+                                              contentType: ContentTypes.Header,
+                                            )),
+                                        Flexible(
+                                            flex: 70,
+                                            child: ListSnappableCombined(
+                                              result: result,
+                                              key: bodyKey,
+                                              scrollController: _bodyContent,
+                                              contentType: ContentTypes.Body,
+                                            )),
+                                        Flexible(
+                                            flex: 10,
+                                            child: ListSnappableCombined(
+                                                result: result,
+                                                key: footerKey,
+                                                scrollController:
+                                                    _footerContent,
+                                                contentType:
+                                                    ContentTypes.Footer)),
+                                      ],
+                                    )),
+                                ...buildNavigationOverlay(context),
+                              ],
                             ),
-                            Align(
-                                key: widget.contentKey,
-                                alignment: Alignment.center,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Flexible(
-                                        flex: 20,
-                                        child: ListSnappableCombined(
-                                          result: result,
-                                          key: headerKey,
-                                          scrollController: _headerContent,
-                                          contentType: ContentTypes.Header,
-                                        )),
-                                    Flexible(
-                                        flex: 70,
-                                        child: ListSnappableCombined(
-                                          result: result,
-                                          key: bodyKey,
-                                          scrollController: _bodyContent,
-                                          contentType: ContentTypes.Body,
-                                        )),
-                                    Flexible(
-                                        flex: 10,
-                                        child: ListSnappableCombined(
-                                            result: result,
-                                            key: footerKey,
-                                            scrollController: _footerContent,
-                                            contentType: ContentTypes.Footer)),
-                                  ],
-                                )),
-                            ...buildNavigationOverlay(context),
-                          ],
-                        ),
-                      ));
+                          ))));
                 }),
+            Obx(() => AnimatedOpacity(
+                opacity: isLoadingFinished.value ? 0 : 1,
+                duration: Duration(milliseconds: 500),
+                child: Center(
+                        child:  SpinKitFadingCube(
+                        color: navigationBarBackgroundColor,
+                        size: 30.0,
+                        )
+                       ))),
             CircularRevealAnimation(
               child: Container(
                 width: MediaQuery.of(context).size.width,
@@ -227,7 +238,7 @@ class _ScreenEditorState extends State<ScreenEditor>
               alignment: Alignment.topCenter,
             ),
             Obx(() => AnimatedOpacity(
-                  opacity: isLoaded.value?1:0,
+                  opacity: isLoadingFinished.value ? 1 : 0,
                   duration: Duration(milliseconds: 500),
                   child: Align(
                     child: Container(
@@ -326,9 +337,7 @@ class _ScreenEditorState extends State<ScreenEditor>
   }
 
   openPreview() {
-    widget.screenPreviewKey.currentState!.setState(() {
-
-    });
+    widget.screenPreviewKey.currentState!.setState(() {});
     if (previewController.status == AnimationStatus.forward ||
         previewController.status == AnimationStatus.completed) {
       previewController.reverse();
@@ -337,7 +346,38 @@ class _ScreenEditorState extends State<ScreenEditor>
     }
   }
 
+  showApp() {
+    if (!isLoadingInProgress) isLoadingFinished.value = true;
+  }
+
   openHelp() {}
 
   delete() {}
+
+  void createScrollControllers() {
+    _controllersHeader = LinkedScrollControllerGroup();
+    _controllersBody = LinkedScrollControllerGroup();
+    _controllersFooter = LinkedScrollControllerGroup();
+
+    _headerContent = _controllersHeader?.addAndGet();
+    _headerBackground = _controllersHeader?.addAndGet();
+
+    _bodyContent = _controllersBody?.addAndGet();
+    _bodyBackground = _controllersBody?.addAndGet();
+
+    _footerContent = _controllersFooter?.addAndGet();
+    _footerBackground = _controllersFooter?.addAndGet();
+  }
+
+  void disposeScrollControllers() {
+    /*  _headerContent?.dispose();
+    _headerBackground?.dispose();
+
+    _bodyBackground?.dispose();
+    _bodyContent?.dispose();
+
+    _footerBackground?.dispose();
+    _footerContent?.dispose();
+*/
+  }
 }
