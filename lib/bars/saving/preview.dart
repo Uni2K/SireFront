@@ -4,16 +4,18 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/utils/util_color.dart';
 
-class Save extends StatefulWidget {
-  Save({Key? key, required this.onClick}) : super(key: key);
+class Preview extends StatefulWidget {
+  Preview({Key? key, required this.onClick}) : super(key: key);
   final VoidCallback onClick;
   bool isLoading = false;
 
   @override
-  _SaveState createState() => _SaveState();
+  _PreviewState createState() => _PreviewState();
 }
 
-class _SaveState extends State<Save> with TickerProviderStateMixin {
+class _PreviewState extends State<Preview> with TickerProviderStateMixin {
+  bool previewVisible = false;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -30,17 +32,18 @@ class _SaveState extends State<Save> with TickerProviderStateMixin {
                 EdgeInsets.only(left: 4, right: 20, top: 4, bottom: 4)),
           ),
           onPressed: () {
+            widget.onClick();
             setState(() {
-              widget.isLoading = true;
+              previewVisible = !previewVisible;
             });
           },
           child: Row(
             children: [
               AnimatedSwitcher(
-                duration: Duration(milliseconds: !widget.isLoading?0:200),
+                duration: Duration(milliseconds: !widget.isLoading ? 0 : 200),
                 transitionBuilder: (child, animation) {
                   return ScaleTransition(
-                    scale:  animation,
+                    scale: animation,
                     child: child,
                     //  turns: _animation,
                   );
@@ -51,7 +54,7 @@ class _SaveState extends State<Save> with TickerProviderStateMixin {
                 width: 10,
               ),
               Text(
-                "Speichern",
+                "Vorschau",
                 style: TextStyle(
                     fontSize: 15,
                     color: Colors.white,
@@ -71,7 +74,6 @@ class _SaveState extends State<Save> with TickerProviderStateMixin {
             ? Container(
                 padding: EdgeInsets.all(9),
                 child: CircularProgressIndicator(
-
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   strokeWidth: 2,
                 ))
@@ -81,11 +83,11 @@ class _SaveState extends State<Save> with TickerProviderStateMixin {
                     color: ColorUtil.getColorFromHex("#035F86"),
                     borderRadius: BorderRadius.all(Radius.circular(4))),
                 child: Center(
-                    child: Text(".pdf",
-                        style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500))),
+                    child: Icon(
+                  previewVisible ? Icons.visibility_off : Icons.visibility,
+                  size: 16,
+                  color: Colors.white,
+                )),
               ),
       ),
     );

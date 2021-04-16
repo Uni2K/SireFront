@@ -9,10 +9,11 @@ import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:printing/printing.dart';
+import 'package:sire/bars/navigation/bar_steps.dart';
 import 'package:sire/bars/navigation/logo.dart';
 import 'package:sire/bars/navigation/type_selector.dart';
 import 'package:sire/bars/saving/bar_editing.dart';
-import 'package:sire/bars/saving/save.dart';
+import 'package:sire/bars/saving/preview.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/helper/helper_server.dart';
@@ -242,7 +243,7 @@ class _ScreenEditorState extends State<ScreenEditor>
               alignment: Alignment.topLeft,
             ),
             Align(
-              child: TypeSelector(),
+              child: BarSteps(),
               alignment: Alignment.topCenter,
             ),
             Obx(() => AnimatedOpacity(
@@ -259,10 +260,9 @@ class _ScreenEditorState extends State<ScreenEditor>
                             BarEditing(
                               delete: () => delete(),
                               help: () => openHelp(),
-                              preview: () => openPreview(),
                             ),
                             Spacer(),
-                            Save(onClick: () => save())
+                            Preview(onClick: () => openPreview())
                           ],
                         )),
                     alignment: Alignment.bottomCenter,
@@ -323,26 +323,6 @@ class _ScreenEditorState extends State<ScreenEditor>
         curve: Curves.linear, duration: Duration(seconds: 1));
   }
 
-  save() async {
-    /* Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
-      final doc = pw.Document();
-
-      final image = await WidgetWraper.fromKey(
-        key: widget.editingKey,
-         pixelRatio: 3.0,
-      );
-
-      doc.addPage(pw.Page(
-          pageFormat: format,
-          build: (pw.Context context) {
-            return
-              pw.Image(image);
-
-          }));
-
-      return doc.save();
-    });*/
-  }
 
   openPreview() {
     widget.screenPreviewKey.currentState!.setState(() {});

@@ -13,7 +13,9 @@ class ButtonTarget extends StatelessWidget {
   Widget build(BuildContext context) {
     return IntrinsicWidth(
         child: TextButton(
+
             style: ButtonStyle(
+              minimumSize:  MaterialStateProperty.all<Size>(Size.zero),
               elevation: MaterialStateProperty.all<double>(5),
               backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
               padding:

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sire/utils/util_color.dart';
 
 Color primaryColor = Colors.white;
-Color backgroundColor=Colors.white;//ColorUtil.getColorFromHex("#EAEDFC");
+Color backgroundColor=ColorUtil.getColorFromHex("#F2F2F2");
 Color navigationBarBackgroundColor = ColorUtil.getColorFromHex("#07A4E9");
 Color accentColor = ColorUtil.getColorFromHex("#5C82A250");
 
@@ -21,7 +21,7 @@ Color lightRed = ColorUtil.getColorFromHex("#FCD9D9");
 Color lightGrey = ColorUtil.getColorFromHex("#DBD6D6");
 Color lightGreyAccent = ColorUtil.getColorFromHex("#E1E1E1");
 
-Color dividerColor = ColorUtil.getColorFromHex("#E1E1E1");
+Color dividerColor = ColorUtil.getColorFromHex("#F7F8F9");
 
 Color lightBlue = ColorUtil.getColorFromHex("#89D4EE");
 

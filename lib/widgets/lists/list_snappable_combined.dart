@@ -55,6 +55,8 @@ class ListSnappableCombinedState extends State<ListSnappableCombined> {
   @override
   Widget build(BuildContext context) {
     widget.selectedIndex = ((widget.content?.length ?? 0) / 2).floor();
+    enableDisableTextInput(widget.selectedIndex);
+
     return ScrollSnapList(
       scrollDirection: Axis.horizontal,
       itemCount: widget.content?.length,
@@ -66,20 +68,22 @@ class ListSnappableCombinedState extends State<ListSnappableCombined> {
       itemSize:
           (((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2))),
       updateOnScroll: true,
-
-
       onItemFocus: (int) {
         widget.onFocused();
         widget.selectedIndex = int;
-        for (PageCombined w in widget.contentPages) {
-          if (widget.contentPages.indexOf(w) == int) {
-            w.isDisable.value = false;
-          } else {
-            w.isDisable.value = true;
-          }
-        }
+        enableDisableTextInput(int);
       },
     );
+  }
+
+  void enableDisableTextInput(int index) {
+    for (PageCombined w in widget.contentPages) {
+      if (widget.contentPages.indexOf(w) == index) {
+        w.isDisable.value = false;
+      } else {
+        w.isDisable.value = true;
+      }
+    }
   }
 
   PageCombined? getContent() {

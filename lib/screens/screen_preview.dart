@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:printing/printing.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
@@ -13,6 +15,7 @@ import 'package:sire/widgets/editor/page_preview.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:sire/widgets/misc/textfield_selectable.dart';
 
 class ScreenPreview extends StatefulWidget {
   final GlobalKey<ListSnappableCombinedState> footerKey, headerKey, bodyKey;
@@ -33,6 +36,13 @@ class ScreenPreview extends StatefulWidget {
 class ScreenPreviewState extends State<ScreenPreview> {
   @override
   Widget build(BuildContext context) {
+    double containerWidth=calculateShareWidth();
+    double slope=((0.9-0.55)/(400-688));
+    double shareSectionWidthFraction=(slope*containerWidth+(0.55-slope*688)).clamp(0.55,0.90);
+    int gridViewColumns=(shareSectionWidthFraction>0.85)?2:((shareSectionWidthFraction>0.80)?3:((shareSectionWidthFraction>0.6)?4:4));
+
+   List<Widget> socialMediaWidgets= getSocialMediaWidgets();
+
     return Container(
         height: MediaQuery.of(context).size.height * heightPercentage,
         child: Stack(
@@ -50,10 +60,10 @@ class ScreenPreviewState extends State<ScreenPreview> {
                         body: widget.bodyKey.currentState?.getContent()))),
             Align(
               child: Container(
-                  width: calculateShareWidth(),
+                  width: containerWidth,
                   padding: EdgeInsets.all(20),
                   child: FractionallySizedBox(
-                      widthFactor: 0.7,
+                      widthFactor:shareSectionWidthFraction ,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,10 +72,13 @@ class ScreenPreviewState extends State<ScreenPreview> {
                             children: [
                               Expanded(
                                   child: ButtonTarget(
-                                icon: Icons.cloud_download_outlined,
+                                icon: Icons.arrow_circle_down,
                                 text: "Herunterladen",
-                                onClick: () {
+                                onClick: (){
+                                  print("save start");
                                   save();
+                                  print("save end");
+
                                 },
                               )),
                               SizedBox(
@@ -96,13 +109,16 @@ class ScreenPreviewState extends State<ScreenPreview> {
                                   color: Colors.white,
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(5))),
-                              padding: EdgeInsets.all(10),
+                              padding: EdgeInsets.all(20),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+
                                 children: [
                                   Row(
                                     children: [
-                                      Expanded(child: Text("Share")),
+                                      Expanded(child: Text("Share", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17),)),
                                       ButtonCircleNeutral(
+                                        background: true,
                                           icon: Icon(
                                             Icons.close,
                                             color: Colors.grey,
@@ -114,12 +130,21 @@ class ScreenPreviewState extends State<ScreenPreview> {
                                   SizedBox(
                                     height: 20,
                                   ),
-                                  GridView.count(
-                                    crossAxisCount: 4,
+
+                                  StaggeredGridView.countBuilder(
                                     shrinkWrap: true,
-                                    childAspectRatio: 1,
-                                    children: getSocialMediaWidgets(),
-                                  )
+                                    crossAxisCount: gridViewColumns,
+                                    itemCount: 7,
+                                    itemBuilder: (BuildContext context, int index) => socialMediaWidgets[index],
+                                    staggeredTileBuilder: (int index) =>
+                                    new StaggeredTile.fit(1),
+                                    mainAxisSpacing: 4.0,
+                                    crossAxisSpacing: 4.0,
+                                  ),
+                                  SizedBox(height: 20,),
+                                  Text("Link zur Seite", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 15),),
+                                  SizedBox(height: 10,),
+                                  TextfieldSelectable()
                                 ],
                               ),
                             ),
@@ -142,24 +167,25 @@ class ScreenPreviewState extends State<ScreenPreview> {
     return remainingWidthPerSide;
   }
 
-  save() {
-    Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
-      final doc = pw.Document(author: "Sire", title: "Title");
+   save() {
+    //https://github.com/flutter/flutter/issues/33577
 
+      Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
+      pw.Document doc = pw.Document(author: "Sire", title: "Title");
       final image = await WidgetWraper.fromKey(
         key: widget.pagePreviewKey,
         pixelRatio: 1.0, //Quality
         // orientation: PdfImageOrientation.topLeft
       );
-
       doc.addPage(pw.Page(
           pageFormat: PdfPageFormat.a4,
           build: (pw.Context context) {
             return pw.Image(image, fit: pw.BoxFit.cover);
           }));
-
-      return doc.save();
+     return await doc.save();
     });
+
+
   }
 
   List<Widget> getSocialMediaWidgets() {

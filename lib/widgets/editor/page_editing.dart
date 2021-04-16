@@ -28,8 +28,8 @@ class PageEditingState extends State<PageEditing> {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.12),
-              spreadRadius: 30,
-              blurRadius: 50,
+              spreadRadius: 20,
+              blurRadius: 40,
               offset: Offset(0, 3), // changes position of shadow
             ),
           ],

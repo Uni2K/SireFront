@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/parser.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
+import 'package:sire/utils/util_color.dart';
 
 enum Types { Twitter, Facebook, Reddit, Skype, Whatsapp, Messenger, Telegram }
 
@@ -22,8 +22,11 @@ class ButtonCircleSocialmedia extends StatefulWidget {
 }
 
 class _ButtonCircleSocialmediaState extends State<ButtonCircleSocialmedia> {
+
   @override
   Widget build(BuildContext context) {
+    FaIcon icon= getIcon();
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -31,19 +34,23 @@ class _ButtonCircleSocialmediaState extends State<ButtonCircleSocialmedia> {
           onPressed: () => getAction(),
           minWidth: 0,
           elevation: 0.0,
-          color: dividerColor,
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          color: icon.color?.withAlpha(30),
+          hoverElevation: 0,
+          highlightElevation: 0,
+          focusElevation: 0,
+          materialTapTargetSize: MaterialTapTargetSize.padded,
           //fillColor: Colors.white,
-          child: SvgPicture.asset(getIcon(), height: 30,width: 30,),
-       
-       
-       
-         shape: CircleBorder(),
+          child: icon,
+          padding: EdgeInsets.all(20),
+          shape: CircleBorder(),
         ),
         SizedBox(
-          height: 10,
+          height: 5,
         ),
-        Text(getText(), style: TextStyle(fontSize: 13),)
+       Flexible(child: Text(
+          getText(),
+          style: TextStyle(fontSize: 13),
+       ))
       ],
     );
   }
@@ -52,24 +59,52 @@ class _ButtonCircleSocialmediaState extends State<ButtonCircleSocialmedia> {
     return widget.type.toShortString();
   }
 
-  String getIcon() {
+  FaIcon getIcon() {
+    double size = 25;
+    Color color = Colors.black;
 
+    IconData iconData = FontAwesomeIcons.undo;
     switch (widget.type) {
       case Types.Facebook:
-        return "assets/036-facebook.svg";
+        iconData = FontAwesomeIcons.facebook;
+        color = ColorUtil.getColorFromHex("#1675F1");
+
+        break;
       case Types.Whatsapp:
-        return "assets/005-whatsapp.svg";
+        iconData = FontAwesomeIcons.whatsapp;
+        color = ColorUtil.getColorFromHex("#24D264");
+
+        break;
       case Types.Telegram:
-        return "assets/036-facebook.svg";
+        iconData = FontAwesomeIcons.telegram;
+        color = ColorUtil.getColorFromHex("#0087CB");
+
+        break;
       case Types.Reddit:
-        return "assets/018-reddit.svg";
+        iconData = FontAwesomeIcons.reddit;
+        color = ColorUtil.getColorFromHex("#FF4500");
+
+        break;
       case Types.Twitter:
-        return "assets/008-twitter.svg";
+        iconData = FontAwesomeIcons.twitter;
+        color = ColorUtil.getColorFromHex("#1CA0F2");
+        break;
       case Types.Messenger:
-        return "assets/036-facebook.svg";
+        iconData = FontAwesomeIcons.facebookMessenger;
+        color = ColorUtil.getColorFromHex("#0083FF");
+
+        break;
       case Types.Skype:
-        return "assets/015-skype.svg";
+        iconData = FontAwesomeIcons.skype;
+        color = ColorUtil.getColorFromHex("#42A5F5");
+
+        break;
     }
+    return FaIcon(
+      iconData,
+      size: size,
+      color: color,
+    );
   }
 
   getAction() {}
