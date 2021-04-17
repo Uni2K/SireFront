@@ -4,9 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 import 'package:printing/printing.dart';
-import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
+import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_circle_neutral.dart';
 import 'package:sire/widgets/buttons/button_circle_socialmedia.dart';
 import 'package:sire/widgets/buttons/button_target.dart';
@@ -17,25 +18,27 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:sire/widgets/misc/textfield_selectable.dart';
 
-class ScreenPreview extends StatefulWidget {
-  final GlobalKey<ListSnappableCombinedState> footerKey, headerKey, bodyKey;
+class ScreenEditorResult extends StatefulWidget {
 
-  ScreenPreview(
-      {Key? key,
-      required this.footerKey,
-      required this.headerKey,
-      required this.bodyKey})
+  ScreenEditorResult(
+      {Key? key})
       : super(key: key);
 
-  GlobalKey pagePreviewKey = new GlobalKey();
+  GlobalKey pageEditorResultKey = new GlobalKey();
 
   @override
-  ScreenPreviewState createState() => ScreenPreviewState();
+  ScreenEditorResultState createState() => ScreenEditorResultState();
 }
 
-class ScreenPreviewState extends State<ScreenPreview> {
+class ScreenEditorResultState extends State<ScreenEditorResult> {
+
+
+
   @override
   Widget build(BuildContext context) {
+    ViewModelMain viewModelMain = Get.put(ViewModelMain());
+
+
     double containerWidth=calculateShareWidth();
     double slope=((0.9-0.55)/(400-688));
     double shareSectionWidthFraction=(slope*containerWidth+(0.55-slope*688)).clamp(0.55,0.90);
@@ -53,11 +56,11 @@ class ScreenPreviewState extends State<ScreenPreview> {
             ),
             Align(
                 child: RepaintBoundary(
-                    key: widget.pagePreviewKey,
-                    child: PagePreview(
-                        footer: widget.footerKey.currentState?.getContent(),
-                        header: widget.headerKey.currentState?.getContent(),
-                        body: widget.bodyKey.currentState?.getContent()))),
+                    key: widget.pageEditorResultKey,
+                    child: PageData(
+                        footer: viewModelMain.footer,
+                        header:  viewModelMain.header,
+                        body:  viewModelMain.body))),
             Align(
               child: Container(
                   width: containerWidth,
@@ -173,7 +176,7 @@ class ScreenPreviewState extends State<ScreenPreview> {
       Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
       pw.Document doc = pw.Document(author: "Sire", title: "Title");
       final image = await WidgetWraper.fromKey(
-        key: widget.pagePreviewKey,
+        key: widget.pageEditorResultKey,
         pixelRatio: 1.0, //Quality
         // orientation: PdfImageOrientation.topLeft
       );

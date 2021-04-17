@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/style.dart';
+import 'package:sire/constants/constant_color.dart';
 
 class PageInputfield extends StatefulWidget {
   PageInputfield({
@@ -34,21 +35,41 @@ class _PageInputfieldState extends State<PageInputfield> {
       textAlign: widget.style.textAlign ?? TextAlign.start,
       textDirection: widget.style.direction,
       keyboardType: TextInputType.multiline,
-
       maxLines: null,
-
+      focusNode: FocusNode(),
+      textInputAction: TextInputAction.next,
+      onSubmitted: (_) => nextEditableTextFocus(context),
       // textScaleFactor: textScaleFactor,
       decoration: new InputDecoration(
-        border: InputBorder.none,
-        contentPadding: EdgeInsets.all(7),
-        focusedBorder: OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
+            gapPadding: 0,
             borderRadius: BorderRadius.all(Radius.circular(0)),
-            borderSide: BorderSide(color: Colors.blue, )),
+            borderSide: BorderSide(
+              color: Colors.white,
+              width: 1.0,
+            )),
+        contentPadding: EdgeInsets.all(7),
+        focusColor: navigationBarBackgroundColor,
+        fillColor: Colors.red,
+        focusedBorder: OutlineInputBorder(
+            gapPadding: 0,
+            borderRadius: BorderRadius.all(Radius.circular(0)),
+            borderSide: BorderSide(
+              color: Colors.blue,
+              width: 1.0,
+            )),
         hintText: widget.hint,
         hintMaxLines: 59,
         isDense: true,
       ),
     ));
+  }
+
+  nextEditableTextFocus(BuildContext context) {
+    FocusScope.of(context).nextFocus();
+    /* do {
+      FocusScope.of(context).nextFocus();
+    } while (FocusScope.of(context).focusedChild?.context?.widget is! EditableText);*/
   }
 }
 

@@ -10,15 +10,14 @@ import 'package:scroll_snap_list/scroll_snap_list.dart';
 enum ContentTypes { Header, Body, Footer }
 
 class ListSnappableCombined extends StatefulWidget {
-  ListSnappableCombined(
-      {Key? key,
-      this.scrollController,
-      required this.contentType,
-      this.background = false,
-      required QueryResult result,
-      required this.onFocused})
+  ListSnappableCombined({Key? key,
+    this.scrollController,
+    required this.contentType,
+    this.background = false,
+    required QueryResult result,
+    required this.onFocused})
       : super(key: key) {
-    content = result.data?[getDataSelector()];
+    content = result.data ? [getDataSelector()];
     for (var item in content ?? []) {
       contentPages.add(PageCombined(
         content: item["content"],
@@ -36,6 +35,9 @@ class ListSnappableCombined extends StatefulWidget {
   int selectedIndex = -1;
   List<PageCombined> contentPages = List.empty(growable: true);
 
+  GlobalKey<ScrollSnapListState> snaplistKey=GlobalKey();
+
+
   getDataSelector() {
     switch (contentType) {
       case ContentTypes.Header:
@@ -52,12 +54,16 @@ class ListSnappableCombined extends StatefulWidget {
 }
 
 class ListSnappableCombinedState extends State<ListSnappableCombined> {
+
+
   @override
   Widget build(BuildContext context) {
     widget.selectedIndex = ((widget.content?.length ?? 0) / 2).floor();
-    enableDisableTextInput(widget.selectedIndex);
+    enableDisableTextInput(-1); //disable all
+
 
     return ScrollSnapList(
+      key:widget.snaplistKey,
       scrollDirection: Axis.horizontal,
       itemCount: widget.content?.length,
       listController: widget.scrollController,
@@ -66,13 +72,15 @@ class ListSnappableCombinedState extends State<ListSnappableCombined> {
         return widget.contentPages[index];
       },
       itemSize:
-          (((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2))),
+      (((MediaQuery
+          .of(context)
+          .size
+          .height * heightPercentage) / sqrt(2))),
       updateOnScroll: true,
       onItemFocus: (int) {
         widget.onFocused();
         widget.selectedIndex = int;
-        enableDisableTextInput(int);
-      },
+        },
     );
   }
 
@@ -91,5 +99,11 @@ class ListSnappableCombinedState extends State<ListSnappableCombined> {
     if (widget.content != null) {
       return widget.contentPages[widget.selectedIndex];
     }
+  }
+
+  void reset() {
+    int selectedIndex = ((widget.content?.length ?? 0) / 2).floor();
+    widget.snaplistKey.currentState?.focusToItem(selectedIndex);
+
   }
 }
