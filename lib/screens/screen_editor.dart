@@ -8,31 +8,26 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
-import 'package:printing/printing.dart';
+import 'package:sire/bars/editor/bar_tools_editor.dart';
 import 'package:sire/bars/navigation/bar_steps.dart';
 import 'package:sire/bars/navigation/logo.dart';
-import 'package:sire/bars/navigation/type_selector.dart';
-import 'package:sire/bars/saving/bar_editing.dart';
-import 'package:sire/bars/saving/preview.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/helper/helper_server.dart';
-import 'package:sire/screens/screen_preview.dart';
-import 'package:sire/widgets/editor/page_editing.dart';
-import 'package:sire/widgets/editor/page_preview.dart';
-import 'package:sire/widgets/lists/list_snappable_combined.dart';
-import 'package:sire/widgets/overlay/navigation_round.dart';
+import 'package:sire/screens/screen_editor_data.dart';
+import 'package:sire/screens/screen_editor_result.dart';
+import 'package:sire/screens/screen_editor_template.dart';
+import 'package:sire/viewmodels/viewmodel_main.dart';
+import 'package:sire/widgets/buttons/button_navigation.dart';
 import 'package:flutter/rendering.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 class ScreenEditor extends StatefulWidget {
   ScreenEditor({Key? key}) : super(key: key);
 
-  GlobalKey editingKey = GlobalKey();
-  GlobalKey backgroundKey = GlobalKey();
-  GlobalKey contentKey = GlobalKey();
-  GlobalKey<ScreenPreviewState> screenPreviewKey = new GlobalKey();
+  GlobalKey<ScreenEditorDataState> screenEditorDataKey = new GlobalKey();
+  GlobalKey<ScreenEditorResultState> screenEditorResultKey = new GlobalKey();
+  GlobalKey<ScreenEditorTemplateState> screenEditorTemplateKey =
+      new GlobalKey();
 
   @override
   _ScreenEditorState createState() => _ScreenEditorState();
@@ -40,214 +35,85 @@ class ScreenEditor extends StatefulWidget {
 
 class _ScreenEditorState extends State<ScreenEditor>
     with TickerProviderStateMixin {
-  LinkedScrollControllerGroup? _controllersHeader,
-      _controllersBody,
-      _controllersFooter;
-
-  ScrollController? _headerContent, _bodyContent, _footerContent;
-  ScrollController? _headerBackground, _bodyBackground, _footerBackground;
-
-  GlobalKey<PageEditingState> previewBackground=GlobalKey();
-
-  GlobalKey<ListSnappableCombinedState> footerKey = GlobalKey(),
-      bodyKey = GlobalKey(),
-      headerKey = GlobalKey(),
-      footerBKey = GlobalKey(),
-      bodyBKey = GlobalKey(),
-      headerBKey = GlobalKey();
-
-  late AnimationController previewController;
-  late Animation<double> previewAnimation;
-
-  RxBool isLoadingFinished = false.obs;
-  bool isLoadingInProgress = true;
+  late AnimationController dataScreenController;
+  late Animation<double> dataScreenAnimation;
+  late AnimationController resultScreenController;
+  late Animation<double> resultScreenAnimation;
 
   @override
   void initState() {
     super.initState();
-    createScrollControllers();
-
-    previewController = AnimationController(
+    dataScreenController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 300),
     );
 
-    previewAnimation = CurvedAnimation(
-      parent: previewController,
+    dataScreenAnimation = CurvedAnimation(
+      parent: dataScreenController,
       curve: Curves.easeIn,
     );
-  }
 
-  @override
-  void dispose() {
-    disposeScrollControllers();
-    super.dispose();
+    resultScreenController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+
+    resultScreenAnimation = CurvedAnimation(
+      parent: resultScreenController,
+      curve: Curves.easeIn,
+    );
+    ViewModelMain viewModelMain = Get.put(ViewModelMain());
+
+    ever(viewModelMain.currentEditorStep, (val) {
+      switch (val) {
+        case EditorSteps.Template:
+          showTemplateScreen();
+          break;
+        case EditorSteps.Data:
+          showDataScreen();
+          break;
+        case EditorSteps.Result:
+          showResultScreen();
+          break;
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    ViewModelMain viewModelMain = Get.put(ViewModelMain());
     Timer(Duration(seconds: 2), () {
-      showApp();
+      viewModelMain.appLoaded.value = true;
     });
 
     return Material(
         color: backgroundColor,
         child: Stack(
           children: [
-            Query(
-                options: QueryOptions(
-                  document: gql(HelperServer.getAllContent()),
-                  pollInterval: Duration(seconds: 60),
-                  cacheRereadPolicy: CacheRereadPolicy.mergeOptimistic,
-                  fetchPolicy: FetchPolicy.cacheAndNetwork,
-                ),
-                builder: (result, {fetchMore, refetch}) {
-                  if (result.hasException) {
-                    return Text(result.exception.toString());
-                  }
-                  if (result.isLoading ) {
-                    return SizedBox();
-                  }
-                  isLoadingInProgress = false;
-
-                  return Obx(() => AnimatedOpacity(
-                      opacity: isLoadingFinished.value ? 1 : 0,
-                      duration: Duration(milliseconds: 1000),
-                      child: Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            height: MediaQuery.of(context).size.height *
-                                heightPercentage,
-                            child: Stack(
-                              children: [
-                                Align(
-                                    key: widget.backgroundKey,
-                                    alignment: Alignment.center,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Flexible(
-                                            flex: 20,
-                                            child: ListSnappableCombined(
-                                                result: result,
-                                                scrollController:
-                                                    _headerBackground,
-                                                key: headerBKey,
-                                                onFocused: ()=>highlightAnimation(0),
-                                                contentType:
-                                                    ContentTypes.Header,
-                                                background: true)),
-                                        Flexible(
-                                            flex: 70,
-                                            child: ListSnappableCombined(
-                                                onFocused: ()=>highlightAnimation(1),
-                                                result: result,
-                                                scrollController:
-                                                    _bodyBackground,
-                                                key: bodyBKey,
-                                                contentType: ContentTypes.Body,
-                                                background: true)),
-                                        Flexible(
-                                            flex: 10,
-                                            child: ListSnappableCombined(
-                                                onFocused: ()=>highlightAnimation(2),
-                                                result: result,
-                                                scrollController:
-                                                    _footerBackground,
-                                                key: footerBKey,
-                                                contentType:
-                                                    ContentTypes.Footer,
-                                                background: true)),
-                                      ],
-                                    )),
-                                Align(
-                                  child: RepaintBoundary(
-                                      key: widget.editingKey,
-                                      child: PageEditing(key: previewBackground,)),
-                                  alignment: Alignment.center,
-                                ),
-                                Align(
-                                    key: widget.contentKey,
-                                    alignment: Alignment.center,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Flexible(
-                                            flex: 20,
-                                            child: ListSnappableCombined(
-                                              onFocused: ()=>null,
-                                              result: result,
-                                              key: headerKey,
-                                              scrollController: _headerContent,
-                                              contentType: ContentTypes.Header,
-                                            )),
-                                        Flexible(
-                                            flex: 70,
-                                            child: ListSnappableCombined(
-                                              onFocused: ()=>null,
-                                              result: result,
-                                              key: bodyKey,
-                                              scrollController: _bodyContent,
-                                              contentType: ContentTypes.Body,
-                                            )),
-                                        Flexible(
-                                            flex: 10,
-                                            child: ListSnappableCombined(
-                                                onFocused: ()=>null,
-                                                result: result,
-                                                key: footerKey,
-                                                scrollController:
-                                                    _footerContent,
-                                                contentType:
-                                                    ContentTypes.Footer)),
-                                      ],
-                                    )),
-                                ...buildNavigationOverlay(context),
-                              ],
-                            ),
-                          ))));
-                }),
+            ScreenEditorTemplate(key: widget.screenEditorTemplateKey),
             Obx(() => AnimatedOpacity(
-                opacity: isLoadingFinished.value ? 0 : 1,
+                opacity: viewModelMain.appLoaded.value ? 0 : 1,
                 duration: Duration(milliseconds: 500),
                 child: Center(
-                        child:  SpinKitFadingCube(
-                        color: navigationBarBackgroundColor,
-                        size: 30.0,
-                        )
-                       ))),
-            CircularRevealAnimation(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                color: previewBackgroundColor,
-                child: ScreenPreview(
-                  key: widget.screenPreviewKey,
-                  bodyKey: bodyKey,
-                  footerKey: footerKey,
-                  headerKey: headerKey,
-                ),
-                alignment: Alignment.center,
-              ),
-              animation: previewAnimation,
-              centerAlignment: Alignment.bottomCenter,
-            ),
+                    child: SpinKitFadingCube(
+                  color: navigationBarBackgroundColor,
+                  size: 30.0,
+                )))),
+            getDataScreen(),
+            getResultScreen(),
             Align(
               child: Logo(),
               alignment: Alignment.topLeft,
             ),
-            Align(
-              child: BarSteps(),
-              alignment: Alignment.topCenter,
-            ),
             Obx(() => AnimatedOpacity(
-                  opacity: isLoadingFinished.value ? 1 : 0,
+                opacity: viewModelMain.appLoaded.value ? 1 : 0,
+                duration: Duration(milliseconds: 500),
+                child: Align(
+                  child: BarSteps(),
+                  alignment: Alignment.topCenter,
+                ))),
+            Obx(() => AnimatedOpacity(
+                  opacity: viewModelMain.appLoaded.value ? 1 : 0,
                   duration: Duration(milliseconds: 500),
                   child: Align(
                     child: Container(
@@ -257,12 +123,15 @@ class _ScreenEditorState extends State<ScreenEditor>
                         height: MediaQuery.of(context).size.height * 0.1,
                         child: Row(
                           children: [
-                            BarEditing(
-                              delete: () => delete(),
-                              help: () => openHelp(),
+                            BarToolsEditor(
+                              screenEditorDataKey: widget.screenEditorDataKey,
+                              screenEditorResultKey:
+                                  widget.screenEditorResultKey,
+                              screenEditorTemplateKey:
+                                  widget.screenEditorTemplateKey,
                             ),
                             Spacer(),
-                            Preview(onClick: () => openPreview())
+                            getEditorNavigationButton(),
                           ],
                         )),
                     alignment: Alignment.bottomCenter,
@@ -278,7 +147,7 @@ class _ScreenEditorState extends State<ScreenEditor>
     );
   }
 
-  List<Widget> buildNavigationOverlay(BuildContext context) {
+  /*List<Widget> buildNavigationOverlay(BuildContext context) {
     List<Widget> overlayWidgets = List.empty(growable: true);
     double totalHeight = MediaQuery.of(context).size.height;
     double totalWidth = MediaQuery.of(context).size.width;
@@ -311,69 +180,115 @@ class _ScreenEditorState extends State<ScreenEditor>
     overlayWidgets.add(rightNav);
 
     return overlayWidgets;
-  }
+  }*/
 
-  navigatePrevious(ContentTypes header, BuildContext context) {
+  /*navigatePrevious(ContentTypes header, BuildContext context) {
     _controllersHeader?.animateTo(0,
         curve: Curves.linear, duration: Duration(seconds: 1));
-  }
+  }*/
 
-  navigateNext(ContentTypes header, BuildContext context) {
+  /*navigateNext(ContentTypes header, BuildContext context) {
     _controllersHeader?.animateTo(30,
         curve: Curves.linear, duration: Duration(seconds: 1));
+  }*/
+
+  Widget getEditorNavigationButton() {
+    ViewModelMain viewModelMain = Get.put(ViewModelMain());
+    String? text;
+    switch (viewModelMain.currentEditorStep.value) {
+      case EditorSteps.Template:
+        text = "Daten eingeben";
+        // onClick=openPreview;
+        break;
+      case EditorSteps.Data:
+        text = "Fertigstellen";
+        //onClick=()=>openPreview();
+
+        break;
+      case EditorSteps.Result:
+        text = null;
+        break;
+    }
+
+    return text != null
+        ? ButtonNavigation(
+            onClick: () => navigateToNextStep(),
+            text: text,
+            icon: Icons.done_rounded,
+          )
+        : Container();
   }
 
+  /// Navigates to the next step in the global navigation
+  navigateToNextStep() {
+    ViewModelMain viewModelMain = Get.put(ViewModelMain());
 
-  openPreview() {
-    widget.screenPreviewKey.currentState!.setState(() {});
-    if (previewController.status == AnimationStatus.forward ||
-        previewController.status == AnimationStatus.completed) {
-      previewController.reverse();
-    } else {
-      previewController.forward();
+    switch (viewModelMain.currentEditorStep.value) {
+      case EditorSteps.Template:
+        widget.screenEditorTemplateKey.currentState?.save();
+        viewModelMain.currentEditorStep.value = EditorSteps.Data;
+        break;
+      case EditorSteps.Data:
+        viewModelMain.currentEditorStep.value = EditorSteps.Result;
+        break;
+      case EditorSteps.Result:
+        break;
     }
   }
 
-  showApp() {
-    if (!isLoadingInProgress) isLoadingFinished.value = true;
+  Widget getResultScreen() {
+    return CircularRevealAnimation(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        color: previewBackgroundColor,
+        child: ScreenEditorResult(key: widget.screenEditorResultKey),
+        alignment: Alignment.center,
+      ),
+      animation: resultScreenAnimation,
+      centerAlignment: Alignment.topCenter,
+    );
   }
 
-  openHelp() {}
-
-  delete() {}
-
-  void createScrollControllers() {
-    _controllersHeader = LinkedScrollControllerGroup();
-    _controllersBody = LinkedScrollControllerGroup();
-    _controllersFooter = LinkedScrollControllerGroup();
-
-    _headerContent = _controllersHeader?.addAndGet();
-    _headerBackground = _controllersHeader?.addAndGet();
-
-    _bodyContent = _controllersBody?.addAndGet();
-    _bodyBackground = _controllersBody?.addAndGet();
-
-    _footerContent = _controllersFooter?.addAndGet();
-    _footerBackground = _controllersFooter?.addAndGet();
+  Widget getDataScreen() {
+    return CircularRevealAnimation(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        color: previewBackgroundColor,
+        child: ScreenEditorData(
+          key: widget.screenEditorDataKey,
+        ),
+        alignment: Alignment.center,
+      ),
+      animation: dataScreenAnimation,
+      centerAlignment: Alignment.bottomCenter,
+    );
   }
 
-  void disposeScrollControllers() {
-     _headerContent?.dispose();
-    _headerBackground?.dispose();
+  showDataScreen() {
+    widget.screenEditorDataKey.currentState!.setState(() {});
 
-    _bodyBackground?.dispose();
-    _bodyContent?.dispose();
-
-    _footerBackground?.dispose();
-    _footerContent?.dispose();
-
+    if (dataScreenController.status == AnimationStatus.forward ||
+        dataScreenController.status == AnimationStatus.completed) {
+      dataScreenController.reverse();
+    } else {
+      dataScreenController.forward();
+    }
   }
 
-  highlightAnimation(int i) {
-    Timer(Duration(seconds: 1), () {
-      previewBackground.currentState?.highlightAnimation(i);
+  showTemplateScreen() {
+    dataScreenController.reverse();
+    resultScreenController.reverse();
+  }
 
-    });
-
+  void showResultScreen() {
+    widget.screenEditorResultKey.currentState!.setState(() {});
+    if (resultScreenController.status == AnimationStatus.forward ||
+        resultScreenController.status == AnimationStatus.completed) {
+      resultScreenController.reverse();
+    } else {
+      resultScreenController.forward();
+    }
   }
 }
