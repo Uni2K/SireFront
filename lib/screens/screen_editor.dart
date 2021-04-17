@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:sire/bars/editor/bar_tools_editor.dart';
 import 'package:sire/bars/navigation/bar_steps.dart';
 import 'package:sire/bars/navigation/logo.dart';

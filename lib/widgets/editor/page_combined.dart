@@ -9,17 +9,18 @@ import 'package:sire/widgets/lists/list_snappable_combined.dart';
 
 // ignore: must_be_immutable
 class PageCombined extends StatefulWidget {
-  PageCombined(
-      {Key? key,
-      this.content,
-      this.background = false,
-      required this.contentType})
+  PageCombined({Key? key,
+    this.content,
+    this.background = false,
+    required this.contentType})
       : super(key: key);
 
   final String? content;
   final bool background;
   final ContentTypes contentType;
-  RxBool isDisable=true.obs;
+  RxBool isDisable = true.obs;
+  List<FocusNode> focusNodes = List.empty(growable: true);
+
   @override
   PageCombinedState createState() => PageCombinedState();
 }
@@ -31,18 +32,25 @@ class PageCombinedState extends State<PageCombined> {
   }
 
   Widget getContent() {
-    return Obx(()=> AbsorbPointer(
-        absorbing: widget.isDisable.value,
-        child: Container(
-            padding: getPadding(),
-            margin: const EdgeInsets.symmetric(
-                horizontal: spacePages, vertical: spacePages),
-            width: ((MediaQuery.of(context).size.height * heightPercentage) /
+    widget.focusNodes.clear();
+
+    return Obx(() {
+
+     return AbsorbPointer(
+            absorbing: widget.isDisable.value,
+            child: Container(
+                padding: getPadding(),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: spacePages, vertical: spacePages),
+                width: ((MediaQuery
+                    .of(context)
+                    .size
+                    .height * heightPercentage) /
                     sqrt(2)) -
-                spacePages * 2,
-            child: Html(
-                customRender: getCustomRenderer(),
-                data: widget.content ?? ""))));
+                    spacePages * 2,
+                child: Html(
+                    customRender: getCustomRenderer(),
+                    data: widget.content ?? "")));});
   }
 
   Widget getBackground() {
@@ -50,8 +58,11 @@ class PageCombinedState extends State<PageCombined> {
         margin: const EdgeInsets.symmetric(
             horizontal: spacePages, vertical: spacePages),
         padding: getPadding(),
-        width: ((MediaQuery.of(context).size.height * heightPercentage) /
-                sqrt(2)) -
+        width: ((MediaQuery
+            .of(context)
+            .size
+            .height * heightPercentage) /
+            sqrt(2)) -
             spacePages * 2,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -69,7 +80,10 @@ class PageCombinedState extends State<PageCombined> {
   ///2.5cm top,left, right, 2cm bottom
   getPadding() {
     double width =
-        ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2)) -
+        ((MediaQuery
+            .of(context)
+            .size
+            .height * heightPercentage) / sqrt(2)) -
             spacePages * 2;
 
     double paddingTLR = paperMarginTLRRelative * width;
@@ -112,7 +126,10 @@ class PageCombinedState extends State<PageCombined> {
 
         for (var value in children) {
           if (value is TextSpan) {
-            return PageInputfield(
+            FocusNode focusNode = FocusNode();
+            widget.focusNodes.add(focusNode);
+
+            return PageInputfield(focusNode: focusNode, onSubmitted: () =>nextFocus(focusNode),
                 hint: value.text ?? "", style: containerSpan.style);
           }
         }
@@ -120,5 +137,15 @@ class PageCombinedState extends State<PageCombined> {
     }
 
     return "";
+  }
+
+  nextFocus(FocusNode focusNode) {
+    int index= widget.focusNodes.indexOf(focusNode);
+
+    if(widget.focusNodes.length>index+1){
+      FocusNode nextFocusNode=widget.focusNodes[index+1];
+      nextFocusNode.requestFocus();
+    }
+
   }
 }

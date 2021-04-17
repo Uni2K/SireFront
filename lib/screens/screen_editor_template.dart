@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/helper/helper_server.dart';
+import 'package:sire/utils/linked_scroll_controller.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/editor/page_editing.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
@@ -49,6 +49,8 @@ class ScreenEditorTemplateState extends State<ScreenEditorTemplate> with TickerP
 
     _footerBackground?.dispose();
     _footerContent?.dispose();
+    print("dispose end");
+
     super.dispose();
   }
 

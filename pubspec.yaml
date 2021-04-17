@@ -23,7 +23,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  linked_scroll_controller: 0.2.0-nullsafety.0
   get: ^4.1.4
   font_awesome_flutter: ^9.0.0
   cupertino_icons: ^1.0.2
