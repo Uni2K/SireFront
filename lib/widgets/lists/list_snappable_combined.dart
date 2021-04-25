@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/helper/helper_server.dart';
+import 'package:sire/objects/page_constituent.dart';
 import 'package:sire/widgets/editor/page_combined.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
@@ -20,6 +21,7 @@ class ListSnappableCombined extends StatefulWidget {
     content = result.data ? [getDataSelector()];
     for (var item in content ?? []) {
       contentPages.add(PageCombined(
+        isDisable: true,
         content: item["content"],
         background: background,
         contentType: contentType,
@@ -59,9 +61,6 @@ class ListSnappableCombinedState extends State<ListSnappableCombined> {
   @override
   Widget build(BuildContext context) {
     widget.selectedIndex = ((widget.content?.length ?? 0) / 2).floor();
-    enableDisableTextInput(-1); //disable all
-
-
     return ScrollSnapList(
       key:widget.snaplistKey,
       scrollDirection: Axis.horizontal,
@@ -84,20 +83,11 @@ class ListSnappableCombinedState extends State<ListSnappableCombined> {
     );
   }
 
-  void enableDisableTextInput(int index) {
-    for (PageCombined w in widget.contentPages) {
-      if (widget.contentPages.indexOf(w) == index) {
-        w.isDisable.value = false;
-      } else {
-        w.isDisable.value = true;
-      }
-    }
-  }
 
-  PageCombined? getContent() {
+  PageConstituent? getContent() {
     if (widget.background) return null;
     if (widget.content != null) {
-      return widget.contentPages[widget.selectedIndex];
+      return widget.contentPages[widget.selectedIndex].getPageConstituent();
     }
   }
 

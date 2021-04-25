@@ -12,7 +12,7 @@ import 'package:sire/widgets/buttons/button_circle_neutral.dart';
 import 'package:sire/widgets/buttons/button_circle_socialmedia.dart';
 import 'package:sire/widgets/buttons/button_target.dart';
 import 'package:sire/widgets/editor/page_editing.dart';
-import 'package:sire/widgets/editor/page_preview.dart';
+import 'package:sire/widgets/editor/page_data.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -34,13 +34,8 @@ class ScreenEditorDataState extends State<ScreenEditorData> {
     double slope = ((0.9 - 0.55) / (400 - 688));
     double shareSectionWidthFraction =
         (slope * containerWidth + (0.55 - slope * 688)).clamp(0.55, 0.90);
-    int gridViewColumns = (shareSectionWidthFraction > 0.85)
-        ? 2
-        : ((shareSectionWidthFraction > 0.80)
-            ? 3
-            : ((shareSectionWidthFraction > 0.6) ? 4 : 4));
 
-    List<Widget> socialMediaWidgets = getSocialMediaWidgets();
+
     ViewModelMain viewModelMain = Get.put(ViewModelMain());
 
     return Container(
@@ -124,31 +119,4 @@ class ScreenEditorDataState extends State<ScreenEditorData> {
     });
   }
 
-  List<Widget> getSocialMediaWidgets() {
-    List<Widget> widgets = List.empty(growable: true);
-
-    widgets.add(ButtonCircleSocialmedia(
-      type: Types.Twitter,
-    ));
-    widgets.add(ButtonCircleSocialmedia(
-      type: Types.Facebook,
-    ));
-    widgets.add(ButtonCircleSocialmedia(
-      type: Types.Reddit,
-    ));
-    widgets.add(ButtonCircleSocialmedia(
-      type: Types.Skype,
-    ));
-    widgets.add(ButtonCircleSocialmedia(
-      type: Types.Whatsapp,
-    ));
-    widgets.add(ButtonCircleSocialmedia(
-      type: Types.Messenger,
-    ));
-    widgets.add(ButtonCircleSocialmedia(
-      type: Types.Telegram,
-    ));
-
-    return widgets;
-  }
 }

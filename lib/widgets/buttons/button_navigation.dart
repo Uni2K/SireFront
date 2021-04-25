@@ -27,7 +27,7 @@ class _ButtonNavigationState extends State<ButtonNavigation> with TickerProvider
                 RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(4.0))),
             padding: MaterialStateProperty.all<EdgeInsets>(
-                EdgeInsets.only(left: 4, right: 20, top: 4, bottom: 4)),
+                EdgeInsets.only(left: 0, right: 20, top: 4, bottom: 4)),
           ),
           onPressed: () {
             widget.onClick();

@@ -1,56 +1,71 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
 import 'package:get/get.dart';
 import 'package:sire/constants/constant_dimensions.dart';
+import 'package:sire/objects/page_constituent.dart';
+import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/editor/page_inputfield.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
 
-// ignore: must_be_immutable
 class PageCombined extends StatefulWidget {
-  PageCombined({Key? key,
-    this.content,
-    this.background = false,
-    required this.contentType})
+  PageCombined(
+      {Key? key,
+      this.content,
+      this.background = false,
+      required this.contentType, required this.isDisable, this.onNextFocus})
       : super(key: key);
 
   final String? content;
   final bool background;
   final ContentTypes contentType;
-  RxBool isDisable = true.obs;
-  List<FocusNode> focusNodes = List.empty(growable: true);
+  final bool isDisable;
+  final ValueChanged<FocusNode>? onNextFocus;
 
   @override
   PageCombinedState createState() => PageCombinedState();
+
+
+
+  PageConstituent getPageConstituent(){
+    return PageConstituent(content, contentType);
+  }
+
+
 }
 
+
+
+
 class PageCombinedState extends State<PageCombined> {
+  List<FocusNode> focusNodes = List.empty(growable: true);
+
   @override
   Widget build(BuildContext context) {
     return widget.background ? getBackground() : getContent();
   }
 
+  List<FocusNode> getFocusNodes() {
+    return focusNodes;
+  }
+
   Widget getContent() {
-    widget.focusNodes.clear();
+    focusNodes.clear();
 
-    return Obx(() {
-
-     return AbsorbPointer(
-            absorbing: widget.isDisable.value,
-            child: Container(
-                padding: getPadding(),
-                margin: const EdgeInsets.symmetric(
-                    horizontal: spacePages, vertical: spacePages),
-                width: ((MediaQuery
-                    .of(context)
-                    .size
-                    .height * heightPercentage) /
+    return AbsorbPointer(
+        absorbing: widget.isDisable,
+        child: Container(
+            padding: getPadding(),
+            margin: const EdgeInsets.symmetric(
+                horizontal: spacePages, vertical: spacePages),
+            width: ((MediaQuery.of(context).size.height * heightPercentage) /
                     sqrt(2)) -
-                    spacePages * 2,
-                child: Html(
-                    customRender: getCustomRenderer(),
-                    data: widget.content ?? "")));});
+                spacePages * 2,
+            child: Html(
+                customRender: getCustomRenderer(),
+                data: widget.content ?? "")));
   }
 
   Widget getBackground() {
@@ -58,11 +73,8 @@ class PageCombinedState extends State<PageCombined> {
         margin: const EdgeInsets.symmetric(
             horizontal: spacePages, vertical: spacePages),
         padding: getPadding(),
-        width: ((MediaQuery
-            .of(context)
-            .size
-            .height * heightPercentage) /
-            sqrt(2)) -
+        width: ((MediaQuery.of(context).size.height * heightPercentage) /
+                sqrt(2)) -
             spacePages * 2,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -80,10 +92,7 @@ class PageCombinedState extends State<PageCombined> {
   ///2.5cm top,left, right, 2cm bottom
   getPadding() {
     double width =
-        ((MediaQuery
-            .of(context)
-            .size
-            .height * heightPercentage) / sqrt(2)) -
+        ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2)) -
             spacePages * 2;
 
     double paddingTLR = paperMarginTLRRelative * width;
@@ -118,6 +127,9 @@ class PageCombinedState extends State<PageCombined> {
     };
   }
 
+
+
+
   generateInputField(Widget child) {
     if (child is ContainerSpan?) {
       ContainerSpan? containerSpan = child as ContainerSpan?;
@@ -126,26 +138,24 @@ class PageCombinedState extends State<PageCombined> {
 
         for (var value in children) {
           if (value is TextSpan) {
-            FocusNode focusNode = FocusNode();
-            widget.focusNodes.add(focusNode);
+            FocusNode focusNode = FocusNode(debugLabel: value.text);
+            if(widget.contentType==ContentTypes.Header && focusNodes.length==0 && !widget.isDisable){
+              focusNode.requestFocus();
+            }
 
-            return PageInputfield(focusNode: focusNode, onSubmitted: () =>nextFocus(focusNode),
-                hint: value.text ?? "", style: containerSpan.style);
+              focusNodes.add(focusNode);
+            return PageInputfield(
+                focusNode: focusNode,
+                onSubmitted: () {
+                  widget.onNextFocus!(focusNode);
+                },
+                hint: value.text ?? "",
+                style: containerSpan.style);
           }
         }
       }
     }
 
     return "";
-  }
-
-  nextFocus(FocusNode focusNode) {
-    int index= widget.focusNodes.indexOf(focusNode);
-
-    if(widget.focusNodes.length>index+1){
-      FocusNode nextFocusNode=widget.focusNodes[index+1];
-      nextFocusNode.requestFocus();
-    }
-
   }
 }

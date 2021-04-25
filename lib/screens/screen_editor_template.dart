@@ -199,10 +199,13 @@ class ScreenEditorTemplateState extends State<ScreenEditorTemplate> with TickerP
     viewModelMain.footer = widget.footerKey.currentState?.getContent();
     viewModelMain.header = widget.headerKey.currentState?.getContent();
     viewModelMain.body = widget.bodyKey.currentState?.getContent();
+
+
+
+
   }
 
   reset() {
-    print("reset");
     ViewModelMain viewModelMain = Get.put(ViewModelMain());
 
     widget.bodyKey.currentState?.reset();

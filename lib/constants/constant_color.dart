@@ -6,6 +6,12 @@ Color backgroundColor=ColorUtil.getColorFromHex("#F2F2F2");
 Color navigationBarBackgroundColor = ColorUtil.getColorFromHex("#07A4E9");
 Color accentColor = ColorUtil.getColorFromHex("#5C82A250");
 
+Color buttonBackgroundColor=ColorUtil.getColorFromHex("#E8EBEC");
+Color buttonTextColor=ColorUtil.getColorFromHex("##76797A");
+
+
+
+
 Color previewBackgroundColor = backgroundColor;
 Color highlightColor = ColorUtil.getColorFromHex("#AEE5FB");
 

@@ -47,7 +47,7 @@ class _PageInputfieldState extends State<PageInputfield> {
           maxLines: null,
           textInputAction: TextInputAction.next,
           focusNode: widget.focusNode,
-          onEditingComplete: () => widget.onSubmitted(),
+        //  onEditingComplete: () => widget.onSubmitted(),
           onFieldSubmitted: (_) => widget.onSubmitted(),
           // textScaleFactor: textScaleFactor,
           decoration: new InputDecoration(
@@ -55,7 +55,7 @@ class _PageInputfieldState extends State<PageInputfield> {
                 gapPadding: 0,
                 borderRadius: BorderRadius.all(Radius.circular(0)),
                 borderSide: BorderSide(
-                  color: Colors.white,
+                  color: Colors.transparent,
                   width: 1.0,
                 )),
             contentPadding: EdgeInsets.all(7),

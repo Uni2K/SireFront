@@ -12,7 +12,7 @@ import 'package:sire/widgets/buttons/button_circle_neutral.dart';
 import 'package:sire/widgets/buttons/button_circle_socialmedia.dart';
 import 'package:sire/widgets/buttons/button_target.dart';
 import 'package:sire/widgets/editor/page_editing.dart';
-import 'package:sire/widgets/editor/page_preview.dart';
+import 'package:sire/widgets/editor/page_data.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
