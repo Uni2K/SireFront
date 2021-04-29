@@ -57,14 +57,23 @@ class PageEditingState extends State<PageEditing>
       duration: const Duration(seconds: 1),
     );
     super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_)=>   _controller.forward()
+    );//i add this to access the context safely.
+
+
+  }
+
+
+  @override
+  void dispose() {
+    _controller.dispose(); //TODO fix and understand
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    Timer(Duration(milliseconds: 300), () {
-    _controller.forward();
-    });
+
 
 
     return DecoratedBoxTransition(
