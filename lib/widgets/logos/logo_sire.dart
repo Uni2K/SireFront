@@ -26,10 +26,12 @@ class _LogoSireState extends State<LogoSire> {
 
   @override
   Widget build(BuildContext context) {
-    return !start? Container(): IntrinsicWidth(
+    return Container(
+        height: 100,
+        child: !start? Container(height: 0,): IntrinsicWidth(
         child: DefaultTextStyle(
           style: TextStyle(
-            fontSize: 50.0,
+            fontSize: 60.0,
             fontFamily: 'Berkshire',
             color: navigationBarBackgroundColor,
           ),
@@ -39,7 +41,7 @@ class _LogoSireState extends State<LogoSire> {
               TypewriterAnimatedTextLogo(
                 'Sire',
                 cursor: "I",
-                fontSize: 50,
+                fontSize: 60,
                 speed: Duration(milliseconds: 200),
               ),
             ],
@@ -47,6 +49,6 @@ class _LogoSireState extends State<LogoSire> {
               print("Tap Event");
             },
           ),
-        ));
+        )));
   }
 }

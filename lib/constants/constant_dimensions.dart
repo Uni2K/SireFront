@@ -8,3 +8,6 @@ const double minScale=0.7;
 const double maxScale=1.0;
 const double viewerWidth=0.6;
 
+const double headerPercentage=0.25;
+const double textSizeDefault=16;
+

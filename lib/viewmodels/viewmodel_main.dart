@@ -1,24 +1,43 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:sire/objects/page_constituent.dart';
-import 'package:sire/widgets/editor/page_combined.dart';
-import 'package:sire/widgets/interactive_page.dart';
-import 'package:sire/widgets/misc/interactive_viewer_adjusted.dart';
-
-enum EditorSteps { Template, Data, Result }
+import 'package:sire/objects/dto_configuration.dart';
+import 'package:sire/objects/dto_header.dart';
+import 'package:sire/screens/screen_main.dart';
+import 'package:sire/widgets/page/interactive_page.dart';
 
 class ViewModelMain extends GetxController {
-  Rx<EditorSteps> currentEditorStep = EditorSteps.Template.obs;
-  RxBool appLoaded = false.obs;
-
-  PageConstituent? footer, body, header;
   GlobalKey<InteractivePageState>? interactivePageKey;
+  Rx<ShowingContainer> currentContainer = ShowingContainer.Welcome.obs;
+  RxList<DTOHeader> headerCached = List<DTOHeader>.empty(growable: true).obs;
+  Rx<DTOConfiguration> configuration = DTOConfiguration.empty().obs;
+  Rx<DTOHeader> currentHeader=DTOHeader.dummy().obs;
 
 
+  ///saves the initial content for fast access
+  void setServerContent(Map<String, dynamic>? data) {
+    List<DTOHeader> tempH = List.empty(growable: true);
+    for (var item in data!["headers"] ?? []) {
+      tempH.add(DTOHeader(item["content"], item["name"]));
+    }
+    headerCached.value = tempH;
+    if(currentHeader.value.content==null && headerCached.length>0)currentHeader.value=headerCached.first;
 
-  void setInteractivePageKey(GlobalKey<InteractivePageState> globalKey) {
-    interactivePageKey=globalKey;
+    Map<String, dynamic> config = data["Configuration"];
+    DTOConfiguration dtoConfiguration = DTOConfiguration.empty();
+    dtoConfiguration.darkmode = config["darkmode"];
+    dtoConfiguration.zoom = config["zoom"];
+    dtoConfiguration.zoomPosition = config["zoom_position"];
+    dtoConfiguration.scrollbar = config["scrollbar"];
+    dtoConfiguration.scrollbarPosition = config["scrollbar_position"];
+    dtoConfiguration.fonts = config["fonts"];
+    dtoConfiguration.fontsValue = config["fonts_value"];
+    dtoConfiguration.headers = config["headers"];
+    dtoConfiguration.headerIndex = config["header_index"];
+    dtoConfiguration.sharing = config["sharing"];
+    dtoConfiguration.sharingProviders = (config["sharing_providers"] as List<Object?>).cast<String>();
+    dtoConfiguration.pageLink = config["page_link"];
+    dtoConfiguration.pollingUpdates = config["polling_updates"];
+    dtoConfiguration.pollingFrequency = config["polling_frequency"];
+    configuration.value=dtoConfiguration;
   }
-
-
 }

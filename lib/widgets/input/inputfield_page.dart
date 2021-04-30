@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/style.dart';
 import 'package:sire/constants/constant_color.dart';
+import 'package:sire/constants/constant_dimensions.dart';
 
-class PageInputfield extends StatefulWidget {
-  PageInputfield({
+class InputfieldPage extends StatefulWidget {
+  InputfieldPage({
     Key? key,
     required this.hint,
     required this.style,
@@ -21,53 +22,44 @@ class PageInputfield extends StatefulWidget {
   TextEditingController textEditingController = new TextEditingController();
 
   @override
-  _PageInputfieldState createState() => _PageInputfieldState();
+  _InputfieldPageState createState() => _InputfieldPageState();
 }
 
 //https://github.com/fluttercandies/extended_text
 //https://github.com/flutter/flutter/issues/30688
-class _PageInputfieldState extends State<PageInputfield> {
+class _InputfieldPageState extends State<InputfieldPage> {
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle = generateTextStyle(widget.style);
-    textStyle = textStyle.copyWith(fontSize: 14);
+    textStyle = textStyle.copyWith(fontSize:textSizeDefault, color: Colors.black);
     return/* RawKeyboardListener(
         focusNode: FocusNode(),
         onKey: handleKeyPress,
         child: */IntrinsicWidth(
             child: TextFormField(
-          enableInteractiveSelection: true,
+
           controller: widget.textEditingController,
           style: textStyle,
-
-          // TextStyle(fontSize: 14, inherit: textStyle.inherit, fontWeight: textStyle.fontWeight, backgroundColor: textStyle.backgroundColor, height: textStyle.height, fontStyle: textStyle.fontStyle ),
-          textAlign: widget.style.textAlign ?? TextAlign.start,
+              textAlign: widget.style.textAlign ?? TextAlign.start,
           textDirection: widget.style.direction,
-          keyboardType: TextInputType.text,
+          keyboardType: TextInputType.multiline,
+
           maxLines: null,
+
           textInputAction: TextInputAction.next,
           focusNode: widget.focusNode,
-        //  onEditingComplete: () => widget.onSubmitted(),
-          onFieldSubmitted: (_) => widget.onSubmitted(),
-          // textScaleFactor: textScaleFactor,
+         onFieldSubmitted: (_) => widget.onSubmitted(),
           decoration: new InputDecoration(
             enabledBorder: OutlineInputBorder(
-                gapPadding: 0,
-                borderRadius: BorderRadius.all(Radius.circular(0)),
                 borderSide: BorderSide(
                   color: Colors.transparent,
-                  width: 1.0,
+                  width: 0.0,
                 )),
-            contentPadding: EdgeInsets.all(7),
+            contentPadding: EdgeInsets.all(5
+            ),
             focusColor: navigationBarBackgroundColor,
             fillColor: Colors.red,
-            focusedBorder: OutlineInputBorder(
-                gapPadding: 0,
-                borderRadius: BorderRadius.all(Radius.circular(0)),
-                borderSide: BorderSide(
-                  color: Colors.blue,
-                  width: 1.0,
-                )),
+
             hintText: widget.hint,
             hintMaxLines: 59,
             isDense: true,
@@ -77,9 +69,6 @@ class _PageInputfieldState extends State<PageInputfield> {
 
   nextEditableTextFocus(BuildContext context) {
     FocusScope.of(context).nextFocus();
-    /* do {
-      FocusScope.of(context).nextFocus();
-    } while (FocusScope.of(context).focusedChild?.context?.widget is! EditableText);*/
   }
 
   void handleKeyPress(RawKeyEvent event) {

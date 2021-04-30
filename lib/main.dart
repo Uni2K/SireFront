@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:sire/screens/screen_editor.dart';
 import 'package:sire/screens/screen_main.dart';
 
-import 'helper/helper_server.dart';
+import 'utils/util_server.dart';
 
 void main() {
   final HttpLink link = HttpLink(

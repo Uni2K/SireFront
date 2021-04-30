@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
+import 'package:sire/widgets/page/page_prototype.dart';
 import 'package:vector_math/vector_math_64.dart';
-import 'editor/page_editing.dart';
-import 'misc/interactive_viewer_adjusted.dart';
+import '../misc/interactive_viewer_adjusted.dart';
 import 'package:sire/widgets/misc/interactive_viewer_adjusted.dart'
 as TrafoController;
 
@@ -85,6 +85,7 @@ class InteractivePageState extends State<InteractivePage>
     controller.value.translate(diffHalf, topOffsetStart);
 
     controller.addListener(() {
+
       ///limits the page at top and bottom
       Vector3 tr = controller.value.getTranslation();
       bool set = false;
@@ -123,7 +124,7 @@ class InteractivePageState extends State<InteractivePage>
             transformationController: controller,
             child: Center(
               child: Container(
-                  height: heightPage, width: widthPage, child: PageEditing()),
+                  height: heightPage, width: widthPage, child: PagePrototype()),
             ),
           )),
     );

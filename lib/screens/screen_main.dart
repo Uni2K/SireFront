@@ -1,25 +1,36 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
+import 'package:sire/objects/dto_header.dart';
+import 'package:sire/utils/util_server.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_go.dart';
 import 'package:sire/widgets/buttons/button_scale.dart';
+import 'package:sire/widgets/containers/container_editing.dart';
+import 'package:sire/widgets/containers/container_final.dart';
+import 'package:sire/widgets/containers/container_header.dart';
+import 'package:sire/widgets/containers/container_welcome.dart';
 
-import 'package:sire/widgets/interactive_page.dart';
+import 'package:sire/widgets/page/interactive_page.dart';
 import 'package:sire/widgets/logos/logo_createdby.dart';
 import 'package:sire/widgets/logos/logo_sire.dart';
-import 'package:sire/widgets/overlay/scrollbar_translation.dart';
-import 'package:sire/widgets/overlay/switcher_darkmode.dart';
+import 'package:sire/widgets/misc/arrow_default.dart';
+import 'package:sire/widgets/switchs/switcher_darkmode.dart';
+
+enum ShowingContainer { Welcome, HeaderSelection, EditingTool, Final }
 
 class ScreenMain extends StatefulWidget {
   GlobalKey<InteractivePageState> pageKey = GlobalKey();
 
   ScreenMain({Key? key}) : super(key: key) {
     ViewModelMain viewModelMain = Get.put(ViewModelMain());
-    viewModelMain.setInteractivePageKey(pageKey);
+    viewModelMain.interactivePageKey=pageKey;
   }
 
   @override
@@ -27,77 +38,97 @@ class ScreenMain extends StatefulWidget {
 }
 
 class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
+
+  RxBool _appLoaded=false.obs;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Stack(
-      children: [
-        InteractivePage(
-          key: widget.pageKey,
-        ),
-        Align(
-          child: Container(margin: EdgeInsets.all(10), child: ButtonScale()),
-          alignment: Alignment.bottomLeft,
-        ),
-        Positioned(
-          top: MediaQuery.of(context).size.height / 5,
-          height: MediaQuery.of(context).size.height -
-              MediaQuery.of(context).size.height / 5 -
-              15,
-          width: (1 - viewerWidth - 0.1) * MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              LogoSire(),
-              SizedBox(
-                height: 100,
-              ),
-              ConstrainedBox(
-                constraints: BoxConstraints(minWidth: double.infinity),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Erstellen Sie jetzt Ihr:",
-                      style: TextStyle(fontSize: 20, color: buttonTextColor),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Notiz Anschreiben Kündigung Bewerbungsschreiben",
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
-                      softWrap: false,
-                      style: TextStyle(
-                          fontSize: 30, color: navigationBarBackgroundColor),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(
-                      height: 70,
-                    ),
-                  ],
-                ),
-              ),
-              ButtonGo(
-                onClick: () {},
-                text: "Los gehts",
-              ),
-              Spacer(),
-              LogoCreatedby()
-            ],
+    double widthViewer = MediaQuery.of(context).size.width * viewerWidth;
+    double widthPage = min(
+        MediaQuery.of(context).size.height * heightPercentage,
+        widthViewer * 0.9);
+    double topOffsetPage = MediaQuery.of(context).size.height / 5;
+    double diffPageViewer = widthViewer - widthPage;
+
+    double widthContainer =
+        (1 - viewerWidth) * MediaQuery.of(context).size.width;
+    return Stack(children: [
+      Query(
+          options: QueryOptions(
+            document: gql(UtilServer.getInitialContent()),
+            pollInterval: null,
+            cacheRereadPolicy: CacheRereadPolicy.mergeOptimistic,
+            fetchPolicy: FetchPolicy.cacheAndNetwork,
           ),
-          left: viewerWidth * MediaQuery.of(context).size.width,
-        ),
-        Align(
-            child: Container(
-                margin: EdgeInsets.all(10), child: SwitcherDarkmode()),
-            alignment: Alignment.topRight)
-      ],
-    ));
+          builder: (result, {fetchMore, refetch}) {
+            if (result.hasException) {
+              print(result.exception?.linkException.toString());
+              return Text(result.exception.toString());
+            }
+            if (result.isLoading) {
+              return SizedBox();
+            }
+            ViewModelMain viewModelMain = Get.put(ViewModelMain());
+            viewModelMain.setServerContent(result.data);
+            Timer(Duration(milliseconds: 500),  (){
+               _appLoaded.value=true;
+             });
+
+            return Scaffold(
+                body: Stack(
+              children: [
+                InteractivePage(
+                  key: widget.pageKey,
+                ),
+                Align(
+                  child: Container(
+                      margin: EdgeInsets.all(10), child: ButtonScale()),
+                  alignment: Alignment.bottomLeft,
+                ),
+                Obx(() => Positioned(
+                      top: topOffsetPage,
+                      height:
+                          MediaQuery.of(context).size.height - topOffsetPage,
+                      width: widthContainer + diffPageViewer / 2 - 80,
+                      child: getShowingContainer(),
+                      left: widthViewer - diffPageViewer / 2 + 40,
+                    )),
+                Align(
+                    child: Container(
+                        margin: EdgeInsets.all(10), child: SwitcherDarkmode()),
+                    alignment: Alignment.topRight),
+                Positioned(
+                    child: ArrowDefault(),
+                    top: topOffsetPage / 2 + 20,
+                    left: (widthViewer - widthPage) / 2 - 40)
+              ],
+            ));
+          }),
+    IgnorePointer(
+          child: Obx(() => AnimatedOpacity(
+          opacity:_appLoaded.value ? 0 : 1,
+          duration: Duration(milliseconds: 500),
+          child: Container(
+              color: Colors.white,
+              child:Center(
+              child: SpinKitFadingCube(
+            color: navigationBarBackgroundColor,
+            size: 30.0,
+          ))))))
+    ]);
+  }
+
+  Widget getShowingContainer() {
+    ViewModelMain vm = Get.put(ViewModelMain());
+    switch (vm.currentContainer.value) {
+      case ShowingContainer.Welcome:
+        return ContainerWelcome();
+      case ShowingContainer.HeaderSelection:
+        return ContainerHeader();
+      case ShowingContainer.Final:
+        return ContainerFinal();
+      case ShowingContainer.EditingTool:
+        return ContainerEditing();
+    }
   }
 }
