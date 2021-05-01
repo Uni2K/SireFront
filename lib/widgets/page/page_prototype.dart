@@ -83,9 +83,7 @@ class PagePrototypeState extends State<PagePrototype>
         child: Container(
             child: AspectRatio(
                 aspectRatio: 1 / sqrt(2),
-                child: Padding(
-                    padding: getPadding(),
-                    child: Align(
+                child:  Align(
                         alignment: Alignment.center,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -112,9 +110,13 @@ class PagePrototypeState extends State<PagePrototype>
                                       duration: Duration(
                                           milliseconds: milliSecondDuration),
                                     ))),
+
+
+                            SizedBox(height: 20,),
+
                             Flexible(
                                 flex: ((1 - headerPercentage) * 10).round(),
-                                fit: FlexFit.tight,
+                               fit: FlexFit.loose,
                                 child: Obx(() => AnimatedContainer(
                                       child: PageBody(),
                                       decoration: BoxDecoration(
@@ -130,7 +132,7 @@ class PagePrototypeState extends State<PagePrototype>
                                           milliseconds: milliSecondDuration),
                                     ))),
                           ],
-                        ))))));
+                        )))));
   }
 
   void highlightAnimation(int i) {

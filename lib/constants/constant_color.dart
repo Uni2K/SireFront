@@ -17,7 +17,7 @@ Color buttonTextColor=ColorUtil.getColorFromHex("#76797A");
 
 
 Color previewBackgroundColor = backgroundColor;
-Color highlightColor = ColorUtil.getColorFromHex("#AEE5FB");
+Color highlightColor = ColorUtil.getColorFromHex("#E8F7FD");
 
 
 

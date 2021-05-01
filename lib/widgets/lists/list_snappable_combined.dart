@@ -9,21 +9,14 @@ import 'package:sire/widgets/page/page_header.dart';
 
 class ListSnappableCombined extends StatefulWidget {
   ListSnappableCombined({Key? key,
-    required QueryResult result,
-    required this.onFocused})
-      : super(key: key) {
-    for (var item in result.data!["headers"] ?? []) {
-      contentPages.add(PageHeader(
-        isDisable: true,
-        content: item["content"],
-      ));
-    }
-  }
+    required this.onFocused, required this.contentPages})
+      : super(key: key);
 
-  final VoidCallback onFocused;
-  List? content;
+
+
+  final ValueChanged<int> onFocused;
   int selectedIndex = -1;
-  List<PageHeader> contentPages = List.empty(growable: true);
+  final List<PageHeader> contentPages ;
 
   GlobalKey<ScrollSnapListState> snaplistKey=GlobalKey();
 
@@ -73,12 +66,12 @@ class ListSnappableCombinedState extends State<ListSnappableCombined> {
       itemBuilder: (context, index) {
         return widget.contentPages[index];
       },
+          endOfListTolerance: 100,
       updateOnScroll: false,
       margin: EdgeInsets.zero,
       padding: EdgeInsets.zero,
       onItemFocus: (int) {
-        print("focues on:$int ");
-        widget.onFocused();
+        widget.onFocused(int);
         widget.selectedIndex = int;
         },
     ));

@@ -11,11 +11,13 @@ class InputfieldPage extends StatefulWidget {
     required this.hint,
     required this.style,
     required this.onSubmitted,
-    required this.focusNode,
+    required this.focusNode, this.maxLines,
   }) : super(key: key);
 
   final String hint;
   final Style style;
+
+  final int? maxLines;
   final VoidCallback onSubmitted;
   final FocusNode focusNode;
 
@@ -30,22 +32,22 @@ class InputfieldPage extends StatefulWidget {
 class _InputfieldPageState extends State<InputfieldPage> {
   @override
   Widget build(BuildContext context) {
+
     TextStyle textStyle = generateTextStyle(widget.style);
     textStyle = textStyle.copyWith(fontSize:textSizeDefault, color: Colors.black);
     return/* RawKeyboardListener(
         focusNode: FocusNode(),
         onKey: handleKeyPress,
-        child: */IntrinsicWidth(
-            child: TextFormField(
+        child: */ TextFormField(
 
           controller: widget.textEditingController,
           style: textStyle,
               textAlign: widget.style.textAlign ?? TextAlign.start,
           textDirection: widget.style.direction,
           keyboardType: TextInputType.multiline,
+          expands: false,
 
-          maxLines: null,
-
+          maxLines: widget.maxLines,
           textInputAction: TextInputAction.next,
           focusNode: widget.focusNode,
          onFieldSubmitted: (_) => widget.onSubmitted(),
@@ -64,7 +66,7 @@ class _InputfieldPageState extends State<InputfieldPage> {
             hintMaxLines: 59,
             isDense: true,
           ),
-    ));
+    );
   }
 
   nextEditableTextFocus(BuildContext context) {

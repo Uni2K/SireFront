@@ -4,6 +4,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/style.dart';
+import 'package:flutter_quill/models/documents/document.dart';
+import 'package:flutter_quill/widgets/controller.dart';
+import 'package:flutter_quill/widgets/editor.dart';
+import 'package:flutter_quill/widgets/toolbar.dart';
 import 'package:get/get.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
@@ -25,6 +29,42 @@ class PageBody extends StatefulWidget {
 
 class PageBodyState extends State<PageBody> {
   List<FocusNode> focusNodes = List.empty(growable: true);
+  late QuillController _controller;
+  FocusNode focusNode=FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    focusNode.addListener(() {
+      if(focusNode.hasFocus){
+        ViewModelMain viewModelMain = Get.put(ViewModelMain());
+          viewModelMain.currentController.value=_controller;
+      }
+
+    });
+    _controller = QuillController(
+        document: Document()..insert(0,"""Sehr geehrte Damen und Herren, bitte lesen Sie weiter!
+
+Das Problem bei dieser Anredeform ist folglich, dass wir keinen konkreten Ansprechpartner meinen, sondern pauschal alles und jeden anschreiben. Dabei kommt es natürlich mitunter vor, dass ein Unternehmen ausschließlich aus Damen oder eben Herren besteht oder es eine bestimmte Hierarchie zu beachten gilt. Gibt es einen Chef und eine Sekräterin, nennen wir den Mann selbstverständlich vorab. Die Formulierung wäre also:“Sehr geehrter Herr Müller, sehr geehrte Frau Mustermann,…“
+Haben wir es beispielsweise mit einer Personalchefin zu tun und schreiben nur im Subtext einen Personaler mit an, sollten wir allerdings auf „Sehr geehrte Frau Mustermann, sehr geehrter Herr Müller,…“ zurückgreifen."""),
+        selection: TextSelection.collapsed(offset: 0));
+
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+  EdgeInsets getPadding() {
+    double width =
+    ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2)) ;
+
+    double paddingTLR = paperMarginTLRRelative * width;
+    double paddingB = paperMarginBRelative * width;
+    return EdgeInsets.only(
+        left: paddingTLR, right: paddingTLR, bottom: paddingB);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +79,28 @@ class PageBodyState extends State<PageBody> {
             .height * heightPercentage,
         widthViewer * 0.9);
 
-    return Container(child: InputfieldPage(
+    return Column(
+      children: [
+
+        Expanded(
+          child: Container(
+            padding: getPadding(),
+            child: QuillEditor(
+                controller: _controller,
+                scrollController: ScrollController(),
+                scrollable: true,
+                focusNode:focusNode,
+                autoFocus: true,
+                readOnly: false,
+                expands: false,
+                padding: EdgeInsets.zero)
+          ),
+        )
+      ],
+    );
+
+
+      /*Container(child: InputfieldPage(
         focusNode: FocusNode(),
         onSubmitted: () {
 
@@ -48,6 +109,8 @@ class PageBodyState extends State<PageBody> {
 
 Das Problem bei dieser Anredeform ist folglich, dass wir keinen konkreten Ansprechpartner meinen, sondern pauschal alles und jeden anschreiben. Dabei kommt es natürlich mitunter vor, dass ein Unternehmen ausschließlich aus Damen oder eben Herren besteht oder es eine bestimmte Hierarchie zu beachten gilt. Gibt es einen Chef und eine Sekräterin, nennen wir den Mann selbstverständlich vorab. Die Formulierung wäre also:“Sehr geehrter Herr Müller, sehr geehrte Frau Mustermann,…“
 Haben wir es beispielsweise mit einer Personalchefin zu tun und schreiben nur im Subtext einen Personaler mit an, sollten wir allerdings auf „Sehr geehrte Frau Mustermann, sehr geehrter Herr Müller,…“ zurückgreifen.""",
-        style:Style()),);
+        style:Style()),);*/
   }
+
+
 }

@@ -5,10 +5,12 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/style.dart';
 import 'package:get/get.dart';
+import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/objects/dto_header.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/input/inputfield_page.dart';
+import 'package:sire/widgets/input/inputfield_quill.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
 
 class PageHeader extends StatefulWidget {
@@ -38,9 +40,15 @@ class PageHeaderState extends State<PageHeader> {
     return AbsorbPointer(
         absorbing: false,
         child: Container(
-            height: height,
+            padding: getPadding(),
+            margin: EdgeInsets.only(bottom: 10),
+            height: height + (widget.isDisable ? 10 : 0),
             decoration: BoxDecoration(
               color: Colors.white,
+              border: Border.all(
+                  color: widget.isDisable?highlightColor:Colors.transparent,
+                  width: 6,
+                  style: BorderStyle.solid),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.01),
@@ -50,24 +58,24 @@ class PageHeaderState extends State<PageHeader> {
                 ),
               ],
             ),
-
             width: ((MediaQuery.of(context).size.height * heightPercentage) /
                     sqrt(2)) -
                 spacePages * 2,
             child: Html(
                 style: {
-                  "body": Style(margin: EdgeInsets.all(0), ), // <-- remove the margin
-                //  "p": Style(  width: 200)
+                  "body": Style(
+                    margin: EdgeInsets.all(0),
+                  ),
+                  // <-- remove the margin
+                  //  "p": Style(  width: 200)
                 },
-                 customRender: getCustomRenderer(),
+                customRender: getCustomRenderer(),
                 data: widget.content?.content ?? "")));
   }
 
   List<FocusNode> getFocusNodes() {
     return focusNodes;
   }
-
-
 
   getCustomRenderer() {
     return {
@@ -85,17 +93,18 @@ class PageHeaderState extends State<PageHeader> {
       },
       "div": (RenderContext context, Widget child,
           Map<String, String> attributes, _) {
-        return Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-
-
-            IntrinsicWidth(child:child),
-
-          ],
-        ));
+        if (attributes["orientation"] != null &&
+            attributes["orientation"] == "right") {
+          return Container(
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              IntrinsicWidth(child: child),
+            ],
+          ));
+        } else
+          return child;
       },
     };
   }
@@ -114,18 +123,46 @@ class PageHeaderState extends State<PageHeader> {
             }
 
             focusNodes.add(focusNode);
-            return InputfieldPage(
+            String txt = value.text ?? "";
+            List<String> paragraphs = txt.split("\\n");
+            StringBuffer sb = new StringBuffer();
+            int maxLines = 1;
+            for (String line in paragraphs) {
+              if (line.isNotEmpty) {
+                sb.write(line.trim() + "\n");
+                maxLines++;
+              }
+            }
+            String finalText = sb.toString();
+
+            return InputfieldQuill(
+              initialContent: finalText,
+              style: containerSpan.style,
+              readOnly: widget.isDisable,
+            );
+
+            /*   InputfieldPage(
                 focusNode: focusNode,
                 onSubmitted: () {
                   widget.onNextFocus!(focusNode);
                 },
-                hint: value.text ?? "asdasd",
-                style: containerSpan.style);
+                maxLines:maxLines,
+                hint: finalText,
+                style: containerSpan.style);*/
           }
         }
       }
     }
 
     return "";
+  }
+
+  EdgeInsets getPadding() {
+    double width =
+        ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2));
+    double paddingTLR = paperMarginTLRRelative * width;
+    double paddingB = paperMarginBRelative * width;
+    return EdgeInsets.only(
+        left: paddingTLR, right: paddingTLR, top: paddingTLR);
   }
 }

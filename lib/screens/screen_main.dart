@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/widgets/controller.dart';
+import 'package:flutter_quill/widgets/toolbar.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -16,6 +18,7 @@ import 'package:sire/widgets/containers/container_editing.dart';
 import 'package:sire/widgets/containers/container_final.dart';
 import 'package:sire/widgets/containers/container_header.dart';
 import 'package:sire/widgets/containers/container_welcome.dart';
+import 'package:sire/widgets/logos/logo_sire_small.dart';
 
 import 'package:sire/widgets/page/interactive_page.dart';
 import 'package:sire/widgets/logos/logo_createdby.dart';
@@ -30,7 +33,7 @@ class ScreenMain extends StatefulWidget {
 
   ScreenMain({Key? key}) : super(key: key) {
     ViewModelMain viewModelMain = Get.put(ViewModelMain());
-    viewModelMain.interactivePageKey=pageKey;
+    viewModelMain.interactivePageKey = pageKey;
   }
 
   @override
@@ -38,8 +41,7 @@ class ScreenMain extends StatefulWidget {
 }
 
 class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
-
-  RxBool _appLoaded=false.obs;
+  RxBool _appLoaded = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +72,9 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
             }
             ViewModelMain viewModelMain = Get.put(ViewModelMain());
             viewModelMain.setServerContent(result.data);
-            Timer(Duration(milliseconds: 500),  (){
-               _appLoaded.value=true;
-             });
+            Timer(Duration(milliseconds: 500), () {
+              _appLoaded.value = true;
+            });
 
             return Scaffold(
                 body: Stack(
@@ -85,10 +87,15 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                       margin: EdgeInsets.all(10), child: ButtonScale()),
                   alignment: Alignment.bottomLeft,
                 ),
+                Align(
+                  child: Container(
+                      margin: EdgeInsets.all(20), child: LogoSireSmall()),
+                  alignment: Alignment.topLeft,
+                ),
                 Obx(() => Positioned(
-                      top: topOffsetPage,
+                      top: getTopOffsetForShowingContainer(topOffsetPage),
                       height:
-                          MediaQuery.of(context).size.height - topOffsetPage,
+                          MediaQuery.of(context).size.height - getTopOffsetForShowingContainer(topOffsetPage),
                       width: widthContainer + diffPageViewer / 2 - 80,
                       child: getShowingContainer(),
                       left: widthViewer - diffPageViewer / 2 + 40,
@@ -98,23 +105,41 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                         margin: EdgeInsets.all(10), child: SwitcherDarkmode()),
                     alignment: Alignment.topRight),
                 Positioned(
-                    child: ArrowDefault(),
+                  child: Obx(() => AnimatedOpacity(
+                      opacity: viewModelMain.editingStarted.value ? 1 : 0,
+                      duration: Duration(milliseconds: 500),
+                      child: Container(
+                        child: SizedBox(
+                            width: widthPage,
+                            child: QuillToolbar.basic(
+                              controller: viewModelMain.currentController.value,
+                            )),
+                      ))),
+                  top: 50,
+                  left: diffPageViewer / 2,
+                ),
+                Positioned(
+                    child: IgnorePointer(
+                        child: Obx(() => AnimatedOpacity(
+                            opacity: viewModelMain.editingStarted.value ? 0 : 1,
+                            duration: Duration(milliseconds: 500),
+                            child: ArrowDefault()))),
                     top: topOffsetPage / 2 + 20,
                     left: (widthViewer - widthPage) / 2 - 40)
               ],
             ));
           }),
-    IgnorePointer(
+      IgnorePointer(
           child: Obx(() => AnimatedOpacity(
-          opacity:_appLoaded.value ? 0 : 1,
-          duration: Duration(milliseconds: 500),
-          child: Container(
-              color: Colors.white,
-              child:Center(
-              child: SpinKitFadingCube(
-            color: navigationBarBackgroundColor,
-            size: 30.0,
-          ))))))
+              opacity: _appLoaded.value ? 0 : 1,
+              duration: Duration(milliseconds: 500),
+              child: Container(
+                  color: Colors.white,
+                  child: Center(
+                      child: SpinKitFadingCube(
+                    color: navigationBarBackgroundColor,
+                    size: 30.0,
+                  ))))))
     ]);
   }
 
@@ -130,5 +155,14 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
       case ShowingContainer.EditingTool:
         return ContainerEditing();
     }
+  }
+
+  double getTopOffsetForShowingContainer(double topOffsetPage) {
+    ViewModelMain vm = Get.put(ViewModelMain());
+    switch (vm.currentContainer.value) {
+      case ShowingContainer.HeaderSelection:
+        return topOffsetPage - 50;
+    }
+    return topOffsetPage;
   }
 }

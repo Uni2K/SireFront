@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_quill/widgets/controller.dart';
 import 'package:get/get.dart';
 import 'package:sire/objects/dto_configuration.dart';
 import 'package:sire/objects/dto_header.dart';
@@ -7,17 +8,20 @@ import 'package:sire/widgets/page/interactive_page.dart';
 
 class ViewModelMain extends GetxController {
   GlobalKey<InteractivePageState>? interactivePageKey;
-  Rx<ShowingContainer> currentContainer = ShowingContainer.Welcome.obs;
+  Rx<ShowingContainer> currentContainer = ShowingContainer.HeaderSelection.obs;
   RxList<DTOHeader> headerCached = List<DTOHeader>.empty(growable: true).obs;
   Rx<DTOConfiguration> configuration = DTOConfiguration.empty().obs;
   Rx<DTOHeader> currentHeader=DTOHeader.dummy().obs;
 
+  Rx<QuillController> currentController=QuillController.basic().obs;
+  RxBool editingStarted = true.obs;
 
   ///saves the initial content for fast access
   void setServerContent(Map<String, dynamic>? data) {
     List<DTOHeader> tempH = List.empty(growable: true);
     for (var item in data!["headers"] ?? []) {
       tempH.add(DTOHeader(item["content"], item["name"]));
+
     }
     headerCached.value = tempH;
     if(currentHeader.value.content==null && headerCached.length>0)currentHeader.value=headerCached.first;
