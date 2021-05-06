@@ -12,7 +12,7 @@ Color navigationBarBackgroundColorLight = ColorUtil.getColorFromHex("#A5DEF7");
 
 Color buttonBackgroundColor=ColorUtil.getColorFromHex("#E8EBEC");
 Color buttonTextColor=ColorUtil.getColorFromHex("#76797A");
-
+Color switchOnColor=ColorUtil.getColorFromHex("#B9B9B9");
 
 
 

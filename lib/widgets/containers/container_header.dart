@@ -1,10 +1,16 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
+import 'package:sire/constants/constant_dimensions.dart';
+import 'package:sire/screens/screen_main.dart';
 import 'package:sire/utils/util_server.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
+import 'package:sire/widgets/buttons/button_default_light.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
+import 'package:sire/widgets/misc/arrow_small.dart';
 import 'package:sire/widgets/page/page_header.dart';
 
 class ContainerHeader extends StatefulWidget {
@@ -19,47 +25,47 @@ class _ContainerHeaderState extends State<ContainerHeader> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Align(
-            alignment: Alignment.topCenter,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 50, child:Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.info_outline_rounded,
-                      size: 20,
-                      color: navigationBarBackgroundColor,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      "Wählen Sie einen passenden Headerbereich aus:",
-                      style: TextStyle(
-                          fontSize: 20, color: navigationBarBackgroundColor),
-                    )
-                  ],
-                )),
-
-                Expanded(
-                    child: ListSnappableCombined(
-                  onFocused: (int) {
-                    viewModelMain.currentHeader.value =
-                        viewModelMain.headerCached.elementAt(int);
+                ButtonDefaultLight(
+                  icon: Icons.done,
+                  text: "Fertig",
+                  onClick: () {
+                    viewModelMain.currentContainer.value=ShowingContainer.EditingTool;
                   },
-                  contentPages: viewModelMain.headerCached
-                      .map((e) => PageHeader(
-                            isDisable: true,
-                            content: e,
-                          ))
-                      .cast<PageHeader>()
-                      .toList(),
-                ))
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Expanded(child:Center(child:Text(
+                  "Wählen Sie einen passenden Headerbereich aus:",
+                  style: TextStyle(
+                      fontSize: 20, color: navigationBarBackgroundColor),
+                ))),SizedBox(width: 10,),
+                ArrowSmall()
               ],
-            )));
+            )),
+        Expanded(
+            child: ListSnappableCombined(
+          onFocused: (int) {
+
+          },
+          contentPages: viewModelMain.headerCached
+              .map((e) => PageHeader(
+                    isDisable: true,
+                    content: e,
+                  ))
+              .cast<PageHeader>()
+              .toList(),
+        ))
+      ],
+    );
   }
 }

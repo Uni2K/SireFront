@@ -140,7 +140,7 @@ packages:
       name: cupertino_icons
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   fake_async:
     dependency: transitive
     description:
@@ -258,13 +258,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.21.0-nullsafety.0"
-  flutter_switch:
-    dependency: "direct main"
-    description:
-      name: flutter_switch
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -575,7 +568,7 @@ packages:
       name: scroll_snap_list
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.7.0"
+    version: "0.8.0"
   sky_engine:
     dependency: transitive
     description: flutter

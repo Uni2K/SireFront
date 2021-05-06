@@ -41,7 +41,7 @@ class _ButtonCircleSocialmediaState extends State<ButtonCircleSocialmedia> {
           materialTapTargetSize: MaterialTapTargetSize.padded,
           //fillColor: Colors.white,
           child: icon,
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(25),
           shape: CircleBorder(),
         ),
         SizedBox(

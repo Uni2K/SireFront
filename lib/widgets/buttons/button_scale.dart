@@ -29,9 +29,6 @@ class _ButtonScaleState extends State<ButtonScale> {
 
   bool disabled = false;
 
-
-
-
   @override
   Widget build(BuildContext context) {
     ViewModelMain viewModelMain = Get.put(ViewModelMain());
@@ -40,17 +37,15 @@ class _ButtonScaleState extends State<ButtonScale> {
         child: Row(mainAxisSize: MainAxisSize.min, children: [
       MaterialButton(
         onPressed: () {
-          disabled=true;
+          disabled = true;
           _value = 1;
-          setState(() {
+          setState(() {});
 
+          viewModelMain.interactivePageKey?.currentState
+              ?.resetPage()
+              .whenComplete(() {
+            disabled = false;
           });
-
-          viewModelMain.interactivePageKey?.currentState?.resetPage().whenComplete(() {
-            disabled=false;
-          });
-
-
         },
         minWidth: 0,
         elevation: 0.0,
@@ -102,9 +97,16 @@ class _ButtonScaleState extends State<ButtonScale> {
               max: maxScale,
               label: '${(_value * 100).round()}%',
               divisions: ((maxScale - minScale) * 10).round(),
+              onChangeStart: (s){
+                viewModelMain.isCurrentlyTouched.value=true;
+              },
+              onChangeEnd: (s){
+                viewModelMain.isCurrentlyTouched.value=false;
+
+              },
 
               onChanged: (value) {
-                if(disabled)return;
+                if (disabled) return;
                 double val = dp(value, 2);
 
                 if (_value != val) {

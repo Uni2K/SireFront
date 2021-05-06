@@ -54,7 +54,6 @@ class ContainerWelcome extends StatelessWidget {
         ButtonGo(
           onClick: () {
             ViewModelMain vm = Get.put(ViewModelMain());
-            vm.editingStarted.value=true;
             vm.currentContainer.value = ShowingContainer.HeaderSelection;
           },
           text: "Los gehts",

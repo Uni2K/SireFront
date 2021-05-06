@@ -22,6 +22,7 @@ class _ButtonCircleNeutralState extends State<ButtonCircleNeutral> {
       },
       minWidth: 0,
       elevation: 0.0,
+      padding: EdgeInsets.zero,
       color: widget.background?dividerColor:null,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       //fillColor: Colors.white,

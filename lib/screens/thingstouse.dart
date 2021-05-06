@@ -92,33 +92,7 @@ TextfieldSelectable()
 ),
 )
 
-List<Widget> getSocialMediaWidgets() {
-  List<Widget> widgets = List.empty(growable: true);
 
-  widgets.add(ButtonCircleSocialmedia(
-    type: Types.Twitter,
-  ));
-  widgets.add(ButtonCircleSocialmedia(
-    type: Types.Facebook,
-  ));
-  widgets.add(ButtonCircleSocialmedia(
-    type: Types.Reddit,
-  ));
-  widgets.add(ButtonCircleSocialmedia(
-    type: Types.Skype,
-  ));
-  widgets.add(ButtonCircleSocialmedia(
-    type: Types.Whatsapp,
-  ));
-  widgets.add(ButtonCircleSocialmedia(
-    type: Types.Messenger,
-  ));
-  widgets.add(ButtonCircleSocialmedia(
-    type: Types.Telegram,
-  ));
-
-  return widgets;
-}
 
 Query(
 options: QueryOptions(

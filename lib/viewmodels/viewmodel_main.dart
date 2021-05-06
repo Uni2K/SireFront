@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_quill/models/documents/document.dart';
 import 'package:flutter_quill/widgets/controller.dart';
 import 'package:get/get.dart';
 import 'package:sire/objects/dto_configuration.dart';
@@ -8,23 +9,23 @@ import 'package:sire/widgets/page/interactive_page.dart';
 
 class ViewModelMain extends GetxController {
   GlobalKey<InteractivePageState>? interactivePageKey;
-  Rx<ShowingContainer> currentContainer = ShowingContainer.HeaderSelection.obs;
+  Rx<ShowingContainer> currentContainer = ShowingContainer.Welcome.obs;
   RxList<DTOHeader> headerCached = List<DTOHeader>.empty(growable: true).obs;
   Rx<DTOConfiguration> configuration = DTOConfiguration.empty().obs;
-  Rx<DTOHeader> currentHeader=DTOHeader.dummy().obs;
-
-  Rx<QuillController> currentController=QuillController.basic().obs;
-  RxBool editingStarted = true.obs;
+  Rx<DTOHeader> currentHeader = DTOHeader.dummy().obs;
+  RxBool isCurrentlyTouched = false.obs;
+  RxBool isEditingStarted=false.obs; //as soon as a controller is set
+  Rx<QuillController> currentController = QuillController.basic().obs;
 
   ///saves the initial content for fast access
   void setServerContent(Map<String, dynamic>? data) {
     List<DTOHeader> tempH = List.empty(growable: true);
     for (var item in data!["headers"] ?? []) {
       tempH.add(DTOHeader(item["content"], item["name"]));
-
     }
     headerCached.value = tempH;
-    if(currentHeader.value.content==null && headerCached.length>0)currentHeader.value=headerCached.first;
+    if (currentHeader.value.content == null && headerCached.length > 0)
+      currentHeader.value = headerCached.first;
 
     Map<String, dynamic> config = data["Configuration"];
     DTOConfiguration dtoConfiguration = DTOConfiguration.empty();
@@ -38,10 +39,21 @@ class ViewModelMain extends GetxController {
     dtoConfiguration.headers = config["headers"];
     dtoConfiguration.headerIndex = config["header_index"];
     dtoConfiguration.sharing = config["sharing"];
-    dtoConfiguration.sharingProviders = (config["sharing_providers"] as List<Object?>).cast<String>();
+    dtoConfiguration.sharingProviders =
+        (config["sharing_providers"] as List<Object?>).cast<String>();
     dtoConfiguration.pageLink = config["page_link"];
     dtoConfiguration.pollingUpdates = config["polling_updates"];
     dtoConfiguration.pollingFrequency = config["polling_frequency"];
-    configuration.value=dtoConfiguration;
+    configuration.value = dtoConfiguration;
+  }
+
+  void updateQuillController(QuillController controller) {
+
+    if(!isEditingStarted.value){
+      //no userinteraction yet
+      isEditingStarted.value=true;
+      currentContainer.value=ShowingContainer.EditingTool;
+    }
+    currentController.value = controller;
   }
 }

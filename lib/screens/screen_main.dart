@@ -12,6 +12,7 @@ import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/objects/dto_header.dart';
 import 'package:sire/utils/util_server.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
+import 'package:sire/widgets/buttons/button_circle_neutral.dart';
 import 'package:sire/widgets/buttons/button_go.dart';
 import 'package:sire/widgets/buttons/button_scale.dart';
 import 'package:sire/widgets/containers/container_editing.dart';
@@ -54,6 +55,16 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
 
     double widthContainer =
         (1 - viewerWidth) * MediaQuery.of(context).size.width;
+
+    double containerDistanceToViewer =
+        ((widthViewer - diffPageViewer / 2) - widthPage) / 2;
+    double leftContainer =
+        (widthViewer - diffPageViewer / 2) + containerDistanceToViewer;
+
+    double topToolBar = topOffsetPage -
+        (topOffsetPage -
+            containerDistanceToViewer); //same distance to page like container
+
     return Stack(children: [
       Query(
           options: QueryOptions(
@@ -88,25 +99,52 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                   alignment: Alignment.bottomLeft,
                 ),
                 Align(
-                  child: Container(
-                      margin: EdgeInsets.all(20), child: LogoSireSmall()),
+                  child: Obx(() => AnimatedOpacity(
+                      opacity: viewModelMain.currentContainer.value ==
+                              ShowingContainer.Welcome
+                          ? 0
+                          : 1,
+                      duration: Duration(milliseconds: 500),
+                      child: Container(
+                          margin: EdgeInsets.all(20), child: LogoSireSmall()))),
                   alignment: Alignment.topLeft,
                 ),
                 Obx(() => Positioned(
-                      top: getTopOffsetForShowingContainer(topOffsetPage),
-                      height:
-                          MediaQuery.of(context).size.height - getTopOffsetForShowingContainer(topOffsetPage),
-                      width: widthContainer + diffPageViewer / 2 - 80,
-                      child: getShowingContainer(),
-                      left: widthViewer - diffPageViewer / 2 + 40,
+                    top: getTopOffsetForShowingContainer(topOffsetPage),
+                    height: MediaQuery.of(context).size.height -
+                        getTopOffsetForShowingContainer(topOffsetPage),
+                    width: widthPage,
+                    //widthContainer + diffPageViewer / 2 - 80,
+                    child:  AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder: (Widget child, Animation<double> animation) {
+                          return ScaleTransition(child: child, scale: animation);
+                        },child: getShowingContainer()),
+                    left: leftContainer //+ 40,
                     )),
                 Align(
                     child: Container(
-                        margin: EdgeInsets.all(10), child: SwitcherDarkmode()),
+                        margin: EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ButtonCircleNeutral(
+                                icon: Icon(
+                                  Icons.info,
+                                  color: switchOnColor,
+                                  size: 21,
+                                ),
+                                onClick: () => null),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            SwitcherDarkmode()
+                          ],
+                        )),
                     alignment: Alignment.topRight),
                 Positioned(
                   child: Obx(() => AnimatedOpacity(
-                      opacity: viewModelMain.editingStarted.value ? 1 : 0,
+                      opacity: isToolbarVisible() ? 1 : 0,
                       duration: Duration(milliseconds: 500),
                       child: Container(
                         child: SizedBox(
@@ -115,13 +153,16 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                               controller: viewModelMain.currentController.value,
                             )),
                       ))),
-                  top: 50,
+                  top: topToolBar,
                   left: diffPageViewer / 2,
                 ),
                 Positioned(
                     child: IgnorePointer(
                         child: Obx(() => AnimatedOpacity(
-                            opacity: viewModelMain.editingStarted.value ? 0 : 1,
+                            opacity: viewModelMain.currentContainer.value ==
+                                    ShowingContainer.Welcome
+                                ? 1
+                                : 0,
                             duration: Duration(milliseconds: 500),
                             child: ArrowDefault()))),
                     top: topOffsetPage / 2 + 20,
@@ -164,5 +205,12 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
         return topOffsetPage - 50;
     }
     return topOffsetPage;
+  }
+
+  bool isToolbarVisible() {
+    ViewModelMain vm = Get.put(ViewModelMain());
+    if(vm.isCurrentlyTouched.value)return false;
+    return vm.currentContainer.value == ShowingContainer.HeaderSelection ||
+        vm.currentContainer.value == ShowingContainer.EditingTool;
   }
 }

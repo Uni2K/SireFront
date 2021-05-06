@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 import 'package:sire/constants/constant_color.dart';
+import 'package:sire/widgets/switchs/switch_prototype.dart';
 
 class SwitcherDarkmode extends StatefulWidget {
   SwitcherDarkmode({Key? key}) : super(key: key);
@@ -10,35 +10,57 @@ class SwitcherDarkmode extends StatefulWidget {
 }
 
 class _SwitcherDarkmodeState extends State<SwitcherDarkmode> {
-    bool _value=false;
+  bool _value = false;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(height:30,width: 60,child:FlutterSwitch(
-      width: 60.0,
-      height: 30.0,
-      toggleSize: 25.0,
-      value:_value,
-      borderRadius: 30.0,
-      padding: 2.0,
-      activeToggleColor: Color(0xFF6E40C9),
-      inactiveToggleColor: Color(0xFF2F363D),
-
-      activeColor: Color(0xFF271052),
-      inactiveColor: buttonBackgroundColor,
-      activeIcon: Icon(
-        Icons.nightlight_round,
-        color: Color(0xFFF8E3A1),
-      ),
-      inactiveIcon: Icon(
-        Icons.wb_sunny,
-        color: Color(0xFFFFDF5D),
-      ),
-      onToggle: (val) {
-        setState(() {
-          _value= val;
-        });
-      },
-    ));
+    return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child:SizedBox(
+        height: 25,
+        width: 50,
+        child: FlutterSwitch(
+          width: 50.0,
+          height: 25.0,
+          toggleSize: 25.0,
+          value: _value,
+          borderRadius: 5.0,
+          padding: 0.0,
+          activeColor: buttonBackgroundColor,
+          inactiveColor: buttonBackgroundColor,
+          activeToggleColor: buttonBackgroundColor,
+          inactiveToggleColor: buttonBackgroundColor,
+          activeIcon: Container(
+              height: 25,
+              width: 25,
+              decoration: BoxDecoration(
+                  color: switchOnColor,
+                  borderRadius: BorderRadius.circular(5)
+              ),
+              child: Center(
+                  child: Icon(
+                Icons.nightlight_round,
+                color: Colors.deepPurple[600],
+                size: 17,
+              ))),
+          inactiveIcon: Container(
+              height: 25,
+              width: 25,
+              decoration: BoxDecoration(
+                  color: switchOnColor,
+                  borderRadius: BorderRadius.circular(5)
+              ),
+              child: Center(
+                  child: Icon(
+                Icons.wb_sunny,
+                size: 17,
+                color: Colors.amber,
+              ))),
+          onToggle: (val) {
+            setState(() {
+              _value = val;
+            });
+          },
+        )));
   }
 }

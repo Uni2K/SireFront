@@ -38,7 +38,7 @@ class PageBodyState extends State<PageBody> {
     focusNode.addListener(() {
       if(focusNode.hasFocus){
         ViewModelMain viewModelMain = Get.put(ViewModelMain());
-          viewModelMain.currentController.value=_controller;
+        viewModelMain.updateQuillController(_controller);
       }
 
     });
@@ -90,7 +90,7 @@ Haben wir es beispielsweise mit einer Personalchefin zu tun und schreiben nur im
                 scrollController: ScrollController(),
                 scrollable: true,
                 focusNode:focusNode,
-                autoFocus: true,
+                autoFocus: false,
                 readOnly: false,
                 expands: false,
                 padding: EdgeInsets.zero)

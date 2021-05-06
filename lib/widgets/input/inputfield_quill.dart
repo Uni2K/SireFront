@@ -72,7 +72,8 @@ class _InputfieldQuillState extends State<InputfieldQuill> {
           //   _controller.document.delete(0, widget.initialContent.length);
           //sdf}
           ViewModelMain viewModelMain = Get.put(ViewModelMain());
-          viewModelMain.currentController.value = _controller;
+          viewModelMain.updateQuillController(_controller);
+
         }
       });
     }
