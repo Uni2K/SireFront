@@ -12,12 +12,11 @@ import 'package:get/get.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/input/inputfield_page.dart';
+import 'package:sire/widgets/input/inputfield_quill.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
 
 class PageBody extends StatefulWidget {
-  PageBody(
-      {Key? key, this.content,this.onNextFocus})
-      : super(key: key);
+  PageBody({Key? key, this.content, this.onNextFocus}) : super(key: key);
 
   final String? content;
 
@@ -30,25 +29,19 @@ class PageBody extends StatefulWidget {
 class PageBodyState extends State<PageBody> {
   List<FocusNode> focusNodes = List.empty(growable: true);
   late QuillController _controller;
-  FocusNode focusNode=FocusNode();
+  FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     focusNode.addListener(() {
-      if(focusNode.hasFocus){
+      if (focusNode.hasFocus) {
         ViewModelMain viewModelMain = Get.put(ViewModelMain());
         viewModelMain.updateQuillController(_controller);
       }
-
     });
     _controller = QuillController(
-        document: Document()..insert(0,"""Sehr geehrte Damen und Herren, bitte lesen Sie weiter!
-
-Das Problem bei dieser Anredeform ist folglich, dass wir keinen konkreten Ansprechpartner meinen, sondern pauschal alles und jeden anschreiben. Dabei kommt es natürlich mitunter vor, dass ein Unternehmen ausschließlich aus Damen oder eben Herren besteht oder es eine bestimmte Hierarchie zu beachten gilt. Gibt es einen Chef und eine Sekräterin, nennen wir den Mann selbstverständlich vorab. Die Formulierung wäre also:“Sehr geehrter Herr Müller, sehr geehrte Frau Mustermann,…“
-Haben wir es beispielsweise mit einer Personalchefin zu tun und schreiben nur im Subtext einen Personaler mit an, sollten wir allerdings auf „Sehr geehrte Frau Mustermann, sehr geehrter Herr Müller,…“ zurückgreifen."""),
-        selection: TextSelection.collapsed(offset: 0));
-
+        document: Document(), selection: TextSelection.collapsed(offset: 0));
   }
 
   @override
@@ -56,9 +49,10 @@ Haben wir es beispielsweise mit einer Personalchefin zu tun und schreiben nur im
     _controller.dispose();
     super.dispose();
   }
+
   EdgeInsets getPadding() {
     double width =
-    ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2)) ;
+        ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2));
 
     double paddingTLR = paperMarginTLRRelative * width;
     double paddingB = paperMarginBRelative * width;
@@ -68,49 +62,25 @@ Haben wir es beispielsweise mit einer Personalchefin zu tun und schreiben nur im
 
   @override
   Widget build(BuildContext context) {
-    double widthViewer = MediaQuery
-        .of(context)
-        .size
-        .width * viewerWidth;
+    double widthViewer = MediaQuery.of(context).size.width * viewerWidth;
     double widthPage = min(
-        MediaQuery
-            .of(context)
-            .size
-            .height * heightPercentage,
+        MediaQuery.of(context).size.height * heightPercentage,
         widthViewer * 0.9);
 
-    return Column(
-      children: [
-
-        Expanded(
+    return Column(children: [
+      Expanded(
           child: Container(
-            padding: getPadding(),
-            child: QuillEditor(
-                controller: _controller,
-                scrollController: ScrollController(),
-                scrollable: true,
-                focusNode:focusNode,
-                autoFocus: false,
-                readOnly: false,
-                expands: false,
-                padding: EdgeInsets.zero)
-          ),
-        )
-      ],
-    );
-
-
-      /*Container(child: InputfieldPage(
-        focusNode: FocusNode(),
-        onSubmitted: () {
-
-        },
-        hint: """Sehr geehrte Damen und Herren, bitte lesen Sie weiter!
+              padding: getPadding(),
+              child: InputfieldQuill(
+                initialContent:
+                    """Sehr geehrte Damen und Herren, bitte lesen Sie weiter!
 
 Das Problem bei dieser Anredeform ist folglich, dass wir keinen konkreten Ansprechpartner meinen, sondern pauschal alles und jeden anschreiben. Dabei kommt es natürlich mitunter vor, dass ein Unternehmen ausschließlich aus Damen oder eben Herren besteht oder es eine bestimmte Hierarchie zu beachten gilt. Gibt es einen Chef und eine Sekräterin, nennen wir den Mann selbstverständlich vorab. Die Formulierung wäre also:“Sehr geehrter Herr Müller, sehr geehrte Frau Mustermann,…“
-Haben wir es beispielsweise mit einer Personalchefin zu tun und schreiben nur im Subtext einen Personaler mit an, sollten wir allerdings auf „Sehr geehrte Frau Mustermann, sehr geehrter Herr Müller,…“ zurückgreifen.""",
-        style:Style()),);*/
+Haben wir es beispielsweise mit einer Personalchefin zu tun und schreiben nur im Subtext einen Personaler mit an, sollten wir allerdings auf „Sehr geehrte Frau Mustermann, sehr geehrter Herr Müller,…“ zurückgreifen.\n""",
+                style: Style(),
+                placeholding: true,
+                readOnly: false,
+              )))
+    ]);
   }
-
-
 }

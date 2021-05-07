@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
@@ -35,7 +36,7 @@ class _ContainerHeaderState extends State<ContainerHeader> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ButtonDefaultLight(
-                  icon: Icons.done,
+                  icon: FontAwesomeIcons.check,
                   text: "Fertig",
                   onClick: () {
                     viewModelMain.currentContainer.value=ShowingContainer.EditingTool;

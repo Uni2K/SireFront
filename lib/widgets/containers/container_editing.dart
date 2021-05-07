@@ -19,77 +19,139 @@ class ContainerEditing extends StatefulWidget {
 class _ContainerEditingState extends State<ContainerEditing> {
   @override
   Widget build(BuildContext context) {
+    ViewModelMain vm = Get.put(ViewModelMain());
+
     return Align(
         alignment: Alignment.topLeft,
         child: FractionallySizedBox(
-          widthFactor: 0.6,
+          widthFactor: 0.5,
           child: Container(
-            padding: EdgeInsets.all(15),
-            margin: EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: buttonBackgroundColor,
-            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.menu_book_rounded,
-                  color: buttonTextColor,
-                  size: 18,
+                Align(
+                        alignment: Alignment.topLeft,
+                        child: IntrinsicHeight(
+                            child: Container(
+                              height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: buttonBackgroundColor,
+                                ),
+                                child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ButtonDefaultLight(
+                                onClick: () {
+                                  vm.currentContainer.value=ShowingContainer.HeaderSelection;
+                                },
+                                vertical: true,
+                                text: "Header",
+                                icon: FontAwesomeIcons.heading),
+                            VerticalDivider(
+                              width: 0.5,
+                              thickness: 0.5,
+                            ),
+                            ButtonDefaultLight(
+                                onClick: () => null,
+                                vertical: true,
+                                text: "Schriftart",
+                                icon: FontAwesomeIcons.font),
+                            VerticalDivider(
+                              width: 0.5,
+                              thickness: 0.5,
+                            ),
+                            ButtonDefaultLight(
+                                onClick: () => null,
+                                vertical: true,
+                                text: "Verwerfen",
+                                icon: FontAwesomeIcons.undo),
+                            Divider(
+                              color: buttonTextColor,
+                            )
+                          ],
+                        )))),
+                SizedBox(
+                  height: 10,
                 ),
                 Expanded(
                     child: Container(
-                        padding: EdgeInsets.all(30),
-                        child: ListView.builder(
+                        padding: EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(5),
+                              topLeft: Radius.circular(5)),
+                          color: buttonBackgroundColor,
+                        ),
+                        child: FocusTraversalGroup(
+                          descendantsAreFocusable: false,
+                            child:ListView.builder(
                           itemBuilder: (context, index) {
-                            return ListTileEditor(contentType: TileContent.formatEmail,);
+                            return ListTileEditor(
+                              contentType: TileContent.formatEmail,
+                            );
                           },
                           itemCount: 20,
-                        ))),
+                        )))),
                 Flexible(
                   flex: 0,
-                  child: ConstrainedBox(
-                      constraints: BoxConstraints(minWidth: double.infinity),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ButtonDefaultLight(
-                            text: "Zeile für Unterschrift",
-                            icon: Icons.text_format_rounded,
-                            onClick: () => null,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          ButtonDefaultLight(
-                            text: "Handgeschriebene Signatur",
-                            icon: Icons.short_text,
-                            onClick: () => null,
-                          ),
-                          SizedBox(
-                            height: 7,
-                          ),
-                          ButtonDefaultLight(
-                            text: "Bild hochladen",
-                            icon: Icons.image,
-                            onClick: () => null,
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Container(child: Align(alignment:Alignment.bottomRight,child:ButtonDownload(
-                            text: "Fertigstellen",
-                            icon: FontAwesomeIcons.filePdf,
-                            onClick: () {
-                              ViewModelMain viewModelMain = Get.put(ViewModelMain());
-                              viewModelMain.currentContainer.value=ShowingContainer.Final;
-
-                            },
-                          )))
-                        ],
-                      )),
+                  child: Container(
+                      padding: EdgeInsets.only(bottom: 15, left: 15, right: 15),
+                      margin: EdgeInsets.only(bottom: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(5),
+                            bottomLeft: Radius.circular(5)),
+                        color: buttonBackgroundColor,
+                      ),
+                      child: ConstrainedBox(
+                          constraints:
+                              BoxConstraints(minWidth: double.infinity),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ButtonDefaultLight(
+                                text: "Zeile für Unterschrift",
+                                icon: FontAwesomeIcons.textWidth,
+                                onClick: () => null,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              ButtonDefaultLight(
+                                text: "Handgeschriebene Signatur",
+                                icon: FontAwesomeIcons.signature,
+                                onClick: () => null,
+                              ),
+                              SizedBox(
+                                height: 7,
+                              ),
+                              ButtonDefaultLight(
+                                text: "Bild hochladen",
+                                icon: FontAwesomeIcons.fileUpload,
+                                onClick: () => null,
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Container(
+                                  child: Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: ButtonDownload(
+                                        text: "Fertigstellen",
+                                        icon: FontAwesomeIcons.filePdf,
+                                        onClick: () {
+                                          ViewModelMain viewModelMain =
+                                              Get.put(ViewModelMain());
+                                          viewModelMain.currentContainer.value =
+                                              ShowingContainer.Final;
+                                        },
+                                      )))
+                            ],
+                          ))),
                 )
               ],
             ),

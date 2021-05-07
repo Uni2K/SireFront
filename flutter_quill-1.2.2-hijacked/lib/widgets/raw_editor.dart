@@ -526,9 +526,11 @@ class RawEditorState extends EditorState
     if (_doc.isEmpty() &&
         !widget.focusNode.hasFocus &&
         widget.placeholder != null) {
-      _doc = Document.fromJson(jsonDecode(
-          '[{"attributes":{"placeholder":true},"insert":"${widget
-              .placeholder}\\n"}]'));
+      _doc =Document.fromJson(jsonDecode(widget.placeholder??'')); //TODO changed
+
+      // Document.fromJson(jsonDecode(
+          //'[{"attributes":{"placeholder":true},"insert":"${widget
+           //   .placeholder}\\n"}]'));
     }
 
     Widget child = CompositedTransformTarget(
@@ -793,6 +795,8 @@ class RawEditorState extends EditorState
     if (widget.focusNode != oldWidget.focusNode) {
       oldWidget.focusNode.removeListener(_handleFocusChanged);
       _focusAttachment?.detach();
+      print("attach Focus 1");
+
       _focusAttachment = widget.focusNode.attach(context,
           onKey: (node, event) {
             if (_keyboardListener.handleRawKeyEvent(event)) {
@@ -1101,7 +1105,9 @@ class RawEditorState extends EditorState
     if (_hasFocus) {
       openConnectionIfNeeded();
     } else {
-      widget.focusNode.requestFocus();
+      //TODO is is also called when unselecting the editor -> prevent
+     if(! widget.controller.blockedFocus)    widget.focusNode.requestFocus();
+
     }
   }
 

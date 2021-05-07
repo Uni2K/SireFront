@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sire/screens/screen_main.dart';
 
@@ -28,10 +30,29 @@ class SireApp extends StatelessWidget {
     return GraphQLProvider(
         client: client,
         child: MaterialApp(
+          shortcuts: ignoredNavigationShortcuts(),
           title: 'Sire',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(),
           home: ScreenMain(),
         ));
+  }
+
+  Map<ShortcutActivator, Intent> ignoredNavigationShortcuts() {
+    Map<ShortcutActivator, Intent> shortcuts =
+        Map.from(WidgetsApp.defaultShortcuts);
+    shortcuts.removeWhere((key, value) {
+      return key.triggers.first.keyLabel ==
+              LogicalKeyboardKey.arrowUp.keyLabel ||
+          key.triggers.first.keyLabel ==
+              LogicalKeyboardKey.arrowDown.keyLabel ||
+          key.triggers.first.keyLabel ==
+              LogicalKeyboardKey.arrowLeft.keyLabel ||
+          key.triggers.first.keyLabel ==
+              LogicalKeyboardKey.arrowRight.keyLabel ||
+          key.triggers.first.keyLabel == LogicalKeyboardKey.space.keyLabel;
+    });
+
+    return shortcuts;
   }
 }

@@ -50,6 +50,7 @@ class Document {
   Delta insert(int index, Object? data, {int replaceLength = 0}) {
     assert(index >= 0);
     assert(data is String || data is Embeddable);
+
     if (data is Embeddable) {
       data = data.toJson();
     } else if ((data as String).isEmpty) {
@@ -58,7 +59,9 @@ class Document {
 
     final delta = _rules.apply(RuleType.INSERT, this, index,
         data: data, len: replaceLength);
+
     compose(delta, ChangeSource.LOCAL);
+
     return delta;
   }
 
@@ -72,7 +75,9 @@ class Document {
   }
 
   Delta replace(int index, int len, Object? data) {
+
     assert(index >= 0);
+
     assert(data is String || data is Embeddable);
 
     final dataIsNotEmpty = (data is String) ? data.isNotEmpty : true;
@@ -83,6 +88,7 @@ class Document {
 
     // We have to insert before applying delete rules
     // Otherwise delete would be operating on stale document snapshot.
+
     if (dataIsNotEmpty) {
       delta = insert(index, data, replaceLength: len);
     }
@@ -132,6 +138,7 @@ class Document {
     var offset = 0;
     delta = _transform(delta);
     final originalDelta = toDelta();
+
     for (final op in delta.toList()) {
       final style =
           op.attributes != null ? Style.fromJson(op.attributes) : null;
@@ -154,9 +161,10 @@ class Document {
       throw '_delta compose failed';
     }
 
-    if (_delta != _root.toDelta()) {
+  /*  if (_delta != _root.toDelta()) { //TODO-> zum merken AUSKOMMENTIERT!!
       throw 'Compose failed';
     }
+*/
     final change = Tuple3(originalDelta, delta, changeSource);
     _observer.add(change);
     _history.handleDocChange(change);

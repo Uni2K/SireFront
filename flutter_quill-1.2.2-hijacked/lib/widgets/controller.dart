@@ -11,10 +11,13 @@ import '../models/quill_delta.dart';
 import '../utils/diff_delta.dart';
 
 class QuillController extends ChangeNotifier {
+  bool blockedFocus;
+
   QuillController(
       {required this.document,
       required this.selection,
       this.iconSize = 18,
+        this.blockedFocus=false,
       this.toolbarHeightFactor = 2});
 
   factory QuillController.basic() {
@@ -91,13 +94,17 @@ class QuillController extends ChangeNotifier {
   bool get hasRedo => document.hasRedo;
 
   void replaceText(
+
       int index, int len, Object? data, TextSelection? textSelection,
       {bool ignoreFocus = false}) {
     assert(data is String || data is Embeddable);
 
     Delta? delta;
+
     if (len > 0 || data is! String || data.isNotEmpty) {
+
       delta = document.replace(index, len, data);
+
       var shouldRetainDelta = toggledStyle.isNotEmpty &&
           delta.isNotEmpty &&
           delta.length <= 2 &&
@@ -113,7 +120,9 @@ class QuillController extends ChangeNotifier {
           shouldRetainDelta = false;
         }
       }
+
       if (shouldRetainDelta) {
+
         final retainDelta = Delta()
           ..retain(index)
           ..retain(data is String ? data.length : 1, toggledStyle.toJson());
@@ -144,6 +153,7 @@ class QuillController extends ChangeNotifier {
     if (ignoreFocus) {
       ignoreFocusOnTextChange = true;
     }
+
     notifyListeners();
     ignoreFocusOnTextChange = false;
   }
@@ -173,7 +183,10 @@ class QuillController extends ChangeNotifier {
     _updateSelection(textSelection, source);
     notifyListeners();
   }
+  void updateSelectionSilent(TextSelection textSelection, ChangeSource source) {
+    _updateSelection(textSelection, source);
 
+  }
   void compose(Delta delta, TextSelection textSelection, ChangeSource source) {
     if (delta.isNotEmpty) {
       document.compose(delta, source);

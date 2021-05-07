@@ -20,6 +20,7 @@ class _ButtonCircleNeutralState extends State<ButtonCircleNeutral> {
       onPressed: () {
         widget.onClick();
       },
+      focusNode: FocusNode(skipTraversal: true),
       minWidth: 0,
       elevation: 0.0,
       padding: EdgeInsets.zero,

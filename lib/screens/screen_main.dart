@@ -203,6 +203,9 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
     switch (vm.currentContainer.value) {
       case ShowingContainer.HeaderSelection:
         return topOffsetPage - 50;
+      case ShowingContainer.EditingTool:
+        return topOffsetPage - 60;
+
     }
     return topOffsetPage;
   }

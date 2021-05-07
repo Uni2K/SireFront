@@ -146,6 +146,7 @@ class _LinkDialogState extends State<_LinkDialog> {
       ),
       actions: [
         TextButton(
+
           onPressed: _link.isNotEmpty ? _applyLink : null,
           child: const Text('Apply'),
         ),
@@ -1189,6 +1190,7 @@ class QuillIconButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
         fillColor: fillColor,
         elevation: 0,
+        focusNode: FocusNode(skipTraversal: true),
         hoverElevation: hoverElevation,
         highlightElevation: hoverElevation,
         onPressed: onPressed,

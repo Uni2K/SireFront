@@ -23,6 +23,7 @@ class _ListTileEditorState extends State<ListTileEditor> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(5),
           child: InkWell(
+            canRequestFocus: false,
             borderRadius: BorderRadius.circular(5),
             onTap: () => {},
             // mouseCursor: resolvedMouseCursor,
