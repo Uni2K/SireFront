@@ -35,6 +35,7 @@ class _ButtonDefaultLightState extends State<ButtonDefaultLight> {
       focusElevation: 0,
       hoverElevation: 0,
       highlightElevation: 0,
+      focusNode: FocusNode(skipTraversal: true, descendantsAreFocusable: false),
       color: buttonBackgroundColor,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       //fillColor: Colors.white,

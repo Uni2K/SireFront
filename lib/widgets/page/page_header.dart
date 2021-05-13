@@ -1,19 +1,15 @@
+import 'dart:collection';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/style.dart';
-import 'package:get/get.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/objects/dto_header.dart';
-import 'package:sire/viewmodels/viewmodel_main.dart';
-import 'package:sire/widgets/input/inputfield_page.dart';
 import 'package:sire/widgets/input/inputfield_quill.dart';
-import 'package:sire/widgets/lists/list_snappable_combined.dart';
 
-class PageHeader extends StatefulWidget {
+class PageHeader extends StatelessWidget {
   PageHeader(
       {Key? key, this.content, required this.isDisable, this.onNextFocus})
       : super(key: key);
@@ -22,11 +18,6 @@ class PageHeader extends StatefulWidget {
   final bool isDisable;
   final ValueChanged<FocusNode>? onNextFocus;
 
-  @override
-  PageHeaderState createState() => PageHeaderState();
-}
-
-class PageHeaderState extends State<PageHeader> {
   List<FocusNode> focusNodes = List.empty(growable: true);
 
   @override
@@ -37,40 +28,46 @@ class PageHeaderState extends State<PageHeader> {
         widthViewer * 0.9);
     double height = widthPage * sqrt(2) * headerPercentage;
 
-    return AbsorbPointer(
-        absorbing: false,
-        child: Container(
-            padding: getPadding(),
-            margin: EdgeInsets.only(bottom: 10),
-            height: height + (widget.isDisable ? 10 : 0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                  color: widget.isDisable?highlightColor:Colors.transparent,
-                  width: 6,
-                  style: BorderStyle.solid),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.01),
-                  spreadRadius: 2,
-                  blurRadius: 3,
-                  offset: Offset(0, 1), // changes position of shadow
-                ),
-              ],
+    EdgeInsets getPadding() {
+      double width =
+          ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2));
+      double paddingTLR = paperMarginTLRRelative * width;
+      double paddingB = paperMarginBRelative * width;
+      return EdgeInsets.only(
+          left: paddingTLR, right: paddingTLR, top: paddingTLR);
+    }
+    return Container(
+        padding: getPadding(),
+        margin: EdgeInsets.only(bottom: 10),
+        height: height + (isDisable ? 10 : 0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+              color: isDisable ? highlightColor : Colors.transparent,
+              width: 6,
+              style: BorderStyle.solid),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.01),
+              spreadRadius: 2,
+              blurRadius: 3,
+              offset: Offset(0, 1), // changes position of shadow
             ),
-            width: ((MediaQuery.of(context).size.height * heightPercentage) /
-                    sqrt(2)) -
-                spacePages * 2,
-            child: Html(
-                style: {
-                  "body": Style(
-                    margin: EdgeInsets.all(0),
-                  ),
-                  // <-- remove the margin
-                  //  "p": Style(  width: 200)
-                },
-                customRender: getCustomRenderer(),
-                data: widget.content?.content ?? "")));
+          ],
+        ),
+        width: ((MediaQuery.of(context).size.height * heightPercentage) /
+                sqrt(2)) -
+            spacePages * 2,
+        child: Html(style: {
+          "body": Style(
+            margin: EdgeInsets.all(0),
+          ),
+          // <-- remove the margin
+          //  "p": Style(  width: 200)
+        },
+            customRender: getCustomRenderer(),
+
+            data: content?.content ?? ""));
   }
 
   List<FocusNode> getFocusNodes() {
@@ -79,20 +76,17 @@ class PageHeaderState extends State<PageHeader> {
 
   getCustomRenderer() {
     return {
-      "b": (RenderContext context, Widget child, Map<String, String> attributes,
-          _) {
+      "b": (RenderContext context, Widget child) {
         return generateInputField(child);
       },
-      "i": (RenderContext context, Widget child, Map<String, String> attributes,
-          _) {
+      "i": (RenderContext context, Widget child) {
         return generateInputField(child);
       },
-      "span": (RenderContext context, Widget child,
-          Map<String, String> attributes, _) {
+      "span": (RenderContext context, Widget child) {
         return generateInputField(child);
       },
-      "div": (RenderContext context, Widget child,
-          Map<String, String> attributes, _) {
+      "div": (RenderContext context, Widget child) {
+        Map attributes=context.tree.element?.attributes ?? Map();
         if (attributes["orientation"] != null &&
             attributes["orientation"] == "right") {
           return Container(
@@ -118,7 +112,7 @@ class PageHeaderState extends State<PageHeader> {
         for (var value in children) {
           if (value is TextSpan) {
             FocusNode focusNode = FocusNode(debugLabel: value.text);
-            if (focusNodes.length == 0 && !widget.isDisable) {
+            if (focusNodes.length == 0 && !isDisable) {
               focusNode.requestFocus();
             }
 
@@ -126,11 +120,9 @@ class PageHeaderState extends State<PageHeader> {
             String txt = value.text ?? "";
             List<String> paragraphs = txt.split("\\n");
             StringBuffer sb = new StringBuffer();
-            int maxLines = 1;
             for (String line in paragraphs) {
               if (line.isNotEmpty) {
                 sb.write(line.trim() + "\n");
-                maxLines++;
               }
             }
             String finalText = sb.toString();
@@ -138,7 +130,7 @@ class PageHeaderState extends State<PageHeader> {
             return InputfieldQuill(
               initialContent: finalText,
               style: containerSpan.style,
-              readOnly: widget.isDisable,
+              readOnly: isDisable,
             );
 
             /*   InputfieldPage(
@@ -155,14 +147,5 @@ class PageHeaderState extends State<PageHeader> {
     }
 
     return "";
-  }
-
-  EdgeInsets getPadding() {
-    double width =
-        ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2));
-    double paddingTLR = paperMarginTLRRelative * width;
-    double paddingB = paperMarginBRelative * width;
-    return EdgeInsets.only(
-        left: paddingTLR, right: paddingTLR, top: paddingTLR);
   }
 }

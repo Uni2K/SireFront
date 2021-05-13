@@ -475,6 +475,7 @@ Widget _selectHeadingStyleButtonBuilder(BuildContext context, Attribute? value,
             hoverElevation: 0,
             highlightElevation: 0,
             elevation: 0,
+            focusNode: FocusNode(skipTraversal: true, descendantsAreFocusable: false), //TODO changed this
             visualDensity: VisualDensity.compact,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
@@ -1190,7 +1191,7 @@ class QuillIconButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
         fillColor: fillColor,
         elevation: 0,
-        focusNode: FocusNode(skipTraversal: true),
+        focusNode: FocusNode(skipTraversal: true, descendantsAreFocusable: false),//TODO changed this
         hoverElevation: hoverElevation,
         highlightElevation: hoverElevation,
         onPressed: onPressed,
@@ -1236,6 +1237,7 @@ class _QuillDropdownButtonState<T> extends State<QuillDropdownButton<T>> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
         fillColor: widget.fillColor,
         elevation: 0,
+        focusNode: FocusNode(skipTraversal: true, descendantsAreFocusable: false),//TODO changed this
         hoverElevation: widget.hoverElevation,
         highlightElevation: widget.hoverElevation,
         onPressed: _showMenu,

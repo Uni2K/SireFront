@@ -53,14 +53,14 @@ class RawEditor extends StatefulWidget {
       this.keyboardAppearance,
       this.enableInteractiveSelection,
       this.scrollPhysics,
-      this.embedBuilder,)
+      this.embedBuilder, this.decider,)
       : assert(maxHeight == null || maxHeight > 0, 'maxHeight cannot be null'),
         assert(minHeight == null || minHeight >= 0, 'minHeight cannot be null'),
         assert(maxHeight == null || minHeight == null || maxHeight >= minHeight,
         'maxHeight cannot be null'),
         showCursor = showCursor ?? true,
         super(key: key);
-
+  final keyDecider decider;
   final QuillController controller;
   final FocusNode focusNode;
   final ScrollController scrollController;
@@ -150,6 +150,7 @@ class RawEditorState extends EditorState
     if (wordModifier && lineModifier) {
       return;
     }
+
     final selection = widget.controller.selection;
 
     var newSelection = widget.controller.selection;
@@ -724,6 +725,7 @@ class RawEditorState extends EditorState
       handleCursorMovement,
       handleShortcut,
       handleDelete,
+      widget.decider
     );
 
     if (defaultTargetPlatform == TargetPlatform.windows ||
@@ -795,7 +797,6 @@ class RawEditorState extends EditorState
     if (widget.focusNode != oldWidget.focusNode) {
       oldWidget.focusNode.removeListener(_handleFocusChanged);
       _focusAttachment?.detach();
-      print("attach Focus 1");
 
       _focusAttachment = widget.focusNode.attach(context,
           onKey: (node, event) {

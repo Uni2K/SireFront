@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:sire/constants/constant_color.dart';
 import 'package:sire/screens/screen_main.dart';
 
 import 'utils/util_server.dart';
@@ -33,7 +34,7 @@ class SireApp extends StatelessWidget {
           shortcuts: ignoredNavigationShortcuts(),
           title: 'Sire',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(),
+          theme: ThemeData(toggleableActiveColor:navigationBarBackgroundColor),
           home: ScreenMain(),
         ));
   }
@@ -50,7 +51,10 @@ class SireApp extends StatelessWidget {
               LogicalKeyboardKey.arrowLeft.keyLabel ||
           key.triggers.first.keyLabel ==
               LogicalKeyboardKey.arrowRight.keyLabel ||
-          key.triggers.first.keyLabel == LogicalKeyboardKey.space.keyLabel;
+          key.triggers.first.keyLabel == LogicalKeyboardKey.space.keyLabel ;
+        //  || key.triggers.first.keyLabel == LogicalKeyboardKey.tab.keyLabel;
+
+
     });
 
     return shortcuts;

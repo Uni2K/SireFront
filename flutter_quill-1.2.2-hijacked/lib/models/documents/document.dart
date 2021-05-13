@@ -235,7 +235,7 @@ class Document {
       throw ArgumentError.value(doc, 'Document Delta cannot be empty.');
     }
 
-    assert((doc.last.data as String).endsWith('\n'));
+    //assert((doc.last.data as String).endsWith('\n'));// TODO changed it
 
     var offset = 0;
     for (final op in doc.toList()) {

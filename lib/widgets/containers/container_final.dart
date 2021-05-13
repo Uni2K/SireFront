@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:sire/constants/constant_color.dart';
+import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_circle_socialmedia.dart';
 import 'package:sire/widgets/buttons/button_download.dart';
 import 'package:sire/widgets/misc/arrow_ready.dart';
 import 'package:sire/widgets/misc/arrow_small.dart';
 import 'package:sire/widgets/misc/text_sirestyle.dart';
 import 'package:sire/widgets/misc/textfield_selectable.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class ContainerFinal extends StatelessWidget {
   @override
@@ -68,7 +73,7 @@ class ContainerFinal extends StatelessWidget {
                         ButtonDownload(
                           text: "Herunterladen",
                           icon: FontAwesomeIcons.filePdf,
-                          onClick: () => null,
+                          onClick: () =>save(),
                         ),
                         SizedBox(
                           width: 10,
@@ -96,6 +101,38 @@ class ContainerFinal extends StatelessWidget {
                 )))
       ],
     );
+  }
+
+  save() {
+    //https://github.com/flutter/flutter/issues/33577
+
+    print("start1");
+    Printing.layoutPdf(onLayout: (PdfPageFormat format) async {
+      ViewModelMain viewModelMain = Get.put(ViewModelMain());
+
+      pw.Document doc = pw.Document(author: "Sire", title: "Title");
+      print("in1");
+
+      final image = await WidgetWraper.fromKey(
+        key: viewModelMain.pagePrototypeKey??GlobalKey(),
+        pixelRatio: 3.0, //Quality
+        // orientation: PdfImageOrientation.topLeft
+      );
+      print("in2");
+
+      doc.addPage(pw.Page(
+        margin: pw.EdgeInsets.all(0),
+          pageFormat: PdfPageFormat.a4,
+          build: (pw.Context context) {
+            return pw.Image(image, fit: pw.BoxFit.cover);
+          }));
+      print("in3");
+
+      return await doc.save();
+    });
+    print("start2");
+
+
   }
 
   List<Widget> getSocialMediaWidgets() {

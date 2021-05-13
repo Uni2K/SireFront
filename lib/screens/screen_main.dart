@@ -7,6 +7,7 @@ import 'package:flutter_quill/widgets/toolbar.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:printing/printing.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/objects/dto_header.dart';
@@ -25,16 +26,20 @@ import 'package:sire/widgets/page/interactive_page.dart';
 import 'package:sire/widgets/logos/logo_createdby.dart';
 import 'package:sire/widgets/logos/logo_sire.dart';
 import 'package:sire/widgets/misc/arrow_default.dart';
+import 'package:sire/widgets/page/page_prototype.dart';
 import 'package:sire/widgets/switchs/switcher_darkmode.dart';
 
 enum ShowingContainer { Welcome, HeaderSelection, EditingTool, Final }
 
 class ScreenMain extends StatefulWidget {
   GlobalKey<InteractivePageState> pageKey = GlobalKey();
+  GlobalKey<PagePrototypeState> pagePrototypeKey = GlobalKey();
 
   ScreenMain({Key? key}) : super(key: key) {
     ViewModelMain viewModelMain = Get.put(ViewModelMain());
     viewModelMain.interactivePageKey = pageKey;
+    viewModelMain.pagePrototypeKey = pagePrototypeKey;
+
   }
 
   @override
@@ -92,6 +97,7 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
               children: [
                 InteractivePage(
                   key: widget.pageKey,
+                  pageKey: widget.pagePrototypeKey,
                 ),
                 Align(
                   child: Container(
@@ -150,6 +156,8 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                         child: SizedBox(
                             width: widthPage,
                             child: QuillToolbar.basic(
+                              showListCheck: false,
+
                               controller: viewModelMain.currentController.value,
                             )),
                       ))),
@@ -183,6 +191,10 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                   ))))))
     ]);
   }
+
+
+
+
 
   Widget getShowingContainer() {
     ViewModelMain vm = Get.put(ViewModelMain());

@@ -24,6 +24,7 @@ class _ButtonDownloadState extends State<ButtonDownload> {
       minWidth: 0,
         padding: EdgeInsets.symmetric(horizontal: 17,vertical: 15),
       color: navigationBarBackgroundColor,
+      focusNode: FocusNode(skipTraversal: true, descendantsAreFocusable: false),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       //fillColor: Colors.white,
       child:Row(children: [FaIcon(widget.icon, color: Colors.white,size: 19,), SizedBox(width: 10,), Text(widget.text, style: TextStyle(fontSize: 15, color: Colors.white), )],),

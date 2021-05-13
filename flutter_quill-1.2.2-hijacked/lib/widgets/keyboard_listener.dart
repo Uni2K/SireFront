@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_quill/widgets/editor.dart';
 
 enum InputShortcut { CUT, COPY, PASTE, SELECT_ALL }
 
@@ -9,12 +10,12 @@ typedef InputShortcutCallback = void Function(InputShortcut? shortcut);
 typedef OnDeleteCallback = void Function(bool forward);
 
 class KeyboardListener {
-  KeyboardListener(this.onCursorMove, this.onShortcut, this.onDelete);
+  KeyboardListener(this.onCursorMove, this.onShortcut, this.onDelete, this.decider);
 
   final CursorMoveCallback onCursorMove;
   final InputShortcutCallback onShortcut;
   final OnDeleteCallback onDelete;
-
+  final keyDecider decider;
   static final Set<LogicalKeyboardKey> _moveKeys = <LogicalKeyboardKey>{
     LogicalKeyboardKey.arrowRight,
     LogicalKeyboardKey.arrowLeft,
@@ -63,43 +64,54 @@ class KeyboardListener {
   };
 
   bool handleRawKeyEvent(RawKeyEvent event) {
-    if (kIsWeb) {
-      // On web platform, we should ignore the key because it's processed already.
-      return false;
-    }
-
-    if (event is! RawKeyDownEvent) {
-      return false;
-    }
-
-    final keysPressed =
-        LogicalKeyboardKey.collapseSynonyms(RawKeyboard.instance.keysPressed);
-    final key = event.logicalKey;
     final isMacOS = event.data is RawKeyEventDataMacOs;
-    if (!_nonModifierKeys.contains(key) ||
-        keysPressed
-                .difference(isMacOS ? _macOsModifierKeys : _modifierKeys)
-                .length >
-            1 ||
-        keysPressed.difference(_interestingKeys).isNotEmpty) {
+
+    if(event is RawKeyDownEvent&&(event.data.keyLabel=='Enter' || event.data.keyLabel=='Tab'  ) && !decider.call(event.logicalKey)  ) {
+      /*onCursorMove(
+          LogicalKeyboardKey.arrowDown,
+          isMacOS ? event.isAltPressed : false,
+          isMacOS ? event.isMetaPressed : false,
+          false);*/
+
+      return true;
+    }
+      if (kIsWeb) {
+        // On web platform, we should ignore the key because it's processed already.
+        return false;
+      }
+
+      if (event is! RawKeyDownEvent) {
+        return false;
+      }
+
+      final keysPressed =
+      LogicalKeyboardKey.collapseSynonyms(RawKeyboard.instance.keysPressed);
+      final key = event.logicalKey;
+      if (!_nonModifierKeys.contains(key) ||
+          keysPressed
+              .difference(isMacOS ? _macOsModifierKeys : _modifierKeys)
+              .length >
+              1 ||
+          keysPressed.difference(_interestingKeys).isNotEmpty) {
+        return false;
+      }
+
+      if (_moveKeys.contains(key)) {
+        onCursorMove(
+            key,
+            isMacOS ? event.isAltPressed : event.isControlPressed,
+            isMacOS ? event.isMetaPressed : event.isAltPressed,
+            event.isShiftPressed);
+      } else if (isMacOS
+          ? event.isMetaPressed
+          : event.isControlPressed && _shortcutKeys.contains(key)) {
+        onShortcut(_keyToShortcut[key]);
+      } else if (key == LogicalKeyboardKey.delete) {
+        onDelete(true);
+      } else if (key == LogicalKeyboardKey.backspace) {
+        onDelete(false);
+      }
       return false;
     }
 
-    if (_moveKeys.contains(key)) {
-      onCursorMove(
-          key,
-          isMacOS ? event.isAltPressed : event.isControlPressed,
-          isMacOS ? event.isMetaPressed : event.isAltPressed,
-          event.isShiftPressed);
-    } else if (isMacOS
-        ? event.isMetaPressed
-        : event.isControlPressed && _shortcutKeys.contains(key)) {
-      onShortcut(_keyToShortcut[key]);
-    } else if (key == LogicalKeyboardKey.delete) {
-      onDelete(true);
-    } else if (key == LogicalKeyboardKey.backspace) {
-      onDelete(false);
-    }
-    return false;
-  }
 }

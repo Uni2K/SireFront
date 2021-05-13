@@ -113,6 +113,8 @@ Widget _defaultEmbedBuilder(BuildContext context, leaf.Embed node) {
   }
 }
 
+typedef keyDecider= bool Function(LogicalKeyboardKey key);
+
 class QuillEditor extends StatefulWidget {
   const QuillEditor(
       {required this.controller,
@@ -139,13 +141,14 @@ class QuillEditor extends StatefulWidget {
       this.onSingleLongTapStart,
       this.onSingleLongTapMoveUpdate,
       this.onSingleLongTapEnd,
-      this.embedBuilder = _defaultEmbedBuilder});
+      this.embedBuilder = _defaultEmbedBuilder, required this.decider});
 
   factory QuillEditor.basic({
     required QuillController controller,
     required bool readOnly,
   }) {
     return QuillEditor(
+
         controller: controller,
         scrollController: ScrollController(),
         scrollable: true,
@@ -153,9 +156,10 @@ class QuillEditor extends StatefulWidget {
         autoFocus: true,
         readOnly: readOnly,
         expands: false,
+        decider: (x){return true;},
         padding: EdgeInsets.zero);
   }
-
+  final keyDecider decider;
   final QuillController controller;
   final FocusNode focusNode;
   final ScrollController scrollController;
@@ -300,7 +304,8 @@ class _QuillEditorState extends State<QuillEditor>
           widget.keyboardAppearance,
           widget.enableInteractiveSelection,
           widget.scrollPhysics,
-          widget.embedBuilder),
+          widget.embedBuilder, widget.decider,
+      ),
     );
   }
 

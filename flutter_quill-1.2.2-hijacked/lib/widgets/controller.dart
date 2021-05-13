@@ -172,10 +172,13 @@ class QuillController extends ChangeNotifier {
     if (selection != adjustedSelection) {
       _updateSelection(adjustedSelection, ChangeSource.LOCAL);
     }
+
     notifyListeners();
   }
 
   void formatSelection(Attribute? attribute) {
+    print("toggle   ${attribute}");
+
     formatText(selection.start, selection.end - selection.start, attribute);
   }
 

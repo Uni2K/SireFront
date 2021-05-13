@@ -36,6 +36,8 @@ class _ButtonScaleState extends State<ButtonScale> {
     return IntrinsicHeight(
         child: Row(mainAxisSize: MainAxisSize.min, children: [
       MaterialButton(
+        focusNode: FocusNode(skipTraversal: true, descendantsAreFocusable: false),
+
         onPressed: () {
           disabled = true;
           _value = 1;
@@ -94,6 +96,7 @@ class _ButtonScaleState extends State<ButtonScale> {
             child: Slider(
               value: _value,
               min: minScale,
+              focusNode: FocusNode(skipTraversal: true, descendantsAreFocusable: false),
               max: maxScale,
               label: '${(_value * 100).round()}%',
               divisions: ((maxScale - minScale) * 10).round(),

@@ -9,12 +9,13 @@ import 'package:sire/widgets/page/page_prototype.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../misc/interactive_viewer_adjusted.dart';
 import 'package:sire/widgets/misc/interactive_viewer_adjusted.dart'
-as TrafoController;
+    as TrafoController;
 
 class InteractivePage extends StatefulWidget {
   GlobalKey<InteractiveViewerAdjustedState> viewerKey = GlobalKey();
+  final GlobalKey<PagePrototypeState> pageKey;
 
-  InteractivePage({GlobalKey? key}) : super(key: key);
+  InteractivePage({GlobalKey? key, required this.pageKey}) : super(key: key);
 
   @override
   InteractivePageState createState() => InteractivePageState();
@@ -38,17 +39,16 @@ class InteractivePageState extends State<InteractivePage>
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
   }
 
-
   @override
   void dispose() {
     pageAnimator.dispose();
     super.dispose();
   }
+
   double dp(double val, int places) {
     num mod = pow(10.0, places);
     return ((val * mod).round().toDouble() / mod);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -56,36 +56,23 @@ class InteractivePageState extends State<InteractivePage>
     controller = TrafoController.TransformationController(matrix4);
 
     ///dimensions of viewer and child
-    widthViewer = MediaQuery
-        .of(context)
-        .size
-        .width * viewerWidth;
-    heightViewer = MediaQuery
-        .of(context)
-        .size
-        .height;
+    widthViewer = MediaQuery.of(context).size.width * viewerWidth;
+    heightViewer = MediaQuery.of(context).size.height;
     double widthPage = min(
-        MediaQuery
-            .of(context)
-            .size
-            .height * heightPercentage,
+        MediaQuery.of(context).size.height * heightPercentage,
         widthViewer * 0.9);
     double heightPage = widthPage * sqrt(2);
 
     ///needed to constrain the focal points to the vertical axis, the second value is not used
-    fixedFocalPoint = Offset(dp(widthViewer / 2,2), dp(heightViewer / 2,2));
+    fixedFocalPoint = Offset(dp(widthViewer / 2, 2), dp(heightViewer / 2, 2));
 
     ///start position
-    topOffsetStart =dp( MediaQuery
-        .of(context)
-        .size
-        .height / 5,2);
+    topOffsetStart = dp(MediaQuery.of(context).size.height / 5, 2);
     double diff = widthViewer - widthPage;
-    diffHalf = dp(diff / 2,2);
+    diffHalf = dp(diff / 2, 2);
     controller.value.translate(diffHalf, topOffsetStart);
 
     controller.addListener(() {
-
       ///limits the page at top and bottom
       Vector3 tr = controller.value.getTranslation();
       bool set = false;
@@ -124,7 +111,10 @@ class InteractivePageState extends State<InteractivePage>
             transformationController: controller,
             child: Center(
               child: Container(
-                  height: heightPage, width: widthPage, child: PagePrototype()),
+                  height: heightPage,
+                  width: widthPage,
+                  child: RepaintBoundary(
+                      key: widget.pageKey, child: PagePrototype())),
             ),
           )),
     );
@@ -132,7 +122,6 @@ class InteractivePageState extends State<InteractivePage>
 
   TickerFuture resetPage() {
     Vector3 endTranslation = Vector3(diffHalf, topOffsetStart, 0);
-    print("RESET TRANS: $endTranslation");
     return translateScaleAnimation(1, endTranslation);
   }
 
@@ -143,69 +132,59 @@ class InteractivePageState extends State<InteractivePage>
     pageAnimator =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
 
-
-
-    if(scale!=null) {
-     double currentScale = controller.value.getMaxScaleOnAxis();
-     Animation<double> scaleAnimation =
-     Tween<double>(begin: currentScale, end: scale).animate(
-       CurvedAnimation(
-         parent: pageAnimator,
-         curve: Interval(
-           0.0,
-           endTranslation == null ? 1 : 0.6,
-           curve: Curves.ease,
-         ),
-       ),
-     );
-     scaleAnimation.addListener(() {
-       double value = scaleAnimation.value;
-       if (value != scale)
-         widget.viewerKey.currentState?.receivedPointerSignal(event, false,
-             scaleChangeFix: value);
-     });
-   }
+    if (scale != null) {
+      double currentScale = controller.value.getMaxScaleOnAxis();
+      Animation<double> scaleAnimation =
+          Tween<double>(begin: currentScale, end: scale).animate(
+        CurvedAnimation(
+          parent: pageAnimator,
+          curve: Interval(
+            0.0,
+            endTranslation == null ? 1 : 0.6,
+            curve: Curves.ease,
+          ),
+        ),
+      );
+      scaleAnimation.addListener(() {
+        double value = scaleAnimation.value;
+        if (value != scale)
+          widget.viewerKey.currentState
+              ?.receivedPointerSignal(event, false, scaleChangeFix: value);
+      });
+    }
     if (endTranslation != null) {
       Vector3 currentTranslation = controller.value.getTranslation();
 
       Animation<Vector3> translateAnimation =
-      Tween<Vector3>(begin: currentTranslation, end: endTranslation)
-          .animate(CurvedAnimation(
+          Tween<Vector3>(begin: currentTranslation, end: endTranslation)
+              .animate(CurvedAnimation(
         parent: pageAnimator,
         curve: Interval(
-          scale==null?0:0.61,
+          scale == null ? 0 : 0.61,
           1,
           curve: Curves.ease,
         ),
       ));
       translateAnimation.addListener(() {
-       translateBy(Offset(endTranslation.x, endTranslation.y));
-
+        translateBy(Offset(endTranslation.x, endTranslation.y));
       });
-
     }
 
-
     pageAnimator.reset();
-   return pageAnimator.forward();
+    return pageAnimator.forward();
   }
 
-
   void animateScaleTo(double target) {
-
     translateScaleAnimation(target, null);
   }
 
-
   void translateBy(Offset d) {
-    Vector3 translation=  controller.value.getTranslation();
-    d= Offset(translation.x-d.dx, translation.y-d.dy);
-    if((d.dx==0 ||d.dx==-0) && (d.dy==0 || d.dy==-0))return;
-
-    print("listener   ${d} ");
-    PointerSignalEvent event = PointerScrollEvent(position: fixedFocalPoint, scrollDelta:d);
+    Vector3 translation = controller.value.getTranslation();
+    d = Offset(translation.x - d.dx, translation.y - d.dy);
+    if ((d.dx == 0 || d.dx == -0) && (d.dy == 0 || d.dy == -0)) return;
+    PointerSignalEvent event =
+        PointerScrollEvent(position: fixedFocalPoint, scrollDelta: d);
     widget.viewerKey.currentState?.receivedPointerSignal(event, true); //
-   // translateScaleAnimation(null, translation);
-
+    // translateScaleAnimation(null, translation);
   }
 }

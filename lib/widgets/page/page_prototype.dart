@@ -80,8 +80,8 @@ class PagePrototypeState extends State<PagePrototype>
     return /* DecoratedBoxTransition(
 
         position: DecorationPosition.background,
-        decoration: decorationTween.animate(_controller), //TODO uncomment-> sk delegate error
-        child: */
+        decoration: decorationTween.animate(_controller),
+        child:*/
         Container(
             decoration: BoxDecoration(      color: Colors.white,
                 boxShadow: [
@@ -103,8 +103,7 @@ class PagePrototypeState extends State<PagePrototype>
                         Flexible(
                             flex: (headerPercentage * 10).round(),
                             fit: FlexFit.tight,
-                            child: Obx(() => AnimatedContainer(
-                                  child: PageHeader(
+                            child: Obx(() => Container(child: PageHeader(
                                     isDisable: false,
                                     content: viewModelMain.currentHeader.value,
                                   ),
@@ -113,32 +112,22 @@ class PagePrototypeState extends State<PagePrototype>
                                           color: _colorHeader.value,
                                           width: 6,
                                           style: BorderStyle.solid)),
-                                  onEnd: () {
-                                    if (_colorHeader.value != Colors.white)
-                                      _colorHeader.value = Colors.white;
-                                  },
-                                  duration: Duration(
-                                      milliseconds: milliSecondDuration),
-                                ))),
+                            ))),
                         SizedBox(
                           height: 20,
                         ),
                         Flexible(
                             flex: ((1 - headerPercentage) * 10).round(),
                             fit: FlexFit.loose,
-                            child: Obx(() => AnimatedContainer(
+                            child: Obx(() => Container(
                                   child: PageBody(),
                                   decoration: BoxDecoration(
                                       border: Border.all(
                                           color: _colorBody.value,
                                           width: 6,
                                           style: BorderStyle.solid)),
-                                  onEnd: () {
-                                    if (_colorBody.value != Colors.white)
-                                      _colorBody.value = Colors.white;
-                                  },
-                                  duration: Duration(
-                                      milliseconds: milliSecondDuration),
+
+
                                 ))),
                       ],
                     ))));
