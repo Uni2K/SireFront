@@ -1,28 +1,18 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
-import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/screens/screen_main.dart';
-import 'package:sire/utils/util_server.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_default_light.dart';
 import 'package:sire/widgets/lists/list_snappable_combined.dart';
 import 'package:sire/widgets/misc/arrow_small.dart';
 import 'package:sire/widgets/page/page_header.dart';
 
-class ContainerHeader extends StatefulWidget {
+class ContainerHeader extends StatelessWidget {
   ContainerHeader({Key? key}) : super(key: key);
 
-  @override
-  _ContainerHeaderState createState() => _ContainerHeaderState();
-}
-
-class _ContainerHeaderState extends State<ContainerHeader> {
-  ViewModelMain viewModelMain = Get.put(ViewModelMain());
+  final ViewModelMain viewModelMain = Get.put(ViewModelMain());
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +38,7 @@ class _ContainerHeaderState extends State<ContainerHeader> {
                 Expanded(child:Center(child:Text(
                   "Wählen Sie einen passenden Headerbereich aus:",
                   style: TextStyle(
-                      fontSize: 20, color: navigationBarBackgroundColor),
+                      fontSize: 20, color: primaryColor),
                 ))),SizedBox(width: 10,),
                 ArrowSmall()
               ],

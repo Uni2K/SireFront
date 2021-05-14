@@ -1,13 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-
-class DTOHeader{
-
+/// Represents a header of the page prototype, also used in the header selection list
+class DTOHeader {
   String? content;
   String? name;
+
   DTOHeader(this.content, this.name);
 
   DTOHeader.dummy();
-
-
 }

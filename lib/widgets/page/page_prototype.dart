@@ -1,13 +1,10 @@
-import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
-import 'package:sire/utils/util_server.dart';
+import 'package:sire/utils/util_size.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 
 import 'page_body.dart';
@@ -22,10 +19,11 @@ class PagePrototype extends StatefulWidget {
 
 class PagePrototypeState extends State<PagePrototype>
     with SingleTickerProviderStateMixin {
+
   Rx<Color> _colorHeader = Colors.white.obs;
   Rx<Color> _colorBody = Colors.white.obs;
-
-  int milliSecondDuration = 500;
+  late AnimationController _controller;
+ final int milliSecondDuration = 500;
 
   final DecorationTween decorationTween = DecorationTween(
     begin: BoxDecoration(
@@ -54,7 +52,6 @@ class PagePrototypeState extends State<PagePrototype>
     ),
   );
 
-  late AnimationController _controller;
 
   @override
   initState() {
@@ -64,7 +61,7 @@ class PagePrototypeState extends State<PagePrototype>
     );
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) =>
-        _controller.forward()); //i add this to access the context safely.
+        _controller.forward());
   }
 
   @override
@@ -145,8 +142,7 @@ class PagePrototypeState extends State<PagePrototype>
   }
 
   EdgeInsets getPadding() {
-    double width =
-        ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2));
+    double width =UtilSize.getPageWidth(context);
 
     double paddingTLR = paperMarginTLRRelative * width;
     double paddingB = paperMarginBRelative * width;

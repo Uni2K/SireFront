@@ -1,10 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:sire/constants/constant_dimensions.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
+import 'package:sire/utils/util_size.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/page/page_header.dart';
 
@@ -14,16 +11,16 @@ class ListSnappableCombined extends StatefulWidget {
       : super(key: key);
 
   final ValueChanged<int> onFocused;
-  int selectedIndex = -1;
   final List<PageHeader> contentPages;
-
-  GlobalKey<ScrollSnapListState> snaplistKey = GlobalKey();
+  final GlobalKey<ScrollSnapListState> snaplistKey = GlobalKey();
 
   @override
   ListSnappableCombinedState createState() => ListSnappableCombinedState();
 }
 
 class ListSnappableCombinedState extends State<ListSnappableCombined> {
+  int selectedIndex = -1;
+
   @override
   void initState() {
     super.initState();
@@ -34,12 +31,9 @@ class ListSnappableCombinedState extends State<ListSnappableCombined> {
 
   @override
   Widget build(BuildContext context) {
-    double widthViewer = MediaQuery.of(context).size.width * viewerWidth;
-    double widthPage = min(
-        MediaQuery.of(context).size.height * heightPercentage,
-        widthViewer * 0.9);
-    double height = widthPage * sqrt(2) * headerPercentage * 0.2;
-    widget.selectedIndex = 0;
+    double widthPage = UtilSize.getPageWidth(context);
+    double height = UtilSize.getHeaderHeigth(context);
+    selectedIndex = 0;
     return Container(
         width: widthPage,
         child: ScrollSnapList(
@@ -65,7 +59,7 @@ class ListSnappableCombinedState extends State<ListSnappableCombined> {
           padding: EdgeInsets.zero,
           onItemFocus: (int) {
             widget.onFocused(int);
-            widget.selectedIndex = int;
+            selectedIndex = int;
           },
         ));
   }

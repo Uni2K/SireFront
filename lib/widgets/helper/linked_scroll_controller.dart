@@ -125,11 +125,7 @@ class _LinkedScrollController extends ScrollController {
       : super(
       initialScrollOffset: initialScrollOffset, keepScrollOffset: false);
 
-  @override
-  void dispose() {
-   // _controllers._allControllers.remove(this);
-  //  super.dispose();
-  }
+
 
   @override
   void attach(ScrollPosition position) {
@@ -206,9 +202,7 @@ class _LinkedScrollPosition extends ScrollPositionWithSingleContext {
     context: context,
     initialPixels: initialPixels,
     oldPosition: oldPosition,
-  ) {
-    assert(owner != null);
-  }
+  );
 
   final _LinkedScrollController owner;
 

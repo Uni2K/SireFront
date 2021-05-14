@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:sire/constants/constant_color.dart';
@@ -7,8 +6,7 @@ import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_circle_socialmedia.dart';
 import 'package:sire/widgets/buttons/button_download.dart';
 import 'package:sire/widgets/misc/arrow_ready.dart';
-import 'package:sire/widgets/misc/arrow_small.dart';
-import 'package:sire/widgets/misc/text_sirestyle.dart';
+import 'package:sire/widgets/misc/text_thanks.dart';
 import 'package:sire/widgets/misc/textfield_selectable.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -29,7 +27,7 @@ class ContainerFinal extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    TextSirestyle(),
+                    TextThanks(),
                     Flexible(
                         child: Text(
                       "dass Sie Sire verwendet haben.\nErzählen Sie gerne Ihren Freunden/-innen davon.",

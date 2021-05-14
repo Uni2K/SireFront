@@ -1,10 +1,8 @@
 import 'dart:math';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:sire/constants/constant_dimensions.dart';
-import 'package:sire/viewmodels/viewmodel_main.dart';
+import 'package:sire/utils/util_size.dart';
 import 'package:sire/widgets/page/page_prototype.dart';
 import 'package:vector_math/vector_math_64.dart';
 import '../misc/interactive_viewer_adjusted.dart';
@@ -12,7 +10,7 @@ import 'package:sire/widgets/misc/interactive_viewer_adjusted.dart'
     as TrafoController;
 
 class InteractivePage extends StatefulWidget {
-  GlobalKey<InteractiveViewerAdjustedState> viewerKey = GlobalKey();
+  final GlobalKey<InteractiveViewerAdjustedState> viewerKey = GlobalKey();
   final GlobalKey<PagePrototypeState> pageKey;
 
   InteractivePage({GlobalKey? key, required this.pageKey}) : super(key: key);
@@ -45,10 +43,7 @@ class InteractivePageState extends State<InteractivePage>
     super.dispose();
   }
 
-  double dp(double val, int places) {
-    num mod = pow(10.0, places);
-    return ((val * mod).round().toDouble() / mod);
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,20 +51,18 @@ class InteractivePageState extends State<InteractivePage>
     controller = TrafoController.TransformationController(matrix4);
 
     ///dimensions of viewer and child
-    widthViewer = MediaQuery.of(context).size.width * viewerWidth;
-    heightViewer = MediaQuery.of(context).size.height;
-    double widthPage = min(
-        MediaQuery.of(context).size.height * heightPercentage,
-        widthViewer * 0.9);
-    double heightPage = widthPage * sqrt(2);
+    widthViewer =UtilSize.getViewerWidth(context);
+    heightViewer = UtilSize.getViewerHeight(context);
+    double widthPage =UtilSize.getPageWidth(context);
+    double heightPage = UtilSize.getPageHeight(context);
 
     ///needed to constrain the focal points to the vertical axis, the second value is not used
-    fixedFocalPoint = Offset(dp(widthViewer / 2, 2), dp(heightViewer / 2, 2));
+    fixedFocalPoint = Offset(UtilSize.dp(widthViewer / 2, 2), UtilSize.dp(heightViewer / 2, 2));
 
     ///start position
-    topOffsetStart = dp(MediaQuery.of(context).size.height / 5, 2);
+    topOffsetStart = UtilSize.getPageOffsetTop(context);
     double diff = widthViewer - widthPage;
-    diffHalf = dp(diff / 2, 2);
+    diffHalf = UtilSize.dp(diff / 2, 2);
     controller.value.translate(diffHalf, topOffsetStart);
 
     controller.addListener(() {

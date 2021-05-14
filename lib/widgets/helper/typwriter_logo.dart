@@ -1,9 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:characters/characters.dart';
 import 'package:flutter/material.dart';
-import 'package:characters/characters.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_html/html_parser.dart';
 import 'package:sire/constants/constant_color.dart';
 
 /// Animated Text that displays a [Text] element as if it is being typed one
@@ -111,7 +108,7 @@ class TypewriterAnimatedTextLogo extends AnimatedText {
                   child: Text(
              cursor,
             style: TextStyle(
-           color: showCursor?navigationBarBackgroundColor: Colors.transparent,
+           color: showCursor?primaryColor: Colors.transparent,
               fontFamily: "Tower",
               fontWeight: FontWeight.bold,
             ),

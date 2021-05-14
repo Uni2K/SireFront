@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_quill/models/documents/document.dart';
 import 'package:flutter_quill/widgets/controller.dart';
 import 'package:get/get.dart';
 import 'package:sire/objects/dto_configuration.dart';
@@ -9,15 +8,23 @@ import 'package:sire/widgets/page/interactive_page.dart';
 import 'package:sire/widgets/page/page_prototype.dart';
 
 class ViewModelMain extends GetxController {
+
+  //Keys
   GlobalKey<InteractivePageState>? interactivePageKey;
   GlobalKey<PagePrototypeState>? pagePrototypeKey;
+
+  //View related
   Rx<ShowingContainer> currentContainer = ShowingContainer.Final.obs;
   RxList<DTOHeader> headerCached = List<DTOHeader>.empty(growable: true).obs;
-  Rx<DTOConfiguration> configuration = DTOConfiguration.empty().obs;
   Rx<DTOHeader> currentHeader = DTOHeader.dummy().obs;
+  Rx<QuillController> currentController = QuillController.basic().obs;
+
+  //General
+  Rx<DTOConfiguration> configuration = DTOConfiguration.empty().obs;
   RxBool isCurrentlyTouched = false.obs;
   RxBool isEditingStarted=false.obs; //as soon as a controller is set
-  Rx<QuillController> currentController = QuillController.basic().obs;
+
+
 
   ///saves the initial content for fast access
   void setServerContent(Map<String, dynamic>? data) {

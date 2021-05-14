@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/screens/screen_main.dart';
@@ -34,7 +33,7 @@ class SireApp extends StatelessWidget {
           shortcuts: ignoredNavigationShortcuts(),
           title: 'Sire',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(toggleableActiveColor:navigationBarBackgroundColor),
+          theme: ThemeData(toggleableActiveColor:primaryColor),
           home: ScreenMain(),
         ));
   }

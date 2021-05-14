@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sire/constants/constant_color.dart';
 
-class ArrowDefault extends StatefulWidget {
+class ArrowDefault extends StatelessWidget {
   ArrowDefault({Key? key}) : super(key: key);
 
-  @override
-  _ArrowDefaultState createState() => _ArrowDefaultState();
-}
-
-class _ArrowDefaultState extends State<ArrowDefault> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,7 +12,7 @@ class _ArrowDefaultState extends State<ArrowDefault> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-        Text("Direkt hier\nbearbeiten", style: TextStyle(color: navigationBarBackgroundColor, fontSize: 20),),
+        Text("Direkt hier\nbearbeiten", style: TextStyle(color: primaryColor, fontSize: 20),),
 
         Transform.rotate(
           origin: Offset(-5,-25),
@@ -35,7 +30,7 @@ class MyPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Path path = Path();
     Paint paint = Paint()
-      ..color = navigationBarBackgroundColor
+      ..color = primaryColor
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;

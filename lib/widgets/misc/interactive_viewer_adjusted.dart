@@ -88,18 +88,11 @@ class InteractiveViewerAdjusted extends StatefulWidget {
       required this.fixedFocalPoint,
       required this.heightParent,
       required this.heightChild})
-      : assert(alignPanAxis != null),
-        assert(child != null),
-        assert(constrained != null),
-        assert(minScale != null),
-        assert(minScale > 0),
+      : assert(minScale > 0),
         assert(minScale.isFinite),
-        assert(maxScale != null),
         assert(maxScale > 0),
         assert(!maxScale.isNaN),
         assert(maxScale >= minScale),
-        assert(panEnabled != null),
-        assert(scaleEnabled != null),
         // boundaryMargin must be either fully infinite or fully finite, but not
         // a mix of both.
         assert(
@@ -839,10 +832,8 @@ class InteractiveViewerAdjustedState extends State<InteractiveViewerAdjusted>
         // previous call to _onScaleUpdate.
         final double desiredScale = _scaleStart! * details.scale;
         final double scaleChange = desiredScale / scale;
-        transformationController!.value = _matrixScale(
-          transformationController!.value,
-          scaleChange
-        );
+        transformationController!.value =
+            _matrixScale(transformationController!.value, scaleChange);
 
         // While scaling, translate such that the user's two fingers stay on
         // the same places in the scene. That means that the focal point of
@@ -974,13 +965,13 @@ class InteractiveViewerAdjustedState extends State<InteractiveViewerAdjusted>
   double? savedYCoordinate;
 
   // Handle mousewheel scroll events.
-  void receivedPointerSignal(PointerSignalEvent event, bool wheel, {double? scaleChangeFix}) {
+  void receivedPointerSignal(PointerSignalEvent event, bool wheel,
+      {double? scaleChangeFix}) {
     if (event is PointerScrollEvent) {
       // Ignore left and right scroll.
-      if (event.scrollDelta.dy == 0.0 && scaleChangeFix==null) {
+      if (event.scrollDelta.dy == 0.0 && scaleChangeFix == null) {
         return;
       }
-
 
       if (savedYCoordinate == null) {
         savedYCoordinate = event.position.dy;
@@ -993,25 +984,15 @@ class InteractiveViewerAdjustedState extends State<InteractiveViewerAdjusted>
       Offset constrainedFocalPoint =
           Offset(widget.fixedFocalPoint.dx, event.localPosition.dy);
 
-      if(wheel){
+      if (wheel) {
         //scroll
         transformationController!.value = matrixTranslate(
           transformationController!.value,
-        -event.scrollDelta*0.45,
+          -event.scrollDelta * 0.45,
         );
-
-
 
         return;
       }
-
-
-
-
-
-
-
-
 
       widget.onInteractionStart?.call(
         ScaleStartDetails(
@@ -1026,52 +1007,14 @@ class InteractiveViewerAdjustedState extends State<InteractiveViewerAdjusted>
       // trackpads and mousewheels on all platforms.
       double scaleChange = math.exp(-event.scrollDelta.dy / 3000);
       if (scaleChangeFix != null) {
-        double currentScale=transformationController!.value.getMaxScaleOnAxis();
-        scaleChange = scaleChangeFix/currentScale;
+        double currentScale =
+            transformationController!.value.getMaxScaleOnAxis();
+        scaleChange = scaleChangeFix / currentScale;
       }
 
-        //jan: lock the focalpoint when the position is not changed -> looks better when scrolling in out
+      //jan: lock the focalpoint when the position is not changed -> looks better when scrolling in out
 
-        if (!_gestureIsSupported(_GestureType.scale)) {
-          widget.onInteractionUpdate?.call(ScaleUpdateDetails(
-            focalPoint: constrainedFocalPoint,
-            localFocalPoint: constrainedFocalPoint,
-            rotation: 0.0,
-            scale: scaleChange,
-            horizontalScale: 1.0,
-            verticalScale: 1.0,
-          ));
-          widget.onInteractionEnd?.call(ScaleEndDetails());
-          return;
-        }
-
-        Offset focalPointScene = transformationController!.toScene(
-          constrainedFocalPoint,
-        );
-
-        // print("s: $savedLocalPositionScene    $savedYCoordinate           $constrainedFocalPoint");
-
-        if (savedLocalPositionScene != null) {
-          focalPointScene = savedLocalPositionScene!;
-        } else {
-          savedLocalPositionScene = focalPointScene;
-        }
-
-        transformationController!.value = _matrixScale(
-            transformationController!.value,
-            scaleChange
-        );
-
-        // After scaling, translate such that the event's position is at the
-        // same scene point before and after the scale.
-        final Offset focalPointSceneScaled = transformationController!.toScene(
-          constrainedFocalPoint,
-        );
-        transformationController!.value = matrixTranslate(
-          transformationController!.value,
-          focalPointSceneScaled - focalPointScene,
-        );
-
+      if (!_gestureIsSupported(_GestureType.scale)) {
         widget.onInteractionUpdate?.call(ScaleUpdateDetails(
           focalPoint: constrainedFocalPoint,
           localFocalPoint: constrainedFocalPoint,
@@ -1081,8 +1024,44 @@ class InteractiveViewerAdjustedState extends State<InteractiveViewerAdjusted>
           verticalScale: 1.0,
         ));
         widget.onInteractionEnd?.call(ScaleEndDetails());
+        return;
       }
 
+      Offset focalPointScene = transformationController!.toScene(
+        constrainedFocalPoint,
+      );
+
+      // print("s: $savedLocalPositionScene    $savedYCoordinate           $constrainedFocalPoint");
+
+      if (savedLocalPositionScene != null) {
+        focalPointScene = savedLocalPositionScene!;
+      } else {
+        savedLocalPositionScene = focalPointScene;
+      }
+
+      transformationController!.value =
+          _matrixScale(transformationController!.value, scaleChange);
+
+      // After scaling, translate such that the event's position is at the
+      // same scene point before and after the scale.
+      final Offset focalPointSceneScaled = transformationController!.toScene(
+        constrainedFocalPoint,
+      );
+      transformationController!.value = matrixTranslate(
+        transformationController!.value,
+        focalPointSceneScaled - focalPointScene,
+      );
+
+      widget.onInteractionUpdate?.call(ScaleUpdateDetails(
+        focalPoint: constrainedFocalPoint,
+        localFocalPoint: constrainedFocalPoint,
+        rotation: 0.0,
+        scale: scaleChange,
+        horizontalScale: 1.0,
+        verticalScale: 1.0,
+      ));
+      widget.onInteractionEnd?.call(ScaleEndDetails());
+    }
   }
 
   // Handle inertia drag animation.
@@ -1203,7 +1182,7 @@ class InteractiveViewerAdjustedState extends State<InteractiveViewerAdjusted>
     // the child.
     return Listener(
       key: _parentKey,
-      onPointerSignal: (_) => receivedPointerSignal(_,true),
+      onPointerSignal: (_) => receivedPointerSignal(_, true),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         // Necessary when panning off screen.

@@ -42,7 +42,7 @@ class ContainerWelcome extends StatelessWidget {
                 maxLines: 1,
                 softWrap: false,
                 style: TextStyle(
-                    fontSize: 30, color: navigationBarBackgroundColor),
+                    fontSize: 30, color: primaryColor),
                 textAlign: TextAlign.center,
               ),
               SizedBox(

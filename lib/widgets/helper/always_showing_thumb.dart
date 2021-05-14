@@ -42,7 +42,7 @@ class AlwaysShowingThumb extends RoundSliderThumbShape {
       enableAnimation: enableAnimation,
       labelPainter: labelPainter,
       parentBox: parentBox,
-      sliderTheme: sliderTheme.copyWith(thumbColor: navigationBarBackgroundColor),
+      sliderTheme: sliderTheme.copyWith(thumbColor: primaryColor),
       value: value,
       textScaleFactor: 0.4,
       sizeWithOverflow: sizeWithOverflow,
@@ -113,7 +113,6 @@ class _RectangularSliderValueIndicatorPathPainter {
       TextPainter labelPainter,
       double textScaleFactor,
       ) {
-    assert(labelPainter != null);
     return Size(
       _upperRectangleWidth(labelPainter, 1, textScaleFactor),
       labelPainter.height + _labelPadding,

@@ -10,6 +10,7 @@ import 'package:sire/utils/util_text.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:tuple/tuple.dart';
 
+// ignore: must_be_immutable
 class InputfieldQuill extends StatefulWidget {
   InputfieldQuill({
     Key? key,
@@ -21,9 +22,8 @@ class InputfieldQuill extends StatefulWidget {
     initialContentJSON = contentToJSON(initialContent, style);
   }
 
-  String initialContent;
+  final String initialContent;
   String initialContentJSON = "";
-  String? currentContent;
   final bool readOnly;
   final bool placeholding;
   final Style style;
@@ -66,7 +66,6 @@ class _InputfieldQuillState extends State<InputfieldQuill> {
         selection: TextSelection.collapsed(offset: 0));
     if (!widget.readOnly) {
       _controller.addListener(() {
-        print( jsonEncode(_controller.document.toDelta().toJson()));
         if (!focusNode.hasFocus) return;
         int lineNumberEdited = UtilText.getLineNumber(
             _controller.document.toPlainText(),

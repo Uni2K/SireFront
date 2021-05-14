@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sire/constants/constant_color.dart';
 
-class ArrowSmall extends StatefulWidget {
+class ArrowSmall extends StatelessWidget {
   ArrowSmall({Key? key}) : super(key: key);
 
-  @override
-  _ArrowSmallState createState() => _ArrowSmallState();
-}
-
-class _ArrowSmallState extends State<ArrowSmall> {
   @override
   Widget build(BuildContext context) {
     return Transform.translate(offset: Offset(20,0),child:Transform.rotate(
@@ -26,7 +21,7 @@ class MyPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Path path = Path();
     Paint paint = Paint()
-      ..color = navigationBarBackgroundColor
+      ..color = primaryColor
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;

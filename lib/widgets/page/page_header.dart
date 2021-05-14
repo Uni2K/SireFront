@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_html/style.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/objects/dto_header.dart';
+import 'package:sire/utils/util_size.dart';
 import 'package:sire/widgets/input/inputfield_quill.dart';
 
 class PageHeader extends StatelessWidget {
@@ -17,25 +17,19 @@ class PageHeader extends StatelessWidget {
   final DTOHeader? content;
   final bool isDisable;
   final ValueChanged<FocusNode>? onNextFocus;
-
-  List<FocusNode> focusNodes = List.empty(growable: true);
+  final List<FocusNode> focusNodes = List.empty(growable: true);
 
   @override
   Widget build(BuildContext context) {
-    double widthViewer = MediaQuery.of(context).size.width * viewerWidth;
-    double widthPage = min(
-        MediaQuery.of(context).size.height * heightPercentage,
-        widthViewer * 0.9);
-    double height = widthPage * sqrt(2) * headerPercentage;
+    double height = UtilSize.getHeaderHeigth(context);
 
     EdgeInsets getPadding() {
-      double width =
-          ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2));
+      double width = UtilSize.getPageWidth(context);
       double paddingTLR = paperMarginTLRRelative * width;
-      double paddingB = paperMarginBRelative * width;
       return EdgeInsets.only(
           left: paddingTLR, right: paddingTLR, top: paddingTLR);
     }
+
     return Container(
         padding: getPadding(),
         margin: EdgeInsets.only(bottom: 10),
@@ -64,10 +58,7 @@ class PageHeader extends StatelessWidget {
           ),
           // <-- remove the margin
           //  "p": Style(  width: 200)
-        },
-            customRender: getCustomRenderer(),
-
-            data: content?.content ?? ""));
+        }, customRender: getCustomRenderer(), data: content?.content ?? ""));
   }
 
   List<FocusNode> getFocusNodes() {
@@ -86,7 +77,7 @@ class PageHeader extends StatelessWidget {
         return generateInputField(child);
       },
       "div": (RenderContext context, Widget child) {
-        Map attributes=context.tree.element?.attributes ?? Map();
+        Map attributes = context.tree.element?.attributes ?? Map();
         if (attributes["orientation"] != null &&
             attributes["orientation"] == "right") {
           return Container(
@@ -132,15 +123,6 @@ class PageHeader extends StatelessWidget {
               style: containerSpan.style,
               readOnly: isDisable,
             );
-
-            /*   InputfieldPage(
-                focusNode: focusNode,
-                onSubmitted: () {
-                  widget.onNextFocus!(focusNode);
-                },
-                maxLines:maxLines,
-                hint: finalText,
-                style: containerSpan.style);*/
           }
         }
       }

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:sire/constants/constant_color.dart';
-import 'package:sire/helper/typwriter_logo.dart';
+import 'package:sire/widgets/helper/typwriter_logo.dart';
 
 class LogoSire extends StatefulWidget {
   LogoSire({Key? key}) : super(key: key);
@@ -33,7 +33,7 @@ class _LogoSireState extends State<LogoSire> {
           style: TextStyle(
             fontSize: 60.0,
             fontFamily: 'Berkshire',
-            color: navigationBarBackgroundColor,
+            color: primaryColor,
           ),
           child: AnimatedTextKit(
             isRepeatingAnimation: false,
@@ -46,7 +46,6 @@ class _LogoSireState extends State<LogoSire> {
               ),
             ],
             onTap: () {
-              print("Tap Event");
             },
           ),
         )));

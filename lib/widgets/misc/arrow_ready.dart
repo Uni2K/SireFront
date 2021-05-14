@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sire/constants/constant_color.dart';
 
-class ArrowReady extends StatefulWidget {
+class ArrowReady extends StatelessWidget {
   ArrowReady({Key? key}) : super(key: key);
 
-  @override
-  _ArrowReadyState createState() => _ArrowReadyState();
-}
-
-class _ArrowReadyState extends State<ArrowReady> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,7 +23,7 @@ class _ArrowReadyState extends State<ArrowReady> {
                 ))),
         Text(
           "Ihr fertiges Dokument",
-          style: TextStyle(color: navigationBarBackgroundColor, fontSize: 18),
+          style: TextStyle(color: primaryColor, fontSize: 18),
         ),
       ],
     ));
@@ -40,7 +35,7 @@ class MyPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Path path = Path();
     Paint paint = Paint()
-      ..color = navigationBarBackgroundColor
+      ..color = primaryColor
       ..style = PaintingStyle.fill
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;

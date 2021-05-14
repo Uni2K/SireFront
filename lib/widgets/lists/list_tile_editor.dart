@@ -5,15 +5,10 @@ import 'package:sire/widgets/buttons/button_circle_neutral.dart';
 
 enum TileContent { addSignature, formatEmail, spellCheck }
 
-class ListTileEditor extends StatefulWidget {
+class ListTileEditor extends StatelessWidget {
   ListTileEditor({Key? key, required this.contentType}) : super(key: key);
   final TileContent contentType;
 
-  @override
-  _ListTileEditorState createState() => _ListTileEditorState();
-}
-
-class _ListTileEditorState extends State<ListTileEditor> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,7 +21,6 @@ class _ListTileEditorState extends State<ListTileEditor> {
             canRequestFocus: false,
             borderRadius: BorderRadius.circular(5),
             onTap: () => {},
-            // mouseCursor: resolvedMouseCursor,
             enableFeedback: true,
             child: Ink(
                 child: Container(
@@ -84,10 +78,17 @@ class _ListTileEditorState extends State<ListTileEditor> {
   }
 
   Widget getContent() {
-    switch (widget.contentType) {
+    switch (contentType) {
       case TileContent.addSignature:
         break;
+      case TileContent.formatEmail:
+        // TODO: Handle this case.
+        break;
+      case TileContent.spellCheck:
+        // TODO: Handle this case.
+        break;
     }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -105,7 +106,7 @@ class _ListTileEditorState extends State<ListTileEditor> {
         ),
         Text(
           " test@gmail.com ",
-          style: TextStyle(color: Colors.white, backgroundColor: navigationBarBackgroundColor),
+          style: TextStyle(color: Colors.white, backgroundColor: primaryColor),
 
         ),
       ],

@@ -1,19 +1,13 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/style.dart';
 import 'package:flutter_quill/models/documents/document.dart';
 import 'package:flutter_quill/widgets/controller.dart';
-import 'package:flutter_quill/widgets/editor.dart';
-import 'package:flutter_quill/widgets/toolbar.dart';
 import 'package:get/get.dart';
 import 'package:sire/constants/constant_dimensions.dart';
+import 'package:sire/utils/util_size.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
-import 'package:sire/widgets/input/inputfield_page.dart';
 import 'package:sire/widgets/input/inputfield_quill.dart';
-import 'package:sire/widgets/lists/list_snappable_combined.dart';
 
 class PageBody extends StatefulWidget {
   PageBody({Key? key, this.content, this.onNextFocus}) : super(key: key);
@@ -51,8 +45,7 @@ class PageBodyState extends State<PageBody> {
   }
 
   EdgeInsets getPadding() {
-    double width =
-        ((MediaQuery.of(context).size.height * heightPercentage) / sqrt(2));
+    double width =UtilSize.getPageWidth(context);
 
     double paddingTLR = paperMarginTLRRelative * width;
     double paddingB = paperMarginBRelative * width;
@@ -62,11 +55,6 @@ class PageBodyState extends State<PageBody> {
 
   @override
   Widget build(BuildContext context) {
-    double widthViewer = MediaQuery.of(context).size.width * viewerWidth;
-    double widthPage = min(
-        MediaQuery.of(context).size.height * heightPercentage,
-        widthViewer * 0.9);
-
     return Column(children: [
       Expanded(
           child: Container(

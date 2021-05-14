@@ -1,30 +1,21 @@
 import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/widgets/controller.dart';
 import 'package:flutter_quill/widgets/toolbar.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:printing/printing.dart';
 import 'package:sire/constants/constant_color.dart';
-import 'package:sire/constants/constant_dimensions.dart';
-import 'package:sire/objects/dto_header.dart';
 import 'package:sire/utils/util_server.dart';
+import 'package:sire/utils/util_size.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_circle_neutral.dart';
-import 'package:sire/widgets/buttons/button_go.dart';
 import 'package:sire/widgets/buttons/button_scale.dart';
 import 'package:sire/widgets/containers/container_editing.dart';
 import 'package:sire/widgets/containers/container_final.dart';
 import 'package:sire/widgets/containers/container_header.dart';
 import 'package:sire/widgets/containers/container_welcome.dart';
 import 'package:sire/widgets/logos/logo_sire_small.dart';
-
 import 'package:sire/widgets/page/interactive_page.dart';
-import 'package:sire/widgets/logos/logo_createdby.dart';
-import 'package:sire/widgets/logos/logo_sire.dart';
 import 'package:sire/widgets/misc/arrow_default.dart';
 import 'package:sire/widgets/page/page_prototype.dart';
 import 'package:sire/widgets/switchs/switcher_darkmode.dart';
@@ -32,14 +23,13 @@ import 'package:sire/widgets/switchs/switcher_darkmode.dart';
 enum ShowingContainer { Welcome, HeaderSelection, EditingTool, Final }
 
 class ScreenMain extends StatefulWidget {
-  GlobalKey<InteractivePageState> pageKey = GlobalKey();
-  GlobalKey<PagePrototypeState> pagePrototypeKey = GlobalKey();
+  final GlobalKey<InteractivePageState> interactiveViewerKey = GlobalKey();
+  final GlobalKey<PagePrototypeState> pagePrototypeKey = GlobalKey();
 
   ScreenMain({Key? key}) : super(key: key) {
     ViewModelMain viewModelMain = Get.put(ViewModelMain());
-    viewModelMain.interactivePageKey = pageKey;
+    viewModelMain.interactivePageKey = interactiveViewerKey;
     viewModelMain.pagePrototypeKey = pagePrototypeKey;
-
   }
 
   @override
@@ -48,27 +38,16 @@ class ScreenMain extends StatefulWidget {
 
 class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
   RxBool _appLoaded = false.obs;
+  ViewModelMain vm = Get.put(ViewModelMain());
 
   @override
   Widget build(BuildContext context) {
-    double widthViewer = MediaQuery.of(context).size.width * viewerWidth;
-    double widthPage = min(
-        MediaQuery.of(context).size.height * heightPercentage,
-        widthViewer * 0.9);
-    double topOffsetPage = MediaQuery.of(context).size.height / 5;
+    double widthViewer = UtilSize.getViewerWidth(context);
+    double widthPage = UtilSize.getPageWidth(context);
+    double topOffsetPage = UtilSize.getPageOffsetTop(context);
     double diffPageViewer = widthViewer - widthPage;
-
-    double widthContainer =
-        (1 - viewerWidth) * MediaQuery.of(context).size.width;
-
-    double containerDistanceToViewer =
-        ((widthViewer - diffPageViewer / 2) - widthPage) / 2;
-    double leftContainer =
-        (widthViewer - diffPageViewer / 2) + containerDistanceToViewer;
-
-    double topToolBar = topOffsetPage -
-        (topOffsetPage -
-            containerDistanceToViewer); //same distance to page like container
+    double leftContainer = UtilSize.getContainerLeft(context);
+    double topToolBar = UtilSize.getToolbarTop(context);
 
     return Stack(children: [
       Query(
@@ -96,7 +75,7 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                 body: Stack(
               children: [
                 InteractivePage(
-                  key: widget.pageKey,
+                  key: widget.interactiveViewerKey,
                   pageKey: widget.pagePrototypeKey,
                 ),
                 Align(
@@ -115,19 +94,28 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                           margin: EdgeInsets.all(20), child: LogoSireSmall()))),
                   alignment: Alignment.topLeft,
                 ),
-                Obx(() => Positioned(
-                    top: getTopOffsetForShowingContainer(topOffsetPage),
-                    height: MediaQuery.of(context).size.height -
-                        getTopOffsetForShowingContainer(topOffsetPage),
-                    width: widthPage,
-                    //widthContainer + diffPageViewer / 2 - 80,
-                    child:  AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        transitionBuilder: (Widget child, Animation<double> animation) {
-                          return ScaleTransition(child: child, scale: animation);
-                        },child: getShowingContainer()),
-                    left: leftContainer //+ 40,
-                    )),
+                Obx(() {
+                  double offsetTopContainer =
+                      UtilSize.getTopOffsetForShowingContainer(
+                          context, vm.currentContainer.value);
+
+                  return Positioned(
+                      top: offsetTopContainer,
+                      height: MediaQuery.of(context).size.height -
+                          offsetTopContainer,
+                      width: widthPage,
+                      //widthContainer + diffPageViewer / 2 - 80,
+                      child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) {
+                            return ScaleTransition(
+                                child: child, scale: animation);
+                          },
+                          child: _getShowingContainer()),
+                      left: leftContainer //+ 40,
+                      );
+                }),
                 Align(
                     child: Container(
                         margin: EdgeInsets.all(10),
@@ -150,14 +138,13 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                     alignment: Alignment.topRight),
                 Positioned(
                   child: Obx(() => AnimatedOpacity(
-                      opacity: isToolbarVisible() ? 1 : 0,
+                      opacity: _isToolbarVisible() ? 1 : 0,
                       duration: Duration(milliseconds: 500),
                       child: Container(
                         child: SizedBox(
                             width: widthPage,
                             child: QuillToolbar.basic(
                               showListCheck: false,
-
                               controller: viewModelMain.currentController.value,
                             )),
                       ))),
@@ -186,17 +173,13 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                   color: Colors.white,
                   child: Center(
                       child: SpinKitFadingCube(
-                    color: navigationBarBackgroundColor,
+                    color: primaryColor,
                     size: 30.0,
                   ))))))
     ]);
   }
 
-
-
-
-
-  Widget getShowingContainer() {
+  Widget _getShowingContainer() {
     ViewModelMain vm = Get.put(ViewModelMain());
     switch (vm.currentContainer.value) {
       case ShowingContainer.Welcome:
@@ -210,21 +193,9 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
     }
   }
 
-  double getTopOffsetForShowingContainer(double topOffsetPage) {
+  bool _isToolbarVisible() {
     ViewModelMain vm = Get.put(ViewModelMain());
-    switch (vm.currentContainer.value) {
-      case ShowingContainer.HeaderSelection:
-        return topOffsetPage - 50;
-      case ShowingContainer.EditingTool:
-        return topOffsetPage - 60;
-
-    }
-    return topOffsetPage;
-  }
-
-  bool isToolbarVisible() {
-    ViewModelMain vm = Get.put(ViewModelMain());
-    if(vm.isCurrentlyTouched.value)return false;
+    if (vm.isCurrentlyTouched.value) return false;
     return vm.currentContainer.value == ShowingContainer.HeaderSelection ||
         vm.currentContainer.value == ShowingContainer.EditingTool;
   }

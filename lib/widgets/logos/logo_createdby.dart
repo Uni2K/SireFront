@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class LogoCreatedby extends StatefulWidget {
+class LogoCreatedby extends StatelessWidget {
   LogoCreatedby({Key? key}) : super(key: key);
 
-  @override
-  _LogoCreatedbyState createState() => _LogoCreatedbyState();
-}
-
-class _LogoCreatedbyState extends State<LogoCreatedby> {
   @override
   Widget build(BuildContext context) {
     return Row(

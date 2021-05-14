@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-
+/// The DTO used to store the configuration information from the server
+/// loaded once on startup
 class DTOConfiguration {
   bool? darkmode;
   bool? zoom;
@@ -15,7 +15,6 @@ class DTOConfiguration {
   bool? pageLink;
   bool? pollingUpdates;
   int? pollingFrequency;
-
 
   DTOConfiguration.empty();
 

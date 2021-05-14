@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
 
-class ButtonDefaultLight extends StatefulWidget {
+class ButtonDefaultLight extends StatelessWidget {
   ButtonDefaultLight(
       {Key? key,
       required this.onClick,
@@ -17,20 +17,15 @@ class ButtonDefaultLight extends StatefulWidget {
   final bool vertical;
 
   @override
-  _ButtonDefaultLightState createState() => _ButtonDefaultLightState();
-}
-
-class _ButtonDefaultLightState extends State<ButtonDefaultLight> {
-  @override
   Widget build(BuildContext context) {
     return IntrinsicWidth(
         child: MaterialButton(
       onPressed: () {
-        widget.onClick();
+        onClick();
       },
       minWidth: 0,
-      padding: EdgeInsets.symmetric(
-          horizontal: 20, vertical: widget.vertical ? 5 : 15),
+      padding:
+          EdgeInsets.symmetric(horizontal: 20, vertical: vertical ? 5 : 15),
       elevation: 0.0,
       focusElevation: 0,
       hoverElevation: 0,
@@ -39,13 +34,13 @@ class _ButtonDefaultLightState extends State<ButtonDefaultLight> {
       color: buttonBackgroundColor,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       //fillColor: Colors.white,
-      child: widget.vertical
+      child: vertical
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 FaIcon(
-                  widget.icon,
+                  icon,
                   size: 15,
                   color: buttonTextColor,
                 ),
@@ -53,7 +48,7 @@ class _ButtonDefaultLightState extends State<ButtonDefaultLight> {
                   height: 5,
                 ),
                 Text(
-                  widget.text,
+                  text,
                   style: TextStyle(fontSize: 14, color: buttonTextColor),
                 )
               ],
@@ -61,7 +56,7 @@ class _ButtonDefaultLightState extends State<ButtonDefaultLight> {
           : Row(
               children: [
                 FaIcon(
-                  widget.icon,
+                  icon,
                   size: 15,
                   color: buttonTextColor,
                 ),
@@ -69,7 +64,7 @@ class _ButtonDefaultLightState extends State<ButtonDefaultLight> {
                   width: 10,
                 ),
                 Text(
-                  widget.text,
+                  text,
                   style: TextStyle(fontSize: 14, color: buttonTextColor),
                 )
               ],

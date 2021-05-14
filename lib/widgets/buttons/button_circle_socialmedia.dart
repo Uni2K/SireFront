@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:sire/constants/constant_color.dart';
 import 'package:sire/utils/util_color.dart';
 
 enum Types { Twitter, Facebook, Reddit, Skype, Whatsapp, Messenger, Telegram }
@@ -11,21 +10,13 @@ extension ParseToString on Types {
   }
 }
 
-class ButtonCircleSocialmedia extends StatefulWidget {
+class ButtonCircleSocialmedia extends StatelessWidget {
   ButtonCircleSocialmedia({Key? key, required this.type}) : super(key: key);
-
   final Types type;
 
   @override
-  _ButtonCircleSocialmediaState createState() =>
-      _ButtonCircleSocialmediaState();
-}
-
-class _ButtonCircleSocialmediaState extends State<ButtonCircleSocialmedia> {
-
-  @override
   Widget build(BuildContext context) {
-    FaIcon icon= getIcon();
+    FaIcon icon = getIcon();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -47,16 +38,17 @@ class _ButtonCircleSocialmediaState extends State<ButtonCircleSocialmedia> {
         SizedBox(
           height: 5,
         ),
-       Flexible(child: Text(
+        Flexible(
+            child: Text(
           getText(),
           style: TextStyle(fontSize: 13),
-       ))
+        ))
       ],
     );
   }
 
   String getText() {
-    return widget.type.toShortString();
+    return type.toShortString();
   }
 
   FaIcon getIcon() {
@@ -64,7 +56,7 @@ class _ButtonCircleSocialmediaState extends State<ButtonCircleSocialmedia> {
     Color color = Colors.black;
 
     IconData iconData = FontAwesomeIcons.undo;
-    switch (widget.type) {
+    switch (type) {
       case Types.Facebook:
         iconData = FontAwesomeIcons.facebook;
         color = ColorUtil.getColorFromHex("#1675F1");

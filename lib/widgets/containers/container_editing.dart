@@ -9,14 +9,9 @@ import 'package:sire/widgets/buttons/button_default_light.dart';
 import 'package:sire/widgets/buttons/button_download.dart';
 import 'package:sire/widgets/lists/list_tile_editor.dart';
 
-class ContainerEditing extends StatefulWidget {
+class ContainerEditing extends StatelessWidget {
   ContainerEditing({Key? key}) : super(key: key);
 
-  @override
-  _ContainerEditingState createState() => _ContainerEditingState();
-}
-
-class _ContainerEditingState extends State<ContainerEditing> {
   @override
   Widget build(BuildContext context) {
     ViewModelMain vm = Get.put(ViewModelMain());
