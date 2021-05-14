@@ -12,9 +12,11 @@ class ViewModelMain extends GetxController {
   //Keys
   GlobalKey<InteractivePageState>? interactivePageKey;
   GlobalKey<PagePrototypeState>? pagePrototypeKey;
+  GlobalKey? repaintKey;
+
 
   //View related
-  Rx<ShowingContainer> currentContainer = ShowingContainer.Final.obs;
+  Rx<ShowingContainer> currentContainer = ShowingContainer.EditingTool.obs;
   RxList<DTOHeader> headerCached = List<DTOHeader>.empty(growable: true).obs;
   Rx<DTOHeader> currentHeader = DTOHeader.dummy().obs;
   Rx<QuillController> currentController = QuillController.basic().obs;

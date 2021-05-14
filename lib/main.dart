@@ -33,7 +33,7 @@ class SireApp extends StatelessWidget {
           shortcuts: ignoredNavigationShortcuts(),
           title: 'Sire',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(toggleableActiveColor:primaryColor),
+          theme: ThemeData(toggleableActiveColor:primaryColor, textSelectionTheme: TextSelectionThemeData(selectionColor: selectionColor)),
           home: ScreenMain(),
         ));
   }

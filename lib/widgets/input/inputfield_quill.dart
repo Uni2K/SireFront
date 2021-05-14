@@ -18,10 +18,12 @@ class InputfieldQuill extends StatefulWidget {
     required this.style,
     required this.readOnly,
     this.placeholding = false,
+    this.contentDescription,
   }) : super(key: key) {
     initialContentJSON = contentToJSON(initialContent, style);
   }
 
+  final String? contentDescription;
   final String initialContent;
   String initialContentJSON = "";
   final bool readOnly;
@@ -29,18 +31,18 @@ class InputfieldQuill extends StatefulWidget {
   final Style style;
 
   @override
-  _InputfieldQuillState createState() => _InputfieldQuillState();
+  InputfieldQuillState createState() => InputfieldQuillState();
 
   String contentToJSON(String content, Style style) {
     Map<String, dynamic> attributes = Map();
-
     if (style.fontWeight == FontWeight.bold) attributes["bold"] = true;
     if (style.fontStyle == FontStyle.italic) attributes["italic"] = true;
+
     Map<String, dynamic> jsonMap = Map();
     if (placeholding) attributes["placeholder"] = true;
     jsonMap["attributes"] = attributes;
 
-    if(content.split("\n").length==2) {
+    if (content.split("\n").length == 2) {
       String lastChar = content.substring(content.length - 1, content.length);
       if (lastChar == "\n") content = content.substring(0, content.length - 1);
     }
@@ -51,10 +53,38 @@ class InputfieldQuill extends StatefulWidget {
   }
 }
 
-class _InputfieldQuillState extends State<InputfieldQuill> {
+class InputfieldQuillState extends State<InputfieldQuill> {
   late QuillController _controller;
   FocusNode focusNode = FocusNode();
   int currentEditingLine = -1;
+  bool blockFocus=true;
+
+  void changeHeaderContent(String identifier, String text) {
+    if (widget.contentDescription == null) return;
+    if (!widget.contentDescription!.contains(identifier)) return;
+
+    //its included
+    List<String> contentDescriptions = widget.contentDescription!.split(";");
+    int line = -1;
+    for (int i = 0; i < contentDescriptions.length; i++) {
+      if (contentDescriptions[i] == identifier) {
+        line = i;
+        break;
+      }
+    }
+
+    if (line != -1) {
+      String? lines =
+          UtilText.getLineByNumber(_controller.document.toPlainText(), line);
+      if (lines == null) return;
+
+      blockFocus=true;
+      _controller.replaceText(
+          0, lines.length, text,null,ignoreFocus:true);
+
+    blockFocus=false;
+    }
+  }
 
   @override
   void initState() {
@@ -74,12 +104,13 @@ class _InputfieldQuillState extends State<InputfieldQuill> {
         if (lineNumberEdited != currentEditingLine) {
           currentEditingLine = lineNumberEdited;
 
-          String? lineInitial = UtilText.getLine(
-              widget.initialContent, _controller.selection.baseOffset);
+          String? lineInitial =
+              UtilText.getLineByNumber(widget.initialContent, lineNumberEdited);
+
           String? lineEdited = UtilText.getLine(
               _controller.document.toPlainText(),
               _controller.selection.baseOffset);
-          if (lineEdited==null || lineInitial == lineEdited) {
+          if (lineEdited == null || lineInitial == lineEdited) {
             //Line is edited -> or new line
             TextSelection selection = UtilText.selectLine(
                 text: _controller.document.toPlainText(),
@@ -88,7 +119,6 @@ class _InputfieldQuillState extends State<InputfieldQuill> {
           }
         }
       });
-
 
       focusNode.addListener(() {
         if (focusNode.hasFocus) {
@@ -104,7 +134,6 @@ class _InputfieldQuillState extends State<InputfieldQuill> {
           ViewModelMain viewModelMain = Get.put(ViewModelMain());
           viewModelMain.updateQuillController(_controller);
         } else {
-
           _controller.blockedFocus = true;
           _controller.updateSelection(
               TextSelection.collapsed(offset: 0), ChangeSource.REMOTE);
@@ -136,35 +165,33 @@ class _InputfieldQuillState extends State<InputfieldQuill> {
 
     return IgnorePointer(
         ignoring: widget.readOnly,
-        child:  QuillEditor(
-                decider: (key) {
-                  int currentLine = UtilText.getLineNumber(
-                      _controller.document.toPlainText(),
-                      _controller.selection.baseOffset);
-                  int totalLineNumber = UtilText.getTotalLineNumber(
-                      _controller.document.toPlainText());
-                  bool re = currentLine == totalLineNumber-1;
-                  if (!re) {
-                    //move line
-                    _controller.updateSelection(
-                        UtilText.selectNextLine(
-                            _controller.document.toPlainText(),
-                           currentLine),
-                        ChangeSource.REMOTE);
-                  }
+        child: QuillEditor(
+            decider: (key) {
+              int currentLine = UtilText.getLineNumber(
+                  _controller.document.toPlainText(),
+                  _controller.selection.baseOffset);
+              int totalLineNumber = UtilText.getTotalLineNumber(
+                  _controller.document.toPlainText());
+              bool re = currentLine == totalLineNumber - 1;
+              if (!re) {
+                //move line
+                _controller.updateSelection(
+                    UtilText.selectNextLine(
+                        _controller.document.toPlainText(), currentLine),
+                    ChangeSource.REMOTE);
+              }
 
-                  return re;
-                },
-                controller: _controller,
-                scrollController: ScrollController(),
-                scrollable: true,
-                focusNode: focusNode,
-                autoFocus: false,
-                customStyles: DefaultStyles(placeHolder: placeholder),
-                placeholder:
-                    widget.placeholding ? widget.initialContentJSON : null,
-                readOnly: widget.readOnly,
-                expands: false,
-                padding: EdgeInsets.zero));
+              return re;
+            },
+            controller: _controller,
+            scrollController: ScrollController(),
+            scrollable: true,
+            focusNode: focusNode,
+            autoFocus: false,
+            customStyles: DefaultStyles(placeHolder: placeholder),
+            placeholder: widget.placeholding ? widget.initialContentJSON : null,
+            readOnly: widget.readOnly,
+            expands: false,
+            padding: EdgeInsets.zero));
   }
 }

@@ -23,7 +23,9 @@ class PagePrototypeState extends State<PagePrototype>
   Rx<Color> _colorHeader = Colors.white.obs;
   Rx<Color> _colorBody = Colors.white.obs;
   late AnimationController _controller;
- final int milliSecondDuration = 500;
+  final int milliSecondDuration = 500;
+  final GlobalKey<PageHeaderState> pageHeaderKey=GlobalKey();
+
 
   final DecorationTween decorationTween = DecorationTween(
     begin: BoxDecoration(
@@ -79,55 +81,58 @@ class PagePrototypeState extends State<PagePrototype>
         position: DecorationPosition.background,
         decoration: decorationTween.animate(_controller),
         child:*/
-        Container(
-            decoration: BoxDecoration(      color: Colors.white,
-                boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.12),
-                spreadRadius: 20,
-                blurRadius: 40,
-                offset: Offset(0, 3), // changes position of shadow
-              )
-            ]),
-            child: AspectRatio(
-                aspectRatio: 1 / sqrt(2),
-                child: Align(
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Flexible(
-                            flex: (headerPercentage * 10).round(),
-                            fit: FlexFit.tight,
-                            child: Obx(() => Container(child: PageHeader(
-                                    isDisable: false,
-                                    content: viewModelMain.currentHeader.value,
-                                  ),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: _colorHeader.value,
-                                          width: 6,
-                                          style: BorderStyle.solid)),
-                            ))),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Flexible(
-                            flex: ((1 - headerPercentage) * 10).round(),
-                            fit: FlexFit.loose,
-                            child: Obx(() => Container(
-                                  child: PageBody(),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: _colorBody.value,
-                                          width: 6,
-                                          style: BorderStyle.solid)),
+      Container(
+          decoration: BoxDecoration(color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.12),
+                  spreadRadius: 20,
+                  blurRadius: 40,
+                  offset: Offset(0, 3), // changes position of shadow
+                )
+              ]),
+          child: AspectRatio(
+              aspectRatio: 1 / sqrt(2),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Flexible(
+                          flex: (headerPercentage * 10).round(),
+                          fit: FlexFit.tight,
+                          child: Obx(() =>
+                              Container(child: PageHeader(
+                                key:pageHeaderKey,
+                                isDisable: false,
+                                content: viewModelMain.currentHeader.value,
+                              ),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: _colorHeader.value,
+                                        width: 6,
+                                        style: BorderStyle.solid)),
+                              ))),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Flexible(
+                          flex: ((1 - headerPercentage) * 10).round(),
+                          fit: FlexFit.loose,
+                          child: Obx(() =>
+                              Container(
+                                child: PageBody(),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: _colorBody.value,
+                                        width: 6,
+                                        style: BorderStyle.solid)),
 
 
-                                ))),
-                      ],
-                    ))));
+                              ))),
+                    ],
+                  ))));
   }
 
   void highlightAnimation(int i) {
@@ -142,11 +147,16 @@ class PagePrototypeState extends State<PagePrototype>
   }
 
   EdgeInsets getPadding() {
-    double width =UtilSize.getPageWidth(context);
+    double width = UtilSize.getPageWidth(context);
 
     double paddingTLR = paperMarginTLRRelative * width;
     double paddingB = paperMarginBRelative * width;
     return EdgeInsets.only(
         left: paddingTLR, right: paddingTLR, top: paddingTLR, bottom: paddingB);
+  }
+
+  void changeHeaderContent(String identifier, String text) {
+
+    pageHeaderKey.currentState?.changeHeaderContent(identifier, text);
   }
 }

@@ -177,7 +177,6 @@ class QuillController extends ChangeNotifier {
   }
 
   void formatSelection(Attribute? attribute) {
-    print("toggle   ${attribute}");
 
     formatText(selection.start, selection.end - selection.start, attribute);
   }

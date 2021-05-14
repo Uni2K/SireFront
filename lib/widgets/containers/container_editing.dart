@@ -7,7 +7,7 @@ import 'package:sire/screens/screen_main.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_default_light.dart';
 import 'package:sire/widgets/buttons/button_download.dart';
-import 'package:sire/widgets/lists/list_tile_editor.dart';
+import 'package:sire/widgets/tiles/list_tile_editor.dart';
 
 class ContainerEditing extends StatelessWidget {
   ContainerEditing({Key? key}) : super(key: key);
@@ -81,16 +81,14 @@ class ContainerEditing extends StatelessWidget {
                               topLeft: Radius.circular(5)),
                           color: buttonBackgroundColor,
                         ),
-                        child: FocusTraversalGroup(
-                          descendantsAreFocusable: false,
-                            child:ListView.builder(
+                        child: ListView.builder(
                           itemBuilder: (context, index) {
                             return ListTileEditor(
-                              contentType: TileContent.formatEmail,
+                              contentType: TileContent.addAddress,
                             );
                           },
-                          itemCount: 20,
-                        )))),
+                          itemCount: 1,
+                        ))),
                 Flexible(
                   flex: 0,
                   child: Container(

@@ -959,6 +959,11 @@ class RawEditorState extends EditorState
   void _onChangeTextEditingValue([bool ignoreCaret = false]) {
     updateRemoteValueIfNeeded();
     if (ignoreCaret) {
+      setState(() {
+        // Use widget.controller.value in build()
+        // Trigger build and updateChildren
+      }); //TODO changed it ->> added this whole setState
+
       return;
     }
     _showCaretOnScreen();

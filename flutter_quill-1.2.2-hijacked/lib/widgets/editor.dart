@@ -125,6 +125,7 @@ class QuillEditor extends StatefulWidget {
       required this.autoFocus,
       required this.readOnly,
       required this.expands,
+        required this.decider,
       this.showCursor,
       this.placeholder,
       this.enableInteractiveSelection = true,
@@ -141,7 +142,7 @@ class QuillEditor extends StatefulWidget {
       this.onSingleLongTapStart,
       this.onSingleLongTapMoveUpdate,
       this.onSingleLongTapEnd,
-      this.embedBuilder = _defaultEmbedBuilder, required this.decider});
+      this.embedBuilder = _defaultEmbedBuilder});
 
   factory QuillEditor.basic({
     required QuillController controller,

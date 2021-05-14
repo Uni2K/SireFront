@@ -25,11 +25,14 @@ enum ShowingContainer { Welcome, HeaderSelection, EditingTool, Final }
 class ScreenMain extends StatefulWidget {
   final GlobalKey<InteractivePageState> interactiveViewerKey = GlobalKey();
   final GlobalKey<PagePrototypeState> pagePrototypeKey = GlobalKey();
+  final GlobalKey repaintKey = GlobalKey();
 
   ScreenMain({Key? key}) : super(key: key) {
     ViewModelMain viewModelMain = Get.put(ViewModelMain());
     viewModelMain.interactivePageKey = interactiveViewerKey;
     viewModelMain.pagePrototypeKey = pagePrototypeKey;
+    viewModelMain.repaintKey = repaintKey;
+
   }
 
   @override
@@ -75,6 +78,7 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                 body: Stack(
               children: [
                 InteractivePage(
+                  repaintKey: widget.repaintKey,
                   key: widget.interactiveViewerKey,
                   pageKey: widget.pagePrototypeKey,
                 ),
@@ -104,15 +108,15 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
                       height: MediaQuery.of(context).size.height -
                           offsetTopContainer,
                       width: widthPage,
-                      //widthContainer + diffPageViewer / 2 - 80,
-                      child: AnimatedSwitcher(
+                      child:
+                      /*AnimatedSwitcher( //TODO uncomment -> auskommentiert für performance testing
                           duration: const Duration(milliseconds: 300),
                           transitionBuilder:
                               (Widget child, Animation<double> animation) {
                             return ScaleTransition(
                                 child: child, scale: animation);
-                          },
-                          child: _getShowingContainer()),
+                          },*/
+                           _getShowingContainer(),
                       left: leftContainer //+ 40,
                       );
                 }),

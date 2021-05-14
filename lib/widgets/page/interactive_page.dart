@@ -12,8 +12,9 @@ import 'package:sire/widgets/misc/interactive_viewer_adjusted.dart'
 class InteractivePage extends StatefulWidget {
   final GlobalKey<InteractiveViewerAdjustedState> viewerKey = GlobalKey();
   final GlobalKey<PagePrototypeState> pageKey;
+  final GlobalKey repaintKey;
 
-  InteractivePage({GlobalKey? key, required this.pageKey}) : super(key: key);
+  InteractivePage({GlobalKey? key, required this.pageKey, required this.repaintKey}) : super(key: key);
 
   @override
   InteractivePageState createState() => InteractivePageState();
@@ -107,7 +108,7 @@ class InteractivePageState extends State<InteractivePage>
                   height: heightPage,
                   width: widthPage,
                   child: RepaintBoundary(
-                      key: widget.pageKey, child: PagePrototype())),
+                      key: widget.repaintKey, child: PagePrototype( key: widget.pageKey))),
             ),
           )),
     );

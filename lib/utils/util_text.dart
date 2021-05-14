@@ -30,7 +30,11 @@ class UtilText {
 
   static String? getLine(String text, int cursorPosition) {
     int lineNumber = getLineNumber(text, cursorPosition);
-    if(lineNumber==-1)return null;
+    return getLineByNumber(text, lineNumber);
+  }
+
+  static String? getLineByNumber(String text, int lineNumber) {
+    if (lineNumber == -1) return null;
     List<String> lines = text.split("\n");
     if (lines.length > 0) {
       if (lines.last.isEmpty) lines.removeLast();
@@ -38,7 +42,8 @@ class UtilText {
     return lines[lineNumber] + ((lineNumber >= lines.length - 1) ? "\n" : "\n");
   }
 
-  static TextSelection selectLine({required String text, required int lineNumber}) {
+  static TextSelection selectLine(
+      {required String text, required int lineNumber}) {
     List<String> lines = text.split("\n");
     if (lines.length > 0) {
       if (lines.last.isEmpty) lines.removeLast();
@@ -47,11 +52,10 @@ class UtilText {
     String alreadySearched = "";
     int startIndex = -1;
     String? line;
-    for (line in lines) {
-
-      int index = lines.indexOf(line);
-      if (index != lines.length) line += "\n";
-      if (index == lineNumber) {
+    for (int i=0;i<lines.length;i++) {
+       line=lines[i];
+      if (i!= lines.length) line += "\n";
+      if (i == lineNumber) {
         startIndex = alreadySearched.length;
         break;
       } else {
@@ -79,5 +83,6 @@ class UtilText {
     if (currentLine + 1 < getTotalLineNumber(text))
       return selectLine(text: text, lineNumber: currentLine + 1);
     else
-      return selectLine(text: text, lineNumber: currentLine );  }
+      return selectLine(text: text, lineNumber: currentLine);
+  }
 }

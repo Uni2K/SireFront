@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/style.dart';
+import 'package:flutter_quill/widgets/controller.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/objects/dto_header.dart';
 import 'package:sire/utils/util_size.dart';
 import 'package:sire/widgets/input/inputfield_quill.dart';
 
-class PageHeader extends StatelessWidget {
+class PageHeader extends StatefulWidget {
   PageHeader(
       {Key? key, this.content, required this.isDisable, this.onNextFocus})
       : super(key: key);
@@ -17,8 +18,13 @@ class PageHeader extends StatelessWidget {
   final DTOHeader? content;
   final bool isDisable;
   final ValueChanged<FocusNode>? onNextFocus;
-  final List<FocusNode> focusNodes = List.empty(growable: true);
+  final List<InputfieldQuill> inputFields = List.empty(growable: true);
 
+  @override
+  PageHeaderState createState() => PageHeaderState();
+}
+
+class PageHeaderState extends State<PageHeader> {
   @override
   Widget build(BuildContext context) {
     double height = UtilSize.getHeaderHeigth(context);
@@ -33,11 +39,11 @@ class PageHeader extends StatelessWidget {
     return Container(
         padding: getPadding(),
         margin: EdgeInsets.only(bottom: 10),
-        height: height + (isDisable ? 10 : 0),
+        height: height + (widget.isDisable ? 10 : 0),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(
-              color: isDisable ? highlightColor : Colors.transparent,
+              color: widget.isDisable ? highlightColor : Colors.transparent,
               width: 6,
               style: BorderStyle.solid),
           boxShadow: [
@@ -52,17 +58,16 @@ class PageHeader extends StatelessWidget {
         width: ((MediaQuery.of(context).size.height * heightPercentage) /
                 sqrt(2)) -
             spacePages * 2,
-        child: Html(style: {
-          "body": Style(
-            margin: EdgeInsets.all(0),
-          ),
-          // <-- remove the margin
-          //  "p": Style(  width: 200)
-        }, customRender: getCustomRenderer(), data: content?.content ?? ""));
-  }
-
-  List<FocusNode> getFocusNodes() {
-    return focusNodes;
+        child: Html(
+            style: {
+              "body": Style(
+                margin: EdgeInsets.all(0),
+              ),
+              // <-- remove the margin
+              //  "p": Style(  width: 200)
+            },
+            customRender: getCustomRenderer(),
+            data: widget.content?.content ?? ""));
   }
 
   getCustomRenderer() {
@@ -74,7 +79,13 @@ class PageHeader extends StatelessWidget {
         return generateInputField(child);
       },
       "span": (RenderContext context, Widget child) {
-        return generateInputField(child);
+        Map attributes = context.tree.element?.attributes ?? Map();
+        String? content;
+        if (attributes["content"] != null) {
+          content = attributes["content"];
+        }
+
+        return generateInputField(child, contentDescription: content);
       },
       "div": (RenderContext context, Widget child) {
         Map attributes = context.tree.element?.attributes ?? Map();
@@ -94,7 +105,7 @@ class PageHeader extends StatelessWidget {
     };
   }
 
-  generateInputField(Widget child) {
+  generateInputField(Widget child, {String? contentDescription}) {
     if (child is ContainerSpan?) {
       ContainerSpan? containerSpan = child as ContainerSpan?;
       if (containerSpan != null && containerSpan.children != null) {
@@ -102,12 +113,11 @@ class PageHeader extends StatelessWidget {
 
         for (var value in children) {
           if (value is TextSpan) {
-            FocusNode focusNode = FocusNode(debugLabel: value.text);
-            if (focusNodes.length == 0 && !isDisable) {
-              focusNode.requestFocus();
-            }
+            //  FocusNode focusNode = FocusNode(debugLabel: value.text);
+            //  if (widget.inputFields.length == 0 && !widget.isDisable) {
+            //    focusNode.requestFocus();
+            // }
 
-            focusNodes.add(focusNode);
             String txt = value.text ?? "";
             List<String> paragraphs = txt.split("\\n");
             StringBuffer sb = new StringBuffer();
@@ -118,16 +128,29 @@ class PageHeader extends StatelessWidget {
             }
             String finalText = sb.toString();
 
-            return InputfieldQuill(
+            InputfieldQuill inputfieldQuill = InputfieldQuill(
+              contentDescription: contentDescription,
+              key: GlobalKey<InputfieldQuillState>(),
               initialContent: finalText,
               style: containerSpan.style,
-              readOnly: isDisable,
+              readOnly: widget.isDisable,
             );
+            widget.inputFields.add(inputfieldQuill);
+
+            return inputfieldQuill;
           }
         }
       }
     }
 
     return "";
+  }
+
+  void changeHeaderContent(String identifier, String text) {
+    for (InputfieldQuill value in widget.inputFields) {
+      (value.key as GlobalKey<InputfieldQuillState>)
+          .currentState
+          ?.changeHeaderContent(identifier, text);
+    }
   }
 }

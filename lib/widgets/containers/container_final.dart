@@ -112,7 +112,7 @@ class ContainerFinal extends StatelessWidget {
       print("in1");
 
       final image = await WidgetWraper.fromKey(
-        key: viewModelMain.pagePrototypeKey??GlobalKey(),
+        key: viewModelMain.repaintKey??GlobalKey(),
         pixelRatio: 3.0, //Quality
         // orientation: PdfImageOrientation.topLeft
       );
