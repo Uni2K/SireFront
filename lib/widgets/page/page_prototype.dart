@@ -100,8 +100,8 @@ class PagePrototypeState extends State<PagePrototype>
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Flexible(
-                          flex: (headerPercentage * 10).round(),
-                          fit: FlexFit.tight,
+                         // flex: (headerPercentage * 10).round(),
+                          fit: FlexFit.loose,
                           child: Obx(() =>
                               Container(child: PageHeader(
                                 key:pageHeaderKey,
@@ -118,7 +118,7 @@ class PagePrototypeState extends State<PagePrototype>
                         height: 20,
                       ),
                       Flexible(
-                          flex: ((1 - headerPercentage) * 10).round(),
+                       //   flex: ((1 - headerPercentage) * 10).round(),
                           fit: FlexFit.loose,
                           child: Obx(() =>
                               Container(
@@ -155,8 +155,8 @@ class PagePrototypeState extends State<PagePrototype>
         left: paddingTLR, right: paddingTLR, top: paddingTLR, bottom: paddingB);
   }
 
-  void changeHeaderContent(String identifier, String text) {
-
-    pageHeaderKey.currentState?.changeHeaderContent(identifier, text);
+  void changeHeaderContent(String type, Map<String,String> text) {
+    if(text.isBlank??false)return;
+    pageHeaderKey.currentState?.changeHeaderContent(type,text);
   }
 }

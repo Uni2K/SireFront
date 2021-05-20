@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
+import 'package:sire/widgets/buttons/button_default_light.dart';
 import 'package:sire/widgets/input/inputfield_default.dart';
 
 class TileAddress extends StatefulWidget {
-  TileAddress({Key? key}) : super(key: key);
+  TileAddress({Key? key, required this.onFinish}) : super(key: key);
+
+  final VoidCallback onFinish;
 
   @override
   _TileAddressState createState() => _TileAddressState();
 }
 
 class _TileAddressState extends State<TileAddress> {
+
   TextEditingController textEditingControllerNameAbs =
-      new TextEditingController(text: "Max Mustermann");
+      new TextEditingController();
   TextEditingController textEditingControllerCompanyAbs =
       new TextEditingController();
   TextEditingController textEditingControllerStreetAbs =
@@ -42,167 +47,236 @@ class _TileAddressState extends State<TileAddress> {
   void initState() {
     super.initState();
     textEditingControllerNameAbs.addListener(() {
-      ViewModelMain viewModelMain=Get.put(ViewModelMain());
-      viewModelMain.pagePrototypeKey?.currentState?.changeHeaderContent("name",textEditingControllerNameAbs.text);
+      updateTextMap("abs");
     });
     textEditingControllerStreetAbs.addListener(() {
-      ViewModelMain viewModelMain=Get.put(ViewModelMain());
-      String text=textEditingControllerNameAbs.text+" "+textEditingControllerStreetNrAbs.text;
-      viewModelMain.pagePrototypeKey?.currentState?.changeHeaderContent("street",text);
+      updateTextMap("abs");
+    });
+    textEditingControllerStreetNrAbs.addListener(() {
+      updateTextMap("abs");
     });
     textEditingControllerCityAbs.addListener(() {
-      ViewModelMain viewModelMain=Get.put(ViewModelMain());
-      String text=textEditingControllerZipAbs.text+" "+textEditingControllerCityAbs.text;
-      viewModelMain.pagePrototypeKey?.currentState?.changeHeaderContent("city",text);
+      updateTextMap("abs");
+    });
+    textEditingControllerZipAbs.addListener(() {
+      updateTextMap("abs");
+    });
+    textEditingControllerCompanyAbs.addListener(() {
+      updateTextMap("abs");
     });
 
+    textEditingControllerNameEmp.addListener(() {
+      updateTextMap("emp");
+    });
+    textEditingControllerStreetEmp.addListener(() {
+      updateTextMap("emp");
+    });
+    textEditingControllerStreetNrEmp.addListener(() {
+      updateTextMap("emp");
+    });
+    textEditingControllerCityEmp.addListener(() {
+      updateTextMap("emp");
+    });
+    textEditingControllerZipEmp.addListener(() {
+      updateTextMap("emp");
+    });
+    textEditingControllerCompanyEmp.addListener(() {
+      updateTextMap("emp");
+    });
+  }
+
+  void updateTextMap(String type) {
+    ViewModelMain viewModelMain = Get.put(ViewModelMain());
+    Map<String, String> map = Map();
+    map["name"] = textEditingControllerNameAbs.text;
+    map["street"] = textEditingControllerStreetAbs.text +
+        " " +
+        textEditingControllerStreetNrAbs.text;
+    map["city"] = textEditingControllerZipAbs.text +
+        " " +
+        textEditingControllerCityAbs.text;
+
+    viewModelMain.pagePrototypeKey?.currentState
+        ?.changeHeaderContent(type, map);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Absender",
-            style: TextStyle(color: primaryColor, fontSize: 14),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                  child: InputfieldDefault(
-                      hint: "Name",
-                      textEditingController: textEditingControllerNameAbs)),
-              SizedBox(
-                width: 10,
+        //height: isMinimized ? 100 : null,
+        padding: EdgeInsets.all(10),
+        child:  FocusTraversalGroup(
+              policy: ReadingOrderTraversalPolicy(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Absender",
+                    style: TextStyle(color: primaryColor, fontSize: 14),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                          child: InputfieldDefault(
+                              hint: "Name",
+                              textEditingController:
+                                  textEditingControllerNameAbs)),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(
+                          child: InputfieldDefault(
+                              hint: "Firma",
+                              textEditingController:
+                                  textEditingControllerCompanyAbs)),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                          flex: 3,
+                          child: InputfieldDefault(
+                              hint: "Straße",
+                              textEditingController:
+                                  textEditingControllerStreetAbs)),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(
+                          flex: 1,
+                          child: InputfieldDefault(
+                              hint: "Nummer",
+                              textEditingController:
+                                  textEditingControllerStreetNrAbs)),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                          flex: 1,
+                          child: InputfieldDefault(
+                              hint: "Postleitzahl",
+                              textEditingController:
+                                  textEditingControllerZipAbs)),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(
+                          flex: 3,
+                          child: InputfieldDefault(
+                              hint: "Ort",
+                              textEditingController:
+                                  textEditingControllerCityAbs)),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Text(
+                    "Empfänger",
+                    style: TextStyle(color: primaryColor, fontSize: 14),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                          child: InputfieldDefault(
+                              hint: "Name",
+                              textEditingController:
+                                  textEditingControllerNameEmp)),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(
+                          child: InputfieldDefault(
+                              hint: "Firma",
+                              textEditingController:
+                                  textEditingControllerCompanyEmp)),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                          flex: 3,
+                          child: InputfieldDefault(
+                              hint: "Straße",
+                              textEditingController:
+                                  textEditingControllerStreetEmp)),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(
+                          flex: 1,
+                          child: InputfieldDefault(
+                              hint: "Nummer",
+                              textEditingController:
+                                  textEditingControllerStreetNrEmp)),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                          flex: 1,
+                          child: InputfieldDefault(
+                              hint: "Postleitzahl",
+                              textEditingController:
+                                  textEditingControllerZipEmp)),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Flexible(
+                          flex: 3,
+                          child: InputfieldDefault(
+                              hint: "Ort",
+                              textEditingController:
+                                  textEditingControllerCityEmp)),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: double.infinity),
+                    child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: ButtonDefaultLight(
+                          text: "Fertig",
+                          icon: FontAwesomeIcons.check,
+                          onClick: () {
+                            setState(() {
+                             widget.onFinish.call();
+                            });
+                          },
+                        )),
+                  )
+                ],
               ),
-              Flexible(
-                  child: InputfieldDefault(
-                      hint: "Firma",
-                      textEditingController: textEditingControllerCompanyAbs)),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                  flex: 3,
-                  child: InputfieldDefault(
-                      hint: "Straße",
-                      textEditingController: textEditingControllerStreetAbs)),
-              SizedBox(
-                width: 10,
-              ),
-              Flexible(
-                  flex: 1,
-                  child: InputfieldDefault(
-                      hint: "Nummer",
-                      textEditingController: textEditingControllerStreetNrAbs)),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                  flex: 1,
-                  child: InputfieldDefault(
-                      hint: "Postleitzahl",
-                      textEditingController: textEditingControllerZipAbs)),
-              SizedBox(
-                width: 10,
-              ),
-              Flexible(
-                  flex: 3,
-                  child: InputfieldDefault(
-                      hint: "Ort",
-                      textEditingController: textEditingControllerCityAbs)),
-            ],
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          Text(
-            "Empfänger",
-            style: TextStyle(color: primaryColor, fontSize: 14),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                  child: InputfieldDefault(
-                      hint: "Name",
-                      textEditingController: textEditingControllerNameEmp)),
-              SizedBox(
-                width: 10,
-              ),
-              Flexible(
-                  child: InputfieldDefault(
-                      hint: "Firma",
-                      textEditingController: textEditingControllerCompanyEmp)),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                  flex: 3,
-                  child: InputfieldDefault(
-                      hint: "Straße",
-                      textEditingController: textEditingControllerStreetEmp)),
-              SizedBox(
-                width: 10,
-              ),
-              Flexible(
-                  flex: 1,
-                  child: InputfieldDefault(
-                      hint: "Nummer",
-                      textEditingController: textEditingControllerStreetNrEmp)),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                  flex: 1,
-                  child: InputfieldDefault(
-                      hint: "Postleitzahl",
-                      textEditingController: textEditingControllerZipEmp)),
-              SizedBox(
-                width: 10,
-              ),
-              Flexible(
-                  flex: 3,
-                  child: InputfieldDefault(
-                      hint: "Ort",
-                      textEditingController: textEditingControllerCityEmp)),
-            ],
-          ),
-        ],
-      ),
-    );
+            ));
   }
 
   @override
@@ -222,6 +296,5 @@ class _TileAddressState extends State<TileAddress> {
     textEditingControllerCityEmp.dispose();
 
     super.dispose();
-
   }
 }

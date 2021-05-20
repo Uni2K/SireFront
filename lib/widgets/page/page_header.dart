@@ -146,11 +146,11 @@ class PageHeaderState extends State<PageHeader> {
     return "";
   }
 
-  void changeHeaderContent(String identifier, String text) {
+  void changeHeaderContent(String type, Map<String,String> text) {
     for (InputfieldQuill value in widget.inputFields) {
       (value.key as GlobalKey<InputfieldQuillState>)
           .currentState
-          ?.changeHeaderContent(identifier, text);
+          ?.changeHeaderContent(type, text);
     }
   }
 }

@@ -44,6 +44,26 @@ class UtilText {
 
   static TextSelection selectLine(
       {required String text, required int lineNumber}) {
+    List<int> indices =
+        getLineStartAndEndIndex(text: text, lineNumber: lineNumber);
+    int endIndex = indices[1];
+    int startIndex = indices[0];
+
+    if (endIndex - startIndex == 0) {
+      return TextSelection.collapsed(offset: startIndex);
+    } else
+      return TextSelection(extentOffset: endIndex, baseOffset: startIndex);
+  }
+
+  static TextSelection selectNextLine(String text, int currentLine) {
+    if (currentLine + 1 < getTotalLineNumber(text))
+      return selectLine(text: text, lineNumber: currentLine + 1);
+    else
+      return selectLine(text: text, lineNumber: currentLine);
+  }
+
+  static List<int> getLineStartAndEndIndex(
+      {required String text, required int lineNumber}) {
     List<String> lines = text.split("\n");
     if (lines.length > 0) {
       if (lines.last.isEmpty) lines.removeLast();
@@ -52,9 +72,9 @@ class UtilText {
     String alreadySearched = "";
     int startIndex = -1;
     String? line;
-    for (int i=0;i<lines.length;i++) {
-       line=lines[i];
-      if (i!= lines.length) line += "\n";
+    for (int i = 0; i < lines.length; i++) {
+      line = lines[i];
+      if (i != lines.length) line += "\n";
       if (i == lineNumber) {
         startIndex = alreadySearched.length;
         break;
@@ -73,16 +93,6 @@ class UtilText {
       endIndex -= 1;
     }
 
-    if (endIndex - startIndex == 0) {
-      return TextSelection.collapsed(offset: startIndex);
-    } else
-      return TextSelection(extentOffset: endIndex, baseOffset: startIndex);
-  }
-
-  static TextSelection selectNextLine(String text, int currentLine) {
-    if (currentLine + 1 < getTotalLineNumber(text))
-      return selectLine(text: text, lineNumber: currentLine + 1);
-    else
-      return selectLine(text: text, lineNumber: currentLine);
+    return [startIndex, endIndex];
   }
 }

@@ -114,7 +114,6 @@ abstract class Container<T extends Node?> extends Node {
   @override
   void insert(int index, Object data, Style? style) {
     assert(index == 0 || (index > 0 && index < length));
-
     if (isNotEmpty) {
       final child = queryChild(index, false);
       child.node!.insert(child.offset, data, style);

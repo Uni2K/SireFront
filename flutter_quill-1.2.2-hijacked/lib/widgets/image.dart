@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:photo_view/photo_view.dart';
 
 class ImageTapWrapper extends StatelessWidget {
   const ImageTapWrapper({
@@ -21,9 +20,6 @@ class ImageTapWrapper extends StatelessWidget {
           onTapDown: (_) {
             Navigator.pop(context);
           },
-          child: PhotoView(
-            imageProvider: imageProvider,
-          ),
         ),
       ),
     );

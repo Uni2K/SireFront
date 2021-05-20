@@ -104,7 +104,6 @@ class QuillController extends ChangeNotifier {
     if (len > 0 || data is! String || data.isNotEmpty) {
 
       delta = document.replace(index, len, data);
-
       var shouldRetainDelta = toggledStyle.isNotEmpty &&
           delta.isNotEmpty &&
           delta.length <= 2 &&

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:sire/constants/constant_color.dart';
+import 'package:sire/objects/dto_header.dart';
 import 'package:sire/screens/screen_main.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_default_light.dart';
@@ -26,49 +27,50 @@ class ContainerEditing extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Align(
-                        alignment: Alignment.topLeft,
-                        child: IntrinsicHeight(
-                            child: Container(
-                              height: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: buttonBackgroundColor,
+                    alignment: Alignment.topLeft,
+                    child: IntrinsicHeight(
+                        child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: buttonBackgroundColor,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                ButtonDefaultLight(
+                                    onClick: () {
+                                      vm.currentContainer.value =
+                                          ShowingContainer.HeaderSelection;
+                                    },
+                                    vertical: true,
+                                    text: "Header",
+                                    icon: FontAwesomeIcons.heading),
+                                VerticalDivider(
+                                  width: 0.5,
+                                  thickness: 0.5,
                                 ),
-                                child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ButtonDefaultLight(
-                                onClick: () {
-                                  vm.currentContainer.value=ShowingContainer.HeaderSelection;
-                                },
-                                vertical: true,
-                                text: "Header",
-                                icon: FontAwesomeIcons.heading),
-                            VerticalDivider(
-                              width: 0.5,
-                              thickness: 0.5,
-                            ),
-                            ButtonDefaultLight(
-                                onClick: () => null,
-                                vertical: true,
-                                text: "Schriftart",
-                                icon: FontAwesomeIcons.font),
-                            VerticalDivider(
-                              width: 0.5,
-                              thickness: 0.5,
-                            ),
-                            ButtonDefaultLight(
-                                onClick: () => null,
-                                vertical: true,
-                                text: "Verwerfen",
-                                icon: FontAwesomeIcons.undo),
-                            Divider(
-                              color: buttonTextColor,
-                            )
-                          ],
-                        )))),
+                                ButtonDefaultLight(
+                                    onClick: () => null,
+                                    vertical: true,
+                                    text: "Schriftart",
+                                    icon: FontAwesomeIcons.font),
+                                VerticalDivider(
+                                  width: 0.5,
+                                  thickness: 0.5,
+                                ),
+                                ButtonDefaultLight(
+                                    onClick: () => null,
+                                    vertical: true,
+                                    text: "Verwerfen",
+                                    icon: FontAwesomeIcons.undo),
+                                Divider(
+                                  color: buttonTextColor,
+                                )
+                              ],
+                            )))),
                 SizedBox(
                   height: 10,
                 ),
@@ -81,14 +83,16 @@ class ContainerEditing extends StatelessWidget {
                               topLeft: Radius.circular(5)),
                           color: buttonBackgroundColor,
                         ),
-                        child: ListView.builder(
-                          itemBuilder: (context, index) {
-                            return ListTileEditor(
-                              contentType: TileContent.addAddress,
-                            );
-                          },
-                          itemCount: 1,
-                        ))),
+                        child: Obx(() {
+                          List<Widget> listitems =
+                              getEditorListItems(vm.currentHeader.value);
+                          return ListView.builder(
+                            itemBuilder: (context, index) {
+                              return listitems[index];
+                            },
+                            itemCount: listitems.length,
+                          );
+                        }))),
                 Flexible(
                   flex: 0,
                   child: Container(
@@ -150,5 +154,22 @@ class ContainerEditing extends StatelessWidget {
             ),
           ),
         ));
+  }
+
+  List<Widget> getEditorListItems(DTOHeader value) {
+    List<Widget> widgets=List.empty(growable: true);
+
+    widgets.add(ListTileEditor(contentType: TileContent.formatEmail));
+    widgets.add(ListTileEditor(contentType: TileContent.addAddress));
+    widgets.add(ListTileEditor(contentType: TileContent.addSignature));
+    widgets.add(ListTileEditor(contentType: TileContent.spellCheck));
+
+
+
+
+
+
+    return widgets;
+
   }
 }

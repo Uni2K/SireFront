@@ -57,33 +57,37 @@ class InputfieldQuillState extends State<InputfieldQuill> {
   late QuillController _controller;
   FocusNode focusNode = FocusNode();
   int currentEditingLine = -1;
-  bool blockFocus=true;
+  bool blockFocus = true;
 
-  void changeHeaderContent(String identifier, String text) {
+  void changeHeaderContent(String type, Map<String,String> text) {
     if (widget.contentDescription == null) return;
-    if (!widget.contentDescription!.contains(identifier)) return;
 
     //its included
     List<String> contentDescriptions = widget.contentDescription!.split(";");
-    int line = -1;
+    String finalText="";
     for (int i = 0; i < contentDescriptions.length; i++) {
-      if (contentDescriptions[i] == identifier) {
-        line = i;
-        break;
+      if(i==0 && contentDescriptions[i]!=type){
+        return;
+      }else if(i==0){
+        continue;
       }
+      String currentIdentifier=contentDescriptions[i];
+      String? insertText=text[currentIdentifier];
+      if(insertText!=null){
+       finalText+=insertText+(i==contentDescriptions.length-1?"":"\n");
+       // finalText+=insertText+"\n";
+
+      }
+
+
     }
 
-    if (line != -1) {
-      String? lines =
-          UtilText.getLineByNumber(_controller.document.toPlainText(), line);
-      if (lines == null) return;
 
-      blockFocus=true;
-      _controller.replaceText(
-          0, lines.length, text,null,ignoreFocus:true);
 
-    blockFocus=false;
-    }
+      blockFocus = true;
+      _controller.replaceText(0, _controller.document.length-1, finalText, null,ignoreFocus: true);
+      blockFocus = false;
+
   }
 
   @override

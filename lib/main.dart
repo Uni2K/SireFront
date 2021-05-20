@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
-import 'package:sire/screens/screen_main.dart';
+import 'package:sire/screens/screen_test.dart';
 
 import 'utils/util_server.dart';
 
@@ -34,7 +34,7 @@ class SireApp extends StatelessWidget {
           title: 'Sire',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(toggleableActiveColor:primaryColor, textSelectionTheme: TextSelectionThemeData(selectionColor: selectionColor)),
-          home: ScreenMain(),
+          home: ScreenTest(),
         ));
   }
 
@@ -42,15 +42,15 @@ class SireApp extends StatelessWidget {
     Map<ShortcutActivator, Intent> shortcuts =
         Map.from(WidgetsApp.defaultShortcuts);
     shortcuts.removeWhere((key, value) {
-      return key.triggers.first.keyLabel ==
+      return key.triggers?.first.keyLabel ==
               LogicalKeyboardKey.arrowUp.keyLabel ||
-          key.triggers.first.keyLabel ==
+          key.triggers?.first.keyLabel ==
               LogicalKeyboardKey.arrowDown.keyLabel ||
-          key.triggers.first.keyLabel ==
+          key.triggers?.first.keyLabel ==
               LogicalKeyboardKey.arrowLeft.keyLabel ||
-          key.triggers.first.keyLabel ==
+          key.triggers?.first.keyLabel ==
               LogicalKeyboardKey.arrowRight.keyLabel ||
-          key.triggers.first.keyLabel == LogicalKeyboardKey.space.keyLabel ;
+          key.triggers?.first.keyLabel == LogicalKeyboardKey.space.keyLabel ;
         //  || key.triggers.first.keyLabel == LogicalKeyboardKey.tab.keyLabel;
 
 
