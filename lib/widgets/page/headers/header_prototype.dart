@@ -1,13 +1,62 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:sire/constants/constant_dimensions.dart';
+import 'package:sire/utils/util_size.dart';
+import 'package:sire/widgets/input/inputfield_quill.dart';
 
 abstract class HeaderPrototype extends StatelessWidget {
-
   final bool readOnly;
+  final List<InputfieldQuill> inputFields = List.empty(growable: true);
 
-  const HeaderPrototype({Key? key, required this.readOnly}) : super(key: key);
+  HeaderPrototype({Key? key, required this.readOnly}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+  void registerInputField(InputfieldQuill input) {
+    inputFields.add(input);
+  }
+
+  void changeHeaderContent(String type, Map<String, String> text) {
+    for (InputfieldQuill value in inputFields) {
+      (value.key as GlobalKey<InputfieldQuillState>)
+          .currentState
+          ?.changeHeaderContent(type, text);
+    }
+  }
+
+  EdgeInsets getPadding(BuildContext context) {
+    double width = UtilSize.getPageWidth(context);
+    double paddingTLR = paperMarginTLRRelative * width;
+    return EdgeInsets.only(
+        left: paddingTLR, right: paddingTLR, top: paddingTLR, bottom: 10);
+  }
+
+  EdgeInsets getMargin(BuildContext context) {
+    return EdgeInsets.only(bottom:  readOnly?10:0);
+  }
+  InputfieldQuill createInputField(
+      {TextStyle style = const TextStyle(fontWeight: FontWeight.normal),
+      required String initialContent,
+      String? contentDescription}) {
+    InputfieldQuill inputfieldQuill = InputfieldQuill(
+      key: GlobalKey<InputfieldQuillState>(),
+      readOnly: readOnly,
+      style: style,
+      contentDescription: contentDescription,
+      initialContent: initialContent,
+    );
+    inputFields.add(inputfieldQuill);
+    return inputfieldQuill;
+  }
+
+  TextStyle getBoldTextStyle() {
+    return TextStyle(fontWeight: FontWeight.bold);
+  }
+
+  double getDefaultSpace() {
+    return 10;
+  }
+
+  double getMiniIconSize() {
+    return 12;
   }
 }

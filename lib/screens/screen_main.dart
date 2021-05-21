@@ -68,6 +68,7 @@ class _ScreenMainState extends State<ScreenMain> with TickerProviderStateMixin {
             if (result.isLoading) {
               return SizedBox();
             }
+
             ViewModelMain viewModelMain = Get.put(ViewModelMain());
             viewModelMain.setServerContent(result.data);
             Timer(Duration(milliseconds: 500), () {

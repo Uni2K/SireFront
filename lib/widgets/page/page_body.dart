@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
 import 'package:flutter_quill/models/documents/document.dart';
 import 'package:flutter_quill/widgets/controller.dart';
 import 'package:get/get.dart';
@@ -65,7 +63,7 @@ class PageBodyState extends State<PageBody> {
 
 Das Problem bei dieser Anredeform ist folglich, dass wir keinen konkreten Ansprechpartner meinen, sondern pauschal alles und jeden anschreiben. Dabei kommt es natürlich mitunter vor, dass ein Unternehmen ausschließlich aus Damen oder eben Herren besteht oder es eine bestimmte Hierarchie zu beachten gilt. Gibt es einen Chef und eine Sekräterin, nennen wir den Mann selbstverständlich vorab. Die Formulierung wäre also:“Sehr geehrter Herr Müller, sehr geehrte Frau Mustermann,…“
 Haben wir es beispielsweise mit einer Personalchefin zu tun und schreiben nur im Subtext einen Personaler mit an, sollten wir allerdings auf „Sehr geehrte Frau Mustermann, sehr geehrter Herr Müller,…“ zurückgreifen.\n""",
-                style: Style(),
+                style: TextStyle(),
                 placeholding: true,
                 readOnly: false,
               )))

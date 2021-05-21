@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
+import 'package:sire/utils/util_size.dart';
+import 'package:sire/utils/util_widgets.dart';
 import 'package:sire/widgets/helper/always_showing_thumb.dart';
 import 'package:sire/widgets/helper/even_rounded_rect_slider_track_shape.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
@@ -18,11 +20,6 @@ class ButtonScale extends StatefulWidget {
 class _ButtonScaleState extends State<ButtonScale> {
   double _value = 1;
 
-  double dp(double val, int places) {
-    num mod = pow(10.0, places);
-    return ((val * mod).round().toDouble() / mod);
-  }
-
   bool disabled = false;
 
   @override
@@ -32,7 +29,8 @@ class _ButtonScaleState extends State<ButtonScale> {
     return IntrinsicHeight(
         child: Row(mainAxisSize: MainAxisSize.min, children: [
       MaterialButton(
-        focusNode: FocusNode(skipTraversal: true, descendantsAreFocusable: false),
+        focusNode:
+            FocusNode(skipTraversal: true, descendantsAreFocusable: false),
 
         onPressed: () {
           disabled = true;
@@ -72,41 +70,24 @@ class _ButtonScaleState extends State<ButtonScale> {
       SizedBox(
           width: 100,
           child: SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: buttonBackgroundColor,
-              inactiveTrackColor: buttonBackgroundColor,
-              trackShape: EvenRoundedRectSliderTrackShape(),
-              trackHeight: 5.0,
-              showValueIndicator: ShowValueIndicator.never,
-              thumbShape: AlwaysShowingThumb(enabledThumbRadius: 6.0),
-              thumbColor: primaryColor,
-              overlayColor: primaryColorLight,
-              overlayShape: RoundSliderOverlayShape(overlayRadius: 10.0),
-              tickMarkShape: RoundSliderTickMarkShape(),
-              inactiveTickMarkColor: Colors.transparent,
-              activeTickMarkColor: Colors.transparent,
-              valueIndicatorShape: PaddleSliderValueIndicatorShape(),
-              valueIndicatorColor: buttonBackgroundColor,
-              valueIndicatorTextStyle: TextStyle(color: buttonTextColor),
-            ),
+            data: UtilWidgets.getDefaultSliderTheme(context),
             child: Slider(
               value: _value,
               min: minScale,
-              focusNode: FocusNode(skipTraversal: true, descendantsAreFocusable: false),
+              focusNode: FocusNode(
+                  skipTraversal: true, descendantsAreFocusable: false),
               max: maxScale,
               label: '${(_value * 100).round()}%',
               divisions: ((maxScale - minScale) * 10).round(),
-              onChangeStart: (s){
-                viewModelMain.isCurrentlyTouched.value=true;
+              onChangeStart: (s) {
+                viewModelMain.isCurrentlyTouched.value = true;
               },
-              onChangeEnd: (s){
-                viewModelMain.isCurrentlyTouched.value=false;
-
+              onChangeEnd: (s) {
+                viewModelMain.isCurrentlyTouched.value = false;
               },
-
               onChanged: (value) {
                 if (disabled) return;
-                double val = dp(value, 2);
+                double val = UtilSize.dp(value, 2);
 
                 if (_value != val) {
                   viewModelMain.interactivePageKey?.currentState

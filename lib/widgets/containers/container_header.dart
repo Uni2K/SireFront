@@ -5,8 +5,10 @@ import 'package:sire/constants/constant_color.dart';
 import 'package:sire/screens/screen_main.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_default_light.dart';
-import 'package:sire/widgets/lists/list_snappable_combined.dart';
+import 'package:sire/widgets/lists/list_snappable_header.dart';
 import 'package:sire/widgets/misc/arrow_small.dart';
+import 'package:sire/widgets/page/headers/header1.dart';
+import 'package:sire/widgets/page/headers/header2.dart';
 import 'package:sire/widgets/page/page_header.dart';
 
 class ContainerHeader extends StatelessWidget {
@@ -44,19 +46,24 @@ class ContainerHeader extends StatelessWidget {
               ],
             )),
         Expanded(
-            child: ListSnappableCombined(
+            child: ListSnappableHeader(
           onFocused: (int) {
 
           },
-        /*  contentPages: viewModelMain.headerCached
-              .map((e) => PageHeader(
-                    isDisable: true,
-                    content: e,
-                  ))
-              .cast<PageHeader>()
-              .toList(),
-        ))*/
+          contentPages: getHeaders()
+        ))
       ],
     );
+  }
+
+  List<PageHeader> getHeaders(){
+    List<PageHeader> pageHeaders=List.empty(growable: true);
+    pageHeaders.add(PageHeader(content: Header1(readOnly: true,),key: GlobalKey(),));
+    pageHeaders.add(PageHeader(content: Header2(readOnly: true),key: GlobalKey()));
+    pageHeaders.add(PageHeader(content: Header1(readOnly: true,),key: GlobalKey()));
+    pageHeaders.add(PageHeader(content: Header2(readOnly: true),key: GlobalKey()));
+    pageHeaders.add(PageHeader(content: Header1(readOnly: true,),key: GlobalKey()));
+    pageHeaders.add(PageHeader(content: Header2(readOnly: true),key: GlobalKey()));
+    return pageHeaders;
   }
 }

@@ -5,8 +5,8 @@ import 'package:sire/utils/util_size.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/page/page_header.dart';
 
-class ListSnappableCombined extends StatefulWidget {
-  ListSnappableCombined(
+class ListSnappableHeader extends StatefulWidget {
+  ListSnappableHeader(
       {Key? key, required this.onFocused, required this.contentPages})
       : super(key: key);
 
@@ -15,10 +15,10 @@ class ListSnappableCombined extends StatefulWidget {
   final GlobalKey<ScrollSnapListState> snaplistKey = GlobalKey();
 
   @override
-  ListSnappableCombinedState createState() => ListSnappableCombinedState();
+  ListSnappableHeaderState createState() => ListSnappableHeaderState();
 }
 
-class ListSnappableCombinedState extends State<ListSnappableCombined> {
+class ListSnappableHeaderState extends State<ListSnappableHeader> {
   int selectedIndex = -1;
 
   @override
@@ -32,35 +32,42 @@ class ListSnappableCombinedState extends State<ListSnappableCombined> {
   @override
   Widget build(BuildContext context) {
     double widthPage = UtilSize.getPageWidth(context);
-    double height = UtilSize.getHeaderHeigth(context);
     selectedIndex = 0;
     return Container(
         width: widthPage,
-        child: ScrollSnapList(
+        child: ListView.builder(
           //  key:widget.snaplistKey,
           scrollDirection: Axis.vertical,
+          //scrollPhysics: PageScrollPhysics(),
           itemCount: widget.contentPages.length,
-          listController: _scrollController,
-          initialIndex: 0,
-          selectedItemAnchor: SelectedItemAnchor.START,
-          itemSize: height,
+          controller: _scrollController,
+          // initialIndex: 0,
+          //selectedItemAnchor: SelectedItemAnchor.START,
           itemBuilder: (context, index) {
             return GestureDetector(
                 onTap: () {
                   ViewModelMain viewModelMain = Get.put(ViewModelMain());
-                  viewModelMain.currentHeader.value =
-                      viewModelMain.headerCached.elementAt(index);
+                  viewModelMain.currentHeader.value = index;
+                  selectedIndex = index;
+                for(int i=0; i<widget.contentPages.length;i++){
+
+                  widget.contentPages[i].highlight(i==index);
+
+                }
+
+
                 },
                 child: widget.contentPages[index]);
           },
-          endOfListTolerance: 100,
-          updateOnScroll: false,
-          margin: EdgeInsets.zero,
+          //   endOfListTolerance: 100,
+
+          //  margin: EdgeInsets.zero,
           padding: EdgeInsets.zero,
-          onItemFocus: (int) {
-            widget.onFocused(int);
-            selectedIndex = int;
-          },
+          //onItemFocus: (int) {
+          //widget.onFocused(int);
+          // selectedIndex = int;
+          //},
+          //itemSize: UtilSize.getHeaderMinHeigth(context),
         ));
   }
 

@@ -39,6 +39,7 @@ class UtilText {
     if (lines.length > 0) {
       if (lines.last.isEmpty) lines.removeLast();
     }
+    if(lineNumber>=lines.length)return null;
     return lines[lineNumber] + ((lineNumber >= lines.length - 1) ? "\n" : "\n");
   }
 

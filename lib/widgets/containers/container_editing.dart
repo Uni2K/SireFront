@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:sire/constants/constant_color.dart';
-import 'package:sire/objects/dto_header.dart';
 import 'package:sire/screens/screen_main.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_default_light.dart';
 import 'package:sire/widgets/buttons/button_download.dart';
+import 'package:sire/widgets/dialogs/dialog_signature.dart';
 import 'package:sire/widgets/tiles/list_tile_editor.dart';
 
 class ContainerEditing extends StatelessWidget {
@@ -16,7 +16,7 @@ class ContainerEditing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ViewModelMain vm = Get.put(ViewModelMain());
-
+    List<Widget> listitems = getEditorListItems();
     return Align(
         alignment: Alignment.topLeft,
         child: FractionallySizedBox(
@@ -83,16 +83,12 @@ class ContainerEditing extends StatelessWidget {
                               topLeft: Radius.circular(5)),
                           color: buttonBackgroundColor,
                         ),
-                        child: Obx(() {
-                          List<Widget> listitems =
-                              getEditorListItems(vm.currentHeader.value);
-                          return ListView.builder(
-                            itemBuilder: (context, index) {
-                              return listitems[index];
-                            },
-                            itemCount: listitems.length,
-                          );
-                        }))),
+                        child: ListView.builder(
+                          itemBuilder: (context, index) {
+                            return listitems[index];
+                          },
+                          itemCount: listitems.length,
+                        ))),
                 Flexible(
                   flex: 0,
                   child: Container(
@@ -121,7 +117,9 @@ class ContainerEditing extends StatelessWidget {
                               ButtonDefaultLight(
                                 text: "Handgeschriebene Signatur",
                                 icon: FontAwesomeIcons.signature,
-                                onClick: () => null,
+                                onClick: () {showDialog(context: context, builder: (context) {
+                                  return DialogSignature(onFinish: ()=>Navigator.of(context).pop(),);
+                                },);},
                               ),
                               SizedBox(
                                 height: 7,
@@ -156,20 +154,14 @@ class ContainerEditing extends StatelessWidget {
         ));
   }
 
-  List<Widget> getEditorListItems(DTOHeader value) {
-    List<Widget> widgets=List.empty(growable: true);
+  List<Widget> getEditorListItems() {
+    List<Widget> widgets = List.empty(growable: true);
 
     widgets.add(ListTileEditor(contentType: TileContent.formatEmail));
     widgets.add(ListTileEditor(contentType: TileContent.addAddress));
     widgets.add(ListTileEditor(contentType: TileContent.addSignature));
     widgets.add(ListTileEditor(contentType: TileContent.spellCheck));
 
-
-
-
-
-
     return widgets;
-
   }
 }

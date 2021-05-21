@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:sire/constants/constant_color.dart';
+import 'package:sire/screens/screen_main.dart';
 import 'package:sire/screens/screen_test.dart';
 
 import 'utils/util_server.dart';
@@ -34,7 +35,7 @@ class SireApp extends StatelessWidget {
           title: 'Sire',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(toggleableActiveColor:primaryColor, textSelectionTheme: TextSelectionThemeData(selectionColor: selectionColor)),
-          home: ScreenTest(),
+          home: ScreenMain(),
         ));
   }
 

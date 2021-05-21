@@ -27,6 +27,7 @@ class ListTileEditor extends StatelessWidget {
             canRequestFocus: true,
             borderRadius: BorderRadius.circular(5),
             hoverColor: getHoverColor(),
+            focusColor:getHoverColor() ,
             enableFeedback: false,
             onTap: () {
               if (!isExpanded.value) {

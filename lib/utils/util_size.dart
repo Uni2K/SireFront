@@ -43,6 +43,7 @@ class UtilSize {
     return getContainerDistanceViewer(context);
   }
 
+
   static double getTopOffsetForShowingContainer(BuildContext context,ShowingContainer showingContainer) {
     double topOffsetPage=getPageOffsetTop(context);
     switch (showingContainer) {
@@ -57,10 +58,13 @@ class UtilSize {
     }
   }
 
-  static double getHeaderHeigth(BuildContext context) {
-   return  getPageWidth(context) * sqrt(2) * headerPercentage ;
+  static double getHeaderMinHeigth(BuildContext context) {
+   return  getPageWidth(context) * sqrt(2) * headerMinPercentage ;
   }
 
+  static double getHeaderMaxHeigth(BuildContext context) {
+    return  getPageWidth(context) * sqrt(2) * headerMaxPercentage ;
+  }
 
   static double dp(double val, int places) {
     num mod = pow(10.0, places);

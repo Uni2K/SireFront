@@ -1,21 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/style.dart';
-import 'package:sire/widgets/input/inputfield_quill.dart';
 import 'package:sire/widgets/page/headers/header_prototype.dart';
 
 class Header1 extends HeaderPrototype {
-
-  Header1({bool readOnly=true}) : super(readOnly:readOnly );
-
+  Header1({bool readOnly = false}) : super(readOnly: readOnly);
 
   @override
   Widget build(BuildContext context) {
-    return Container(child: Column(children: [
-      InputfieldQuill(readOnly: true, style: Style(fontWeight: FontWeight.bold), initialContent: 'Bemerkung',),
-      InputfieldQuill(readOnly: true, style: Style(fontWeight: FontWeight.normal), initialContent: 'Max Mustermann',),
-      InputfieldQuill(readOnly: true, style: Style(fontWeight: FontWeight.normal), initialContent: 'Max Mustermann',),
-      InputfieldQuill(readOnly: true, style: Style(fontWeight: FontWeight.normal), initialContent: 'Max Mustermann',),
-      InputfieldQuill(readOnly: true, style: Style(fontWeight: FontWeight.normal), initialContent: 'Max Mustermann',),
-    ],),);
+    inputFields.clear();
+
+    return Container(
+      padding: getPadding(context),
+    //  margin: getMargin(context),
+      child: IntrinsicHeight(
+          child: Stack(
+        children: [
+          Align(
+              alignment: Alignment.topLeft,
+              child: IntrinsicWidth(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    createInputField(
+                      contentDescription: "abs;name;street;city",
+                      initialContent: '''Absender Name
+Absender Straße
+Absender Stadt
+''',
+                    ),
+                  ],
+                ),
+              )),
+          Align(
+              alignment: Alignment.bottomRight,
+              child: IntrinsicWidth(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    createInputField(
+                      style: getBoldTextStyle(),
+                      initialContent: 'Bemerkung',
+                    ),
+                    SizedBox(
+                      height: getDefaultSpace(),
+                    ),
+                    createInputField(
+                      contentDescription: "emp;name;street;city",
+                      initialContent: '''Empfänger Name
+Empfänger Straße
+Empfänger Stadt
+''',
+                    ),
+                    SizedBox(
+                      height: getDefaultSpace(),
+                    ),
+                    createInputField(
+                      initialContent: 'Stadt, Datum',
+                    ),
+                  ],
+                ),
+              ))
+        ],
+      )),
+    );
   }
 }

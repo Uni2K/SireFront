@@ -30,6 +30,11 @@ class ColorUtil {
     return Color(int.parse(hexColor, radix: 16));
   }
 
+  static String getHexFromColor(Color? color){
+    if(color==null)return "#000";
+   return '#${color.value.toRadixString(16)}';
+  }
+
   static Color getRandomColor() {
     return Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
         .withOpacity(1.0);

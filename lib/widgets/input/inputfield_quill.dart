@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/style.dart';
 import 'package:flutter_quill/models/documents/document.dart';
 import 'package:flutter_quill/widgets/controller.dart';
 import 'package:flutter_quill/widgets/default_styles.dart';
 import 'package:flutter_quill/widgets/editor.dart';
 import 'package:get/get.dart';
+import 'package:sire/utils/util_color.dart';
 import 'package:sire/utils/util_text.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:tuple/tuple.dart';
@@ -28,15 +28,17 @@ class InputfieldQuill extends StatefulWidget {
   String initialContentJSON = "";
   final bool readOnly;
   final bool placeholding;
-  final Style style;
+  final TextStyle style;
 
   @override
   InputfieldQuillState createState() => InputfieldQuillState();
 
-  String contentToJSON(String content, Style style) {
+  String contentToJSON(String content, TextStyle style) {
     Map<String, dynamic> attributes = Map();
     if (style.fontWeight == FontWeight.bold) attributes["bold"] = true;
     if (style.fontStyle == FontStyle.italic) attributes["italic"] = true;
+   if(style.color!=null) attributes["color"] =  ColorUtil.getHexFromColor(style.color);
+    if(style.fontSize!=null) attributes["size"] =  style.fontSize.toString();
 
     Map<String, dynamic> jsonMap = Map();
     if (placeholding) attributes["placeholder"] = true;

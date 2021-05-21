@@ -86,16 +86,25 @@ class _TileAddressState extends State<TileAddress> {
   }
 
   void updateTextMap(String type) {
-    ViewModelMain viewModelMain = Get.put(ViewModelMain());
     Map<String, String> map = Map();
-    map["name"] = textEditingControllerNameAbs.text;
-    map["street"] = textEditingControllerStreetAbs.text +
-        " " +
-        textEditingControllerStreetNrAbs.text;
-    map["city"] = textEditingControllerZipAbs.text +
-        " " +
-        textEditingControllerCityAbs.text;
-
+    if(type=="abs") {
+      map["name"] = textEditingControllerNameAbs.text;
+      map["street"] = textEditingControllerStreetAbs.text +
+          " " +
+          textEditingControllerStreetNrAbs.text;
+      map["city"] = textEditingControllerZipAbs.text +
+          " " +
+          textEditingControllerCityAbs.text;
+    }else if(type=="emp"){
+      map["name"] = textEditingControllerNameEmp.text;
+      map["street"] = textEditingControllerStreetEmp.text +
+          " " +
+          textEditingControllerStreetNrEmp.text;
+      map["city"] = textEditingControllerZipEmp.text +
+          " " +
+          textEditingControllerCityEmp.text;
+    }
+    ViewModelMain viewModelMain = Get.put(ViewModelMain());
     viewModelMain.pagePrototypeKey?.currentState
         ?.changeHeaderContent(type, map);
   }

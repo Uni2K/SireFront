@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/widgets/controller.dart';
 import 'package:get/get.dart';
 import 'package:sire/objects/dto_configuration.dart';
-import 'package:sire/objects/dto_header.dart';
 import 'package:sire/screens/screen_main.dart';
 import 'package:sire/widgets/page/interactive_page.dart';
 import 'package:sire/widgets/page/page_prototype.dart';
@@ -17,8 +16,7 @@ class ViewModelMain extends GetxController {
 
   //View related
   Rx<ShowingContainer> currentContainer = ShowingContainer.EditingTool.obs;
-  RxList<DTOHeader> headerCached = List<DTOHeader>.empty(growable: true).obs;
-  Rx<DTOHeader> currentHeader = DTOHeader.dummy().obs;
+  Rx<int> currentHeader = 0.obs;
   Rx<QuillController> currentController = QuillController.basic().obs;
 
   //General
@@ -30,15 +28,8 @@ class ViewModelMain extends GetxController {
 
   ///saves the initial content for fast access
   void setServerContent(Map<String, dynamic>? data) {
-    List<DTOHeader> tempH = List.empty(growable: true);
-    for (var item in data!["headers"] ?? []) {
-      tempH.add(DTOHeader(item["content"], item["name"]));
-    }
-    headerCached.value = tempH;
-    if (currentHeader.value.content == null && headerCached.length > 0)
-      currentHeader.value = headerCached.first;
 
-    Map<String, dynamic> config = data["Configuration"];
+    Map<String, dynamic> config = data?["Configuration"];
     DTOConfiguration dtoConfiguration = DTOConfiguration.empty();
     dtoConfiguration.darkmode = config["darkmode"];
     dtoConfiguration.zoom = config["zoom"];
