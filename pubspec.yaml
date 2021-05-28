@@ -35,7 +35,7 @@ dependencies:
   animated_text_kit: ^4.2.1
   dynamic_widget: ^4.0.0
   hand_signature: ^2.0.0
-
+  dotted_border: ^2.0.0
   flutter_quill:
     path: flutter_quill-1.2.2-hijacked
 

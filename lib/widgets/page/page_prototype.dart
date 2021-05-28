@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +7,9 @@ import 'package:sire/constants/constant_color.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/utils/util_size.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
+import 'package:sire/widgets/misc/moveable_stack_item.dart';
+import 'package:sire/widgets/misc/resizable_widget.dart';
+import 'package:sire/widgets/misc/responsive_util.dart';
 import 'package:sire/widgets/page/headers/header_prototype.dart';
 
 import 'headers/header1.dart';
@@ -101,10 +105,10 @@ class PagePrototypeState extends State<PagePrototype>
                           // flex: (headerPercentage * 10).round(),
                           fit: FlexFit.loose,
                           child: Obx(() {
-
                             return PageHeader(
                               key: pageHeaderKey,
-                              content: getHeader(viewModelMain.currentHeader.value),
+                              content:
+                                  getHeader(viewModelMain.currentHeader.value),
                             );
                           }),
                         ),
@@ -122,6 +126,21 @@ class PagePrototypeState extends State<PagePrototype>
                                           width: 6,
                                           style: BorderStyle.solid)),
                                 ))),
+                        Flexible(
+                          child:
+                          GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                              onTap: (){
+                                FocusScope.of(context).unfocus();
+                              },
+                              child:
+                          Container(
+                              child: Obx(() => Stack(
+                                    children: [
+                                      ...getSignatures(),
+                                    ],
+                                  )))),
+                        )
                       ],
                     ))));
   }
@@ -151,11 +170,21 @@ class PagePrototypeState extends State<PagePrototype>
     pageHeaderKey.currentState?.changeHeaderContent(type, text);
   }
 
- HeaderPrototype getHeader(int value) {
-    if(value==0)return Header1();
-    if(value==1)return Header2();
+  HeaderPrototype getHeader(int value) {
+    if (value == 0) return Header1();
+    if (value == 1) return Header2();
 
     return Header1();
+  }
 
+  List<Widget> getSignatures() {
+    ViewModelMain viewModelMain = Get.put(ViewModelMain());
+    List<Widget> images = List.empty(growable: true);
+    for (ByteData pic in viewModelMain.signatures) {
+      images.add(
+        ResizebleWidget(child: Image.memory(pic.buffer.asUint8List()),data: pic,),
+      );
+    }
+    return images;
   }
 }

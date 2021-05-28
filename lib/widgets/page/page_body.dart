@@ -46,15 +46,17 @@ class PageBodyState extends State<PageBody> {
     double width =UtilSize.getPageWidth(context);
 
     double paddingTLR = paperMarginTLRRelative * width;
-    double paddingB = paperMarginBRelative * width;
+    double paddingB =10;// paperMarginBRelative * width;
     return EdgeInsets.only(
         left: paddingTLR, right: paddingTLR, bottom: paddingB);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Expanded(
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+      Flexible(
           child: Container(
               padding: getPadding(),
               child: InputfieldQuill(

@@ -191,7 +191,7 @@ class InputfieldQuillState extends State<InputfieldQuill> {
             },
             controller: _controller,
             scrollController: ScrollController(),
-            scrollable: true,
+            scrollable: false,
             focusNode: focusNode,
             autoFocus: false,
             customStyles: DefaultStyles(placeHolder: placeholder),

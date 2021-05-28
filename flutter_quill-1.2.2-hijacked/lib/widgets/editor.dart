@@ -1049,7 +1049,7 @@ class RenderEditableContainerBox extends RenderBox
 
   @override
   void performLayout() {
-    assert(!constraints.hasBoundedHeight);
+  //  assert(!constraints.hasBoundedHeight); //TODO changed this
     assert(constraints.hasBoundedWidth);
     _resolvePadding();
     assert(_resolvedPadding != null);

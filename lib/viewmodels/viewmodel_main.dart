@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/widgets/controller.dart';
 import 'package:get/get.dart';
@@ -24,6 +26,8 @@ class ViewModelMain extends GetxController {
   RxBool isCurrentlyTouched = false.obs;
   RxBool isEditingStarted=false.obs; //as soon as a controller is set
 
+  //Data
+  RxList<ByteData> signatures=List<ByteData>.empty(growable: true).obs;
 
 
   ///saves the initial content for fast access

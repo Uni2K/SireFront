@@ -117,9 +117,19 @@ class ContainerEditing extends StatelessWidget {
                               ButtonDefaultLight(
                                 text: "Handgeschriebene Signatur",
                                 icon: FontAwesomeIcons.signature,
-                                onClick: () {showDialog(context: context, builder: (context) {
-                                  return DialogSignature(onFinish: ()=>Navigator.of(context).pop(),);
-                                },);},
+                                onClick: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return DialogSignature(onFinish: (data) {
+                                        if (data != null)
+                                          vm.signatures.add(data);
+
+                                        Navigator.of(context).pop();
+                                      });
+                                    },
+                                  );
+                                },
                               ),
                               SizedBox(
                                 height: 7,
