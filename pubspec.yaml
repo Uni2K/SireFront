@@ -36,6 +36,7 @@ dependencies:
   dynamic_widget: ^4.0.0
   hand_signature: ^2.0.0
   dotted_border: ^2.0.0
+  image_picker: ^0.7.5+3
   flutter_quill:
     path: flutter_quill-1.2.2-hijacked
 
