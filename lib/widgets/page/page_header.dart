@@ -59,4 +59,5 @@ class PageHeaderState extends State<PageHeader> {
       isHighlighted = val;
     });
   }
+
 }

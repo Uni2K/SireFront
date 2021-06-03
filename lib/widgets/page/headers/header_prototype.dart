@@ -1,15 +1,27 @@
 import 'dart:js';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:sire/constants/constant_dimensions.dart';
 import 'package:sire/utils/util_size.dart';
+import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/input/inputfield_quill.dart';
 
 abstract class HeaderPrototype extends StatelessWidget {
   final bool readOnly;
   final List<InputfieldQuill> inputFields = List.empty(growable: true);
 
-  HeaderPrototype({Key? key, required this.readOnly}) : super(key: key);
+  HeaderPrototype({Key? key, required this.readOnly}) : super(key: key){
+
+      ViewModelMain viewModelMain = Get.put(ViewModelMain());
+      viewModelMain.resetTrigger.listen((p0) {
+        for(InputfieldQuill field in inputFields){
+          (field.key as GlobalKey<InputfieldQuillState>).currentState!.resetField();
+        }
+      });
+
+
+  }
 
   void registerInputField(InputfieldQuill input) {
     inputFields.add(input);
@@ -47,6 +59,9 @@ abstract class HeaderPrototype extends StatelessWidget {
     inputFields.add(inputfieldQuill);
     return inputfieldQuill;
   }
+
+
+
 
   TextStyle getBoldTextStyle() {
     return TextStyle(fontWeight: FontWeight.bold);

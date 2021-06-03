@@ -1050,7 +1050,8 @@ class RawEditorState extends EditorState
     SchedulerBinding.instance!.addPostFrameCallback((_) {
       _showCaretOnScreenScheduled = false;
 
-      final viewport = RenderAbstractViewport.of(getRenderEditor())!;
+      final viewport = RenderAbstractViewport.of(getRenderEditor());
+      if(viewport==null)return; //TODO changed this
       final editorOffset = getRenderEditor()!
           .localToGlobal(const Offset(0, 0), ancestor: viewport);
       final offsetInViewport = _scrollController!.offset + editorOffset.dy;

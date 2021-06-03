@@ -170,6 +170,8 @@ class PagePrototypeState extends State<PagePrototype>
     pageHeaderKey.currentState?.changeHeaderContent(type, text);
   }
 
+
+
   HeaderPrototype getHeader(int value) {
     if (value == 0) return Header1();
     if (value == 1) return Header2();

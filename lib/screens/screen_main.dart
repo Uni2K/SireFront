@@ -19,6 +19,7 @@ import 'package:sire/widgets/page/interactive_page.dart';
 import 'package:sire/widgets/misc/arrow_default.dart';
 import 'package:sire/widgets/page/page_prototype.dart';
 import 'package:sire/widgets/switchs/switcher_darkmode.dart';
+import 'package:sire/widgets/tiles/list_tile_editor.dart';
 
 enum ShowingContainer { Welcome, HeaderSelection, EditingTool, Final }
 
@@ -33,6 +34,8 @@ class ScreenMain extends StatefulWidget {
     viewModelMain.pagePrototypeKey = pagePrototypeKey;
     viewModelMain.repaintKey = repaintKey;
 
+    viewModelMain.editorTiles.clear();
+    viewModelMain.editorTiles.addAll([TileContent.formatEmail,TileContent.addAddress,TileContent.addSignature,TileContent.spellCheck]);
   }
 
   @override

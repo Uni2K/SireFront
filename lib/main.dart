@@ -34,7 +34,25 @@ class SireApp extends StatelessWidget {
           shortcuts: ignoredNavigationShortcuts(),
           title: 'Sire',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(toggleableActiveColor:primaryColor, textSelectionTheme: TextSelectionThemeData(selectionColor: selectionColor)),
+          theme: ThemeData(
+              toggleableActiveColor: primaryColor,
+              checkboxTheme:
+                  CheckboxThemeData(
+                      shape:  RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
+                      visualDensity: VisualDensity.compact,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      overlayColor: null,
+                      fillColor: MaterialStateColor.resolveWith(
+                (states) {
+                  if (states.contains(MaterialState.selected) && !states.contains(MaterialState.disabled)) {
+                    return primaryColor; // the color when checkbox is selected;
+                  }
+                  return buttonBackgroundColor; //the color when checkbox is unselected;
+                },
+              )),
+              textSelectionTheme:
+                  TextSelectionThemeData(selectionColor: selectionColor)),
           home: ScreenMain(),
         ));
   }
@@ -51,10 +69,8 @@ class SireApp extends StatelessWidget {
               LogicalKeyboardKey.arrowLeft.keyLabel ||
           key.triggers?.first.keyLabel ==
               LogicalKeyboardKey.arrowRight.keyLabel ||
-          key.triggers?.first.keyLabel == LogicalKeyboardKey.space.keyLabel ;
-        //  || key.triggers.first.keyLabel == LogicalKeyboardKey.tab.keyLabel;
-
-
+          key.triggers?.first.keyLabel == LogicalKeyboardKey.space.keyLabel;
+      //  || key.triggers.first.keyLabel == LogicalKeyboardKey.tab.keyLabel;
     });
 
     return shortcuts;

@@ -31,10 +31,10 @@ class _PickerColorState extends State<PickerColor> {
     return  GridView.builder(
       shrinkWrap: true,
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 17,
+            maxCrossAxisExtent: 14,
             childAspectRatio: 1 / 1,
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 5),
+            crossAxisSpacing: 3,
+            mainAxisSpacing: 3),
         itemCount: widget.availableColors.length,
         itemBuilder: (context, index) {
           final itemColor = widget.availableColors[index];
@@ -46,10 +46,11 @@ class _PickerColorState extends State<PickerColor> {
               });
             },
             child: Container(
-              width: 20,
-              height: 20,
+              width:16,
+              height: 16,
               decoration: BoxDecoration(
                   color: itemColor,
+                  borderRadius: BorderRadius.circular(3),
                   shape: widget.circleItem == true
                       ? BoxShape.circle
                       : BoxShape.rectangle,),

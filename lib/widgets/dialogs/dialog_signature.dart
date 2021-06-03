@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hand_signature/signature.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,6 +13,7 @@ import 'package:sire/constants/constant_color.dart';
 import 'package:sire/utils/util_widgets.dart';
 import 'package:sire/widgets/buttons/button_circle_neutral.dart';
 import 'package:sire/widgets/buttons/button_default_action.dart';
+import 'package:sire/widgets/dropdowns/dropdown_fonts.dart';
 import 'package:sire/widgets/misc/picker_color.dart';
 import 'dart:ui' as ui;
 
@@ -56,9 +59,11 @@ class _DialogSignatureState extends State<DialogSignature> {
 
   final double width = 500;
   int index = 0;
+  String _selectedFont = "Arty";
 
   ByteData? _pickedImage;
   final picker = ImagePicker();
+  final FocusNode focusNodeTextField = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +93,7 @@ class _DialogSignatureState extends State<DialogSignature> {
                           color: Colors.black,
                         ),
                         background: false,
-                        onClick: () => null,
+                        onClick: () =>Navigator.of(context).pop(),
                       ),
                     ],
                   ),
@@ -108,7 +113,9 @@ class _DialogSignatureState extends State<DialogSignature> {
                                       preferredSize: Size.fromHeight(34.0),
                                       child: TabBar(
                                         onTap: (x) {
-                                          index = x;
+                                          setState(() {
+                                            index = x;
+                                          });
                                         },
                                         isScrollable: true,
                                         //   padding: EdgeInsets.symmetric(horizontal: 20),
@@ -196,59 +203,61 @@ class _DialogSignatureState extends State<DialogSignature> {
                   ),
                   Row(
                     children: [
-                      Icon(
-                        Icons.format_color_text_rounded,
-                        color: buttonTextColor,
-                        size: 17,
-                      ),
                       SizedBox(
-                        width: 10,
-                      ),
-                      SizedBox(
-                          width: 200,
+                          width: 110,
                           child: PickerColor(
                               onSelectColor: (x) => setState(() {
                                     chosenColor = x;
                                   }),
+                              circleItem: false,
                               availableColors: availableColors,
-                              initialColor: chosenColor))
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.line_weight_rounded,
-                        color: buttonTextColor,
-                        size: 17,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: SliderTheme(
-                            data: UtilWidgets.getDefaultSliderTheme(context)
-                                .copyWith(
-                                    thumbShape: RoundSliderThumbShape(
-                                        enabledThumbRadius: 6)),
-                            child: Slider(
-                              value: strokeWidth,
-                              min: 1,
-                              focusNode: FocusNode(
-                                  skipTraversal: true,
-                                  descendantsAreFocusable: false),
-                              max: 10,
-                              divisions: 10,
-                              onChanged: (value) {
+                              initialColor: chosenColor)),
+                     if(index == 1)
+                          DropdownFonts(
+                              probeText: _textEditingController.text,
+                              onFontSelected: (String value) {
                                 setState(() {
-                                  strokeWidth = value;
+                                  _selectedFont = value;
                                 });
                               },
-                            )),
-                      ),
+                            ),
+                      if( index == 0) Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.line_weight_rounded,
+                                  color: buttonTextColor,
+                                  size: 17,
+                                ),
+                                SizedBox(
+                                  width: 2,
+                                ),
+                                SizedBox(
+                                  width: 100,
+                                  child: SliderTheme(
+                                      data: UtilWidgets.getDefaultSliderTheme(
+                                              context)
+                                          .copyWith(
+                                              thumbShape: RoundSliderThumbShape(
+                                                  enabledThumbRadius: 6)),
+                                      child: Slider(
+                                        value: strokeWidth,
+                                        min: 1,
+                                        focusNode: FocusNode(
+                                            skipTraversal: true,
+                                            descendantsAreFocusable: false),
+                                        max: 10,
+                                        divisions: 10,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            strokeWidth = value;
+                                          });
+                                        },
+                                      )),
+                                )
+                              ],
+                            ),
                       Spacer(),
                       ButtonDefaultAction(
                         text: 'Fertig',
@@ -259,8 +268,13 @@ class _DialogSignatureState extends State<DialogSignature> {
                                 .toImage()
                                 .then((value) => widget.onFinish(value));
                           } else if (index == 1) {
-                            _captureImage()
-                                .then((value) => widget.onFinish(value));
+                            focusNodeTextField.unfocus();
+                            FocusScope.of(context).unfocus();
+                             Timer(Duration(milliseconds: 500,),(){
+                               _captureImage()
+                                   .then((value) => widget.onFinish(value));
+                             } );
+
                           } else if (index == 2) {
                             widget.onFinish(_pickedImage);
                           }
@@ -357,50 +371,38 @@ class _DialogSignatureState extends State<DialogSignature> {
                     key: _textEditingKey,
                     child: IntrinsicWidth(
                         child: TextField(
+                      focusNode: focusNodeTextField,
                       decoration: InputDecoration(
                         isDense: true,
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: buttonTextColor.withAlpha(100)),
-                        ),
+                        enabledBorder: InputBorder.none,
                         focusedBorder: UnderlineInputBorder(
                           borderSide:
                               BorderSide(color: buttonTextColor.withAlpha(100)),
                         ),
-                        border: UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: buttonTextColor.withAlpha(100)),
-                        ),
+                        border: InputBorder.none,
                       ),
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontFamily: _selectedFont,
+                      ),
+                      //   strutStyle: StrutStyle( fontSize: 40,height: 1.1),
                       autofocus: true,
                       controller: _textEditingController,
                     ))))),
-        Align(
-          alignment: Alignment.topRight,
-          child: Container(
-              margin: EdgeInsets.only(right: 4, top: 2),
-              child: ButtonCircleNeutral(
-                onClick: () {
-                  control.clear();
-                },
-                icon: Icon(
-                  Icons.delete,
-                  color: buttonTextColor,
-                  size: 18,
-                ),
-                background: true,
-              )),
-        ),
       ],
     ));
     children.add(Stack(
       children: [
         if (_pickedImage != null)
-        Positioned.fill(child:Image.memory(_pickedImage!.buffer.asUint8List(), fit: BoxFit.cover,)),
+          Positioned.fill(
+              child: Image.memory(
+            _pickedImage!.buffer.asUint8List(),
+            fit: BoxFit.cover,
+          )),
         Align(
-            alignment: _pickedImage!=null?Alignment.bottomLeft:Alignment.center,
+            alignment:
+                _pickedImage != null ? Alignment.bottomLeft : Alignment.center,
             child: ButtonDefaultAction(
               text: "Bild auswählen",
               icon: Icons.image_search_rounded,
@@ -413,22 +415,7 @@ class _DialogSignatureState extends State<DialogSignature> {
                 });
               },
             )),
-        Align(
-          alignment: Alignment.topRight,
-          child: Container(
-              margin: EdgeInsets.only(right: 4, top: 2),
-              child: ButtonCircleNeutral(
-                onClick: () {
-                  control.clear();
-                },
-                icon: Icon(
-                  Icons.delete,
-                  color: buttonTextColor,
-                  size: 18,
-                ),
-                background: true,
-              )),
-        ),
+
       ],
     ));
     return children;

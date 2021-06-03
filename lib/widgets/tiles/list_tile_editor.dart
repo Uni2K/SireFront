@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:sire/constants/constant_color.dart';
+import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_circle_neutral.dart';
 import 'package:sire/widgets/tiles/tile_add_signature.dart';
 import 'package:sire/widgets/tiles/tile_address.dart';
@@ -116,18 +117,10 @@ class ListTileEditor extends StatelessWidget {
                                                   color: buttonTextColor,
                                                 ),
                                                 background: false,
-                                                onClick: () => null,
+                                                onClick: () => delete(),
                                               ),
-                                              SizedBox(
-                                                width: 7,
-                                              ),
-                                              ButtonCircleNeutral(
-                                                icon: Icon(Icons.settings,
-                                                    size: 16,
-                                                    color: buttonTextColor),
-                                                background: false,
-                                                onClick: () => null,
-                                              ),
+
+
                                             ],
                                           ),
                                           Flexible(child: getContent())
@@ -201,5 +194,11 @@ class ListTileEditor extends StatelessWidget {
       case TileContent.addAddress:
         return Colors.white;
     }
+  }
+
+  delete() {
+    ViewModelMain viewModelMain = Get.put(ViewModelMain());
+    viewModelMain.editorTiles.removeWhere((element) => element==contentType);
+
   }
 }

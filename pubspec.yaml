@@ -37,6 +37,7 @@ dependencies:
   hand_signature: ^2.0.0
   dotted_border: ^2.0.0
   image_picker: ^0.7.5+3
+  fluttertoast: ^8.0.7
   flutter_quill:
     path: flutter_quill-1.2.2-hijacked
 
@@ -78,6 +79,35 @@ flutter:
     - family: Tower
       fonts:
         - asset: fonts/TowerCGCondensed.ttf
+
+    - family: Arty
+      fonts:
+        - asset: fonts/signature/ArtySignature.otf
+
+    - family: AlexBrush
+      fonts:
+        - asset: fonts/signature/AlexBrush-Regular.ttf
+
+    - family: Arabella
+      fonts:
+        - asset: fonts/signature/Arabella.ttf
+
+    - family: Otto
+      fonts:
+        - asset: fonts/signature/Otto.ttf
+
+    - family: Quig
+      fonts:
+        - asset: fonts/signature/QUIGLEYW.TTF
+
+    - family: Sacramento
+      fonts:
+        - asset: fonts/signature/Sacramento-Regular.ttf
+
+    - family: Stalemate
+      fonts:
+        - asset: fonts/signature/Stalemate-Regular.ttf
+
 
 
 

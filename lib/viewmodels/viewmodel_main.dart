@@ -7,6 +7,7 @@ import 'package:sire/objects/dto_configuration.dart';
 import 'package:sire/screens/screen_main.dart';
 import 'package:sire/widgets/page/interactive_page.dart';
 import 'package:sire/widgets/page/page_prototype.dart';
+import 'package:sire/widgets/tiles/list_tile_editor.dart';
 
 class ViewModelMain extends GetxController {
 
@@ -17,15 +18,16 @@ class ViewModelMain extends GetxController {
 
 
   //View related
-  Rx<ShowingContainer> currentContainer = ShowingContainer.EditingTool.obs;
+  Rx<ShowingContainer> currentContainer = ShowingContainer.Final.obs;
   Rx<int> currentHeader = 0.obs;
   Rx<QuillController> currentController = QuillController.basic().obs;
+  RxList<TileContent> editorTiles = List<TileContent>.empty(growable: true).obs;
 
   //General
   Rx<DTOConfiguration> configuration = DTOConfiguration.empty().obs;
   RxBool isCurrentlyTouched = false.obs;
   RxBool isEditingStarted=false.obs; //as soon as a controller is set
-
+  RxBool resetTrigger=false.obs;
   //Data
   RxList<ByteData> signatures=List<ByteData>.empty(growable: true).obs;
 

@@ -7,6 +7,7 @@ import 'package:sire/screens/screen_main.dart';
 import 'package:sire/viewmodels/viewmodel_main.dart';
 import 'package:sire/widgets/buttons/button_default_light.dart';
 import 'package:sire/widgets/buttons/button_download.dart';
+import 'package:sire/widgets/dialogs/dialog_line.dart';
 import 'package:sire/widgets/dialogs/dialog_signature.dart';
 import 'package:sire/widgets/tiles/list_tile_editor.dart';
 
@@ -16,11 +17,10 @@ class ContainerEditing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ViewModelMain vm = Get.put(ViewModelMain());
-    List<Widget> listitems = getEditorListItems();
     return Align(
         alignment: Alignment.topLeft,
         child: FractionallySizedBox(
-          widthFactor: 0.5,
+          widthFactor: 0.65,
           child: Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -52,17 +52,9 @@ class ContainerEditing extends StatelessWidget {
                                   width: 0.5,
                                   thickness: 0.5,
                                 ),
+
                                 ButtonDefaultLight(
-                                    onClick: () => null,
-                                    vertical: true,
-                                    text: "Schriftart",
-                                    icon: FontAwesomeIcons.font),
-                                VerticalDivider(
-                                  width: 0.5,
-                                  thickness: 0.5,
-                                ),
-                                ButtonDefaultLight(
-                                    onClick: () => null,
+                                    onClick: () => {resetAll()},
                                     vertical: true,
                                     text: "Verwerfen",
                                     icon: FontAwesomeIcons.undo),
@@ -83,12 +75,16 @@ class ContainerEditing extends StatelessWidget {
                               topLeft: Radius.circular(5)),
                           color: buttonBackgroundColor,
                         ),
-                        child: ListView.builder(
-                          itemBuilder: (context, index) {
-                            return listitems[index];
-                          },
-                          itemCount: listitems.length,
-                        ))),
+                        child: Obx(() {
+                          List<Widget> listitems = getEditorListItems();
+
+                          return ListView.builder(
+                            itemBuilder: (context, index) {
+                              return listitems[index];
+                            },
+                            itemCount: listitems.length,
+                          );
+                        }))),
                 Flexible(
                   flex: 0,
                   child: Container(
@@ -109,13 +105,25 @@ class ContainerEditing extends StatelessWidget {
                               ButtonDefaultLight(
                                 text: "Zeile für Unterschrift",
                                 icon: FontAwesomeIcons.textWidth,
-                                onClick: () => null,
+                                onClick: () => {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return DialogLine(onFinish: (data) {
+                                        if (data != null)
+                                          vm.signatures.add(data);
+
+                                        Navigator.of(context).pop();
+                                      });
+                                    },
+                                  )
+                                },
                               ),
                               SizedBox(
                                 height: 10,
                               ),
                               ButtonDefaultLight(
-                                text: "Handgeschriebene Signatur",
+                                text: "Signaturen",
                                 icon: FontAwesomeIcons.signature,
                                 onClick: () {
                                   showDialog(
@@ -132,14 +140,6 @@ class ContainerEditing extends StatelessWidget {
                                 },
                               ),
                               SizedBox(
-                                height: 7,
-                              ),
-                              ButtonDefaultLight(
-                                text: "Bild hochladen",
-                                icon: FontAwesomeIcons.fileUpload,
-                                onClick: () => null,
-                              ),
-                              SizedBox(
                                 height: 15,
                               ),
                               Container(
@@ -149,6 +149,8 @@ class ContainerEditing extends StatelessWidget {
                                         text: "Fertigstellen",
                                         icon: FontAwesomeIcons.filePdf,
                                         onClick: () {
+                                          FocusScope.of(context).unfocus();
+
                                           ViewModelMain viewModelMain =
                                               Get.put(ViewModelMain());
                                           viewModelMain.currentContainer.value =
@@ -166,12 +168,18 @@ class ContainerEditing extends StatelessWidget {
 
   List<Widget> getEditorListItems() {
     List<Widget> widgets = List.empty(growable: true);
-
-    widgets.add(ListTileEditor(contentType: TileContent.formatEmail));
-    widgets.add(ListTileEditor(contentType: TileContent.addAddress));
-    widgets.add(ListTileEditor(contentType: TileContent.addSignature));
-    widgets.add(ListTileEditor(contentType: TileContent.spellCheck));
+    ViewModelMain vm = Get.put(ViewModelMain());
+    for (TileContent tile in vm.editorTiles) {
+      widgets.add(ListTileEditor(contentType: tile));
+    }
 
     return widgets;
+  }
+
+  resetAll() {
+    ViewModelMain vm = Get.put(ViewModelMain());
+    vm.signatures.clear();
+    vm.currentHeader.value = 0;
+    vm.resetTrigger.toggle();
   }
 }
