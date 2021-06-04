@@ -18,7 +18,7 @@ class ViewModelMain extends GetxController {
 
 
   //View related
-  Rx<ShowingContainer> currentContainer = ShowingContainer.Final.obs;
+  Rx<ShowingContainer> currentContainer = ShowingContainer.EditingTool.obs;
   Rx<int> currentHeader = 0.obs;
   Rx<QuillController> currentController = QuillController.basic().obs;
   RxList<TileContent> editorTiles = List<TileContent>.empty(growable: true).obs;

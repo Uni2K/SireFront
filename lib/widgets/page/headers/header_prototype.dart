@@ -74,4 +74,30 @@ abstract class HeaderPrototype extends StatelessWidget {
   double getMiniIconSize() {
     return 12;
   }
+
+  List<String> getContentChilds(String identifier) {
+
+    List<String> childs=List.empty(growable: true);
+    List<String?> contentDescriptionsList=inputFields.where((element) => element.contentDescription!=null && element.contentDescription!.contains(identifier)).map((e) => e.contentDescription).toList();
+    for(String? contentDescriptionParent in contentDescriptionsList){
+      if(contentDescriptionParent==null)continue;
+
+      List<String> contentDescriptions = contentDescriptionParent.split(";");
+      for (int i = 0; i < contentDescriptions.length; i++) {
+        if (i == 0 && contentDescriptions[i] != identifier) {
+         continue;
+        } else if (i == 0) {
+          continue;
+        }
+        String x=contentDescriptions[i];
+        if(!childs.contains(x))
+        childs.add(x);
+      }
+    }
+    return childs;
+  }
+
+
+
+
 }

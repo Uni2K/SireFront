@@ -14,8 +14,14 @@ class InputfieldDefault extends StatefulWidget {
 }
 
 class _InputfieldDefaultState extends State<InputfieldDefault> {
+
+  bool _valid=false;
+  bool _autovalidate=false;
+
   @override
   Widget build(BuildContext context) {
+
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -27,13 +33,31 @@ class _InputfieldDefaultState extends State<InputfieldDefault> {
         SizedBox(
           height: 2,
         ),
-        TextField(
+        TextFormField(
           readOnly: false,
           controller: widget.textEditingController,
           style: TextStyle(fontSize: 14),
+          autovalidateMode: _autovalidate?AutovalidateMode.always:AutovalidateMode.disabled,
+
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              setState(() {
+                _valid=false;
+              });
+              return "";
+            }
+
+            setState(() {
+              _valid=true;
+            });
+            return null;
+          },
+
           decoration: InputDecoration(
+            errorText: null,
+
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-            fillColor: buttonBackgroundColor,
+            fillColor: _valid?buttonBackgroundColor:Colors.red[100],
             filled: true,
             isDense: true,
             border: new OutlineInputBorder(

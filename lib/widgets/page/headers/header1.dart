@@ -56,6 +56,7 @@ Empfänger Stadt
                       height: getDefaultSpace(),
                     ),
                     createInputField(
+                      contentDescription: "abs;date",
                       initialContent: 'Stadt, Datum',
                     ),
                   ],
